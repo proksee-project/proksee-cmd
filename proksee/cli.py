@@ -45,7 +45,6 @@ class ProkseeCLI(click.MultiCommand):
         return mod.cli
 
 
-#@click.help_option('-h', '--help')
 @click.version_option(
     None,
     "--ver",
