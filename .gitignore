@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+#fastq files
+*.fastq
+*.fq
+*.fastq.gz
+*.fq.gz

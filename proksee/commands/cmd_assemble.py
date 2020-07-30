@@ -1,10 +1,13 @@
 import click
 import os
 # import platform detection
+from proksee import platform_identify
 # import quality module
+from proksee import read_quality
 # import organism detection
+from proksee import organism_detection
 # import assembler
-
+from proksee import assembler
 
 @click.command('assemble',
                short_help='Assemble reads.')
@@ -24,7 +27,7 @@ def cli(ctx, forward, reverse, output_dir):
 
     # Step 1: Platform detection
     # Pass forward and reverse datasets to platform detection module and ensure that both files are of the same platform
-
+    platform_identify()
     # Step 2: Quality Check
     # Pass forward and reverse datasets to quality check module and calculate quality statistics
 
