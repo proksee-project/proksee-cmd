@@ -34,7 +34,7 @@ def cli(ctx, forward, reverse, output_dir):
     # Pass forward and reverse datasets to platform detection module and ensure that both files are of the same platform
     file_dicn = platform_identify.fastq_extn_check(forward, reverse)
     platform_dicn = platform_identify.platform_output(file_dicn)
-    sys.stdout.write(platform_dicn)
+    print(platform_dicn)
     sys.stdout.write('Platform identification complete')
 
 
