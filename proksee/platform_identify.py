@@ -9,7 +9,7 @@ GZ_TRUE = 1
 
 # Checking files for valid fastq extension, passing to dictionary
 def fastq_extn_check(fwd=None, rev=None):
-    if rev == 'use_pair':
+    if rev is None:
         file_list = [fwd]
     else:
         file_list = [fwd, rev]
@@ -37,6 +37,7 @@ def fastq_extn_check(fwd=None, rev=None):
             pass
 
     return f_name_dicn
+
 
 # Identifying sequencing platform based on read
 def plat_iden(open_file=None):
@@ -82,34 +83,57 @@ def platform_output(f_name_dicn=None):
         '''Almost identical operations for zipped/unzipped files'''
         if (f_name_dicn[file] == GZ_TRUE):
             with gzip.open(file, mode='rt') as open_file:
-                fastq_platform[file] = plat_iden(open_file)
+                fastq_platform[os.path.basename(file)] = plat_iden(open_file)
 
 
         elif (f_name_dicn[file] == GZ_FALSE):
             with open(file, mode='r') as open_file:
-                fastq_platform[file] = plat_iden(open_file)
+                fastq_platform[os.path.basename(file)] = plat_iden(open_file)
 
     return fastq_platform
 
-def main():
-    '''Initiating main function with mandatory parameters = 2'''
-    if len(sys.argv) != 3:
-        sys.exit('''
-        Command usage: python platform_identification.py FORWARD_READ REVERSE_READ.
-        Need to pass 2 arguments for forward and reverse fastq reads.
-        For single read, use "use_pair" as an argument in lieu of reverse read.
-        ''')
+
+# Writing output to file within output directory
+def output_write(fastq_platform=None, output_dir=None):
+    output_file = open(os.path.join(output_dir, 'platform.txt'), 'w')
+    for key, value in fastq_platform.items():
+        output_file.write('{} : {}\n'.format(key, value))
     
-    forward_read = sys.argv[1]
-    reverse_read = sys.argv[2]
+    platform_complete = 'Sequencing platform identified for your input reads. ' \
+        'Output written in platform.txt within ' + os.path.abspath(output_dir) + '.\n'
+    
+    return platform_complete
+
+def main():
+    if len(sys.argv) > 4 or len(sys.argv) < 3:
+        sys.exit('''
+        Command usage: python platform_identify.py OUTPUT_DIRECTORY FORWARD REVERSE
+        Need to pass 3 arguments corresponding to output directory and forward 
+        and reverse fastq reads. For a single read, only output directory and
+        forward fastq read are required as arguments.
+        ''')
+
+    if len(sys.argv) == 4:
+        output_dir = sys.argv[1]
+        forward_read = sys.argv[2]
+        reverse_read = sys.argv[3]
+        
+    elif len(sys.argv) == 3:
+        output_dir = sys.argv[1]
+        forward_read = sys.argv[2]
+        reverse_read = None
+
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
 
     '''Creating dictionary of file names and zipped/unzippped status'''
     file_dicn = fastq_extn_check(forward_read, reverse_read)
     
     '''Output dictionary of file names and possible sequencing platform'''
     output_dicn = platform_output(file_dicn)
-    for key, value in output_dicn.items():
-        sys.stdout.write(key + ': ' + value + '\n')
+    
+    complete = output_write(output_dicn, output_dir)
+    sys.stdout.write(complete)
 
 
 if __name__ == '__main__':
