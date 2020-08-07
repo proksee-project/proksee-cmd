@@ -33,10 +33,9 @@ def cli(ctx, forward, reverse, output_dir):
 
     # Step 1: Platform detection
     # Pass forward and reverse datasets to platform detection module and ensure that both files are of the same platform
-    platform_identify = PlatformIdentify(output_dir, forward, reverse)
-    dicn = platform_identify.fastq_extn_check()
-    print(platform_identify.platform_output(dicn))
-
+    platform_identify = PlatformIdentify(forward, reverse)
+    platform = platform_identify.identify_platform(forward, reverse)
+    print(platform)
 
     # Step 2: Quality Check
     # Pass forward and reverse datasets to quality check module and calculate quality statistics
