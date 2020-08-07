@@ -4,6 +4,7 @@ import sys
 
 # import platform detection
 from proksee import platform_identify
+from proksee.platform_identify_oop import PlatformIdentify
 
 # import quality module
 from proksee import read_quality
@@ -32,10 +33,11 @@ def cli(ctx, forward, reverse, output_dir):
 
     # Step 1: Platform detection
     # Pass forward and reverse datasets to platform detection module and ensure that both files are of the same platform
-    file_dicn = platform_identify.fastq_extn_check(forward, reverse)
-    output_dicn = platform_identify.platform_output(file_dicn)
-    complete1 = platform_identify.output_write(output_dicn, output_dir)
-    sys.stdout.write(complete1)
+    platform_identify = PlatformIdentify(output_dir, forward, reverse)
+    dicn = platform_identify.fastq_extn_check()
+    print(platform_identify.platform_output(dicn))
+
+
     # Step 2: Quality Check
     # Pass forward and reverse datasets to quality check module and calculate quality statistics
 
