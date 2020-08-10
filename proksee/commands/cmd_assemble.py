@@ -3,17 +3,16 @@ import os
 import sys
 
 # import platform detection
-from proksee import platform_identify
-from proksee.platform_identify_oop import PlatformIdentify
+from proksee.platform_identify import PlatformIdentify
 
 # import quality module
-from proksee import read_quality
+from proksee.read_quality import ReadFiltering
 
 # import organism detection
-from proksee import organism_detection
+from proksee.organism_detection import OrganismDetection
 
 # import assembler
-from proksee import assembler
+from proksee.assembler import Assembler
 
 @click.command('assemble',
                short_help='Assemble reads.')
@@ -39,9 +38,26 @@ def cli(ctx, forward, reverse, output_dir):
 
     # Step 2: Quality Check
     # Pass forward and reverse datasets to quality check module and calculate quality statistics
+    read_filtering = ReadFiltering(forward, reverse, output_dir)
+    filtering = read_filtering.filter_read(forward, reverse, output_dir)
+    print(filtering)
+
+    forward_filtered = os.path.join(output_dir, 'fwd_filtered.fastq')
+    if reverse is None:
+        reverse_filtered = None
+    else:
+        reverse_filtered = os.path.join(output_dir, 'rev_filtered.fastq')
 
     # Step 3: Organism Detection
     # Pass forward and reverse datasets to organism detection module and return the dominate genus and species
+    organism_identify = OrganismDetection(forward_filtered, reverse_filtered, \
+        output_dir)
+    major_organism = organism_identify.major_organism(forward_filtered, \
+        reverse_filtered, output_dir)
+    print(major_organism)
 
     # Step 4: Assembly (Only skesa for now)
     # Pass forward and reverse datasets to assembly module and return a path to the results or paths to specific files
+    assembler = Assembler(forward_filtered, reverse_filtered, output_dir)
+    assembly = assembler.perform_assembly(forward_filtered, reverse_filtered, output_dir)
+    print(assembly)
