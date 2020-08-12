@@ -28,7 +28,7 @@ class ReadFiltering():
         return fastp_str
 
 
-    def fastp_func(self,output_dir, fastp_str):
+    def fastp_func(self, output_dir, fastp_str):
         fastp_log = open(os.path.join(output_dir, 'fastp.log'), 'w+')
         try:
             subprocess.call(fastp_str, shell=True, stderr=fastp_log)    
@@ -39,6 +39,6 @@ class ReadFiltering():
     def filter_read(self, forward, reverse, output_dir):
         fastp_string = self.fastp_string(forward, reverse, output_dir)
         self.fastp_func(output_dir, fastp_string)
-        output_string = 'FASTP filtered reads in ' + os.path.abspath(output_dir)
+        output_string = 'FASTP filtered reads written to output directory'
 
         return output_string

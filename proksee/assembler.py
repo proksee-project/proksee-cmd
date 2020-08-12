@@ -33,8 +33,8 @@ class Assembler():
     def perform_assembly(self, forward, reverse, output_dir):
         skesa_string = self.skesa_string(forward, reverse)
         self.skesa_func(skesa_string, output_dir)
-        output_string = 'SKESA assembled reads and log files are in ' + \
-            os.path.abspath(output_dir)
+        output_string = 'SKESA assembled reads and log files written to \
+            output directory'
         
         return output_string
 
