@@ -72,7 +72,7 @@ class FastqCheck():
                     fastq_attr[open_file] += 1
 
             elif count_line == 4:
-                four = re.match(r'.+', line)
+                four = re.match(r'^\S+$', line)
                 if four is not None:
                     fastq_attr[open_file] += 1
 
@@ -89,11 +89,21 @@ class FastqCheck():
     def fastq_input_check(self, forward, reverse):
         extn_dicn = self.fastq_extn_check(forward, reverse)
         status_dicn = self.fastq_status(extn_dicn)
-        if status_dicn[forward] or status_dicn[reverse]:
-            output_string = 'Read/s are valid fastq file/s..proceeding..'
-            status = True
-        elif not status_dicn[forward] and not status_dicn[reverse]:
-            output_string = 'Read/s are invalid fastq file/s..exiting..'
-            status = False
+        
+        if reverse is not None:
+            if status_dicn[forward] and status_dicn[reverse]:
+                output_string = 'Reads are valid fastq files..proceeding..'
+                status = True
+            elif not status_dicn[forward] or not status_dicn[reverse]:
+                output_string = 'Either one or both of forward/reverse reads are invalid fastq files..exiting..'
+                status = False
+        
+        elif reverse is None:
+            if status_dicn[forward]:
+                output_string = 'Forward read (single read) is valid fastq file..proceeding..'
+                status = True
+            elif not status_dicn[forward]:
+                output_string = 'Forward read (single read) is invalid fastq file..exiting..'
+                status = False
 
         return (output_string, status)
