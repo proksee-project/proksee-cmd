@@ -38,8 +38,9 @@ class OrganismDetection():
 
     def identify_organism(self, refseq_out):
         '''Initiating counting of output organisms'''
-        organism_counter = defaultdict(int)
-
+        organism_counter_uniq = defaultdict(int)
+        total_organism_count = 0
+        probability = {}
         '''Opening refseq_masher output file'''
         with open(refseq_out, 'r') as open_file:
             for line in open_file:
@@ -51,18 +52,25 @@ class OrganismDetection():
                     try:
                         '''Joining genus and species name, counting occurrences'''
                         test_organism = col2.split(' ')[0] + ' ' + col2.split(' ')[1]
-                        organism_counter[test_organism] += 1
-
+                        organism_counter_uniq[test_organism] += 1
+                        total_organism_count += 1
                     except Exception:
                         pass
-
+        
         try:
             '''Output organism with highest number of occurrences'''
-            major_org = max(organism_counter.items(), key=operator.itemgetter(1))[0]
+            mx = max(organism_counter_uniq.values())
+            for key, value in organism_counter_uniq.items():
+                if value == mx:
+                    probability[key] = round(value/total_organism_count , 2)
         except Exception:
             pass
         
-        return major_org
+        org_string = ''
+        for key, value in probability.items():
+            org_string += key + ' (probability : ' + str(value) + '), '
+        
+        return org_string
 
 
     def major_organism(self, forward, reverse, output_dir):
@@ -70,6 +78,6 @@ class OrganismDetection():
         refseq_out = self.refseq_masher_func(refseq_string, output_dir)
         major_org = self.identify_organism(refseq_out)
 
-        output_string = 'Major reference organism is {}'.format(major_org)
+        output_string = 'Major reference organism is/are {}'.format(major_org)
 
         return output_string

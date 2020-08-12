@@ -2,6 +2,8 @@ import re
 import gzip
 import sys
 import os
+from collections import defaultdict
+
 
 GZ_TRUE = 0
 GZ_FALSE = 1
@@ -46,10 +48,11 @@ class FastqCheck():
                     status[file] = self.fastq_line_check(open_file)
         return status
 
+
     def fastq_line_check(self, open_file):
         count_line = 0
-        fastq_attr = {}; fastq = {}
-        fastq_attr[open_file] = 0
+        fastq = {}
+        fastq_attr = defaultdict(int)
         for line in open_file:
             count_line += 1
 
