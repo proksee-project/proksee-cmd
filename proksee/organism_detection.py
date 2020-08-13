@@ -29,11 +29,11 @@ class OrganismDetection():
         stdout = open(refseq_out, 'w+')
         stderr = open(refseq_log, 'w+')
         try:
-            subprocess.call(ref_str, shell=True, stdout=stdout, stderr=stderr)
+            rc = subprocess.call(ref_str, shell=True, stdout=stdout, stderr=stderr)
         except subprocess.CalledProcessError as e:
             raise e
 
-        return refseq_out
+        return refseq_out, rc
 
 
     def identify_organism(self, refseq_out):
@@ -75,9 +75,9 @@ class OrganismDetection():
 
     def major_organism(self, forward, reverse, output_dir):
         refseq_string = self.refseq_masher_string(forward, reverse)
-        refseq_out = self.refseq_masher_func(refseq_string, output_dir)
+        refseq_out, return_code = self.refseq_masher_func(refseq_string, output_dir)
         major_org = self.identify_organism(refseq_out)
 
-        output_string = 'Major reference organism is/are {}'.format(major_org)
+        output_string = 'Major reference organism is/are {}. Return code {}'.format(major_org, return_code)
 
         return output_string

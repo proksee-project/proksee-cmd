@@ -25,16 +25,19 @@ class Assembler():
         skesa_out = open(os.path.join(output_dir,'skesa.out'), 'w+')
         skesa_log = open(os.path.join(output_dir,'skesa.log'), 'w+')
         try:
-            subprocess.check_call(skesa_str, shell=True, \
+            rc = subprocess.check_call(skesa_str, shell=True, \
                 stdout=skesa_out, stderr=skesa_log)
         except subprocess.CalledProcessError as e:
             raise e
-
+        
+        return rc
+    
+    
     def perform_assembly(self, forward, reverse, output_dir):
         skesa_string = self.skesa_string(forward, reverse)
-        self.skesa_func(skesa_string, output_dir)
+        return_code = self.skesa_func(skesa_string, output_dir)
         output_string = 'SKESA assembled reads and log files written ' + \
-            'to output directory'
+            'to output directory. Return code {}'.format(return_code)
         
         return output_string
 
