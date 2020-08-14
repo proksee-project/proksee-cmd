@@ -14,7 +14,7 @@ class PlatformIdentify():
         self.reverse = reverse
 
     # Checking files for valid fastq extension, passing to dictionary
-    def fastq_extn_check(self):
+    def __fastq_extn_check(self):
         if self.reverse is None:
             file_list = [self.forward]
         else:
@@ -35,7 +35,7 @@ class PlatformIdentify():
 
 
     # Identifying sequencing platform based on read
-    def plat_iden(self, open_file):
+    def __plat_iden(self, open_file):
         count_line = 0
         for line in open_file:
             count_line += 1
@@ -57,35 +57,35 @@ class PlatformIdentify():
 
 
     # Opening files within input directory and assigning plat_iden method
-    def platform_output(self, f_name_dicn):
+    def __platform_output(self, f_name_dicn):
         platform_dicn = {}
         for file in f_name_dicn:
             if (f_name_dicn[file] == GZ_TRUE):
                 with gzip.open(file, mode='rt') as open_file:
-                    platform_dicn[file] = self.plat_iden(open_file)
+                    platform_dicn[file] = self.__plat_iden(open_file)
             elif (f_name_dicn[file] == GZ_FALSE):
                 with open(file, mode='r') as open_file:
-                    platform_dicn[file] = self.plat_iden(open_file)
+                    platform_dicn[file] = self.__plat_iden(open_file)
         
         return platform_dicn
 
 
     # Integrate functions to another function to output sequencing platform
-    def identify_platform(self, forward, reverse):
-        f_name_dicn = self.fastq_extn_check()
-        platform_dicn = self.platform_output(f_name_dicn)
+    def identify_platform(self):
+        f_name_dicn = self.__fastq_extn_check()
+        platform_dicn = self.__platform_output(f_name_dicn)
         if self.reverse is None:
-            output_string = 'Sequencing plaform for ' + os.path.basename(forward) + \
-                ' is ' + platform_dicn[forward]
+            output_string = 'Sequencing plaform for ' + os.path.basename(self.forward) + \
+                ' is ' + platform_dicn[self.forward]
         else:
-            if platform_dicn[forward] == platform_dicn[reverse]:
-                output_string = 'Sequencing plaform for ' + os.path.basename(forward) + ' and ' + \
-                    os.path.basename(reverse) + ' are same: ' + platform_dicn[forward]
+            if platform_dicn[self.forward] == platform_dicn[self.reverse]:
+                output_string = 'Sequencing plaform for ' + os.path.basename(self.forward) + ' and ' + \
+                    os.path.basename(self.reverse) + ' are same: ' + platform_dicn[self.forward]
             else:
-                output_string1 = 'Sequencing plaform for ' + os.path.basename(forward) + \
-                    ' is ' + platform_dicn[forward] + '\n'
-                output_string2 = 'Sequencing plaform for ' + os.path.basename(reverse) + \
-                    ' is ' + platform_dicn[reverse]
+                output_string1 = 'Sequencing plaform for ' + os.path.basename(self.forward) + \
+                    ' is ' + platform_dicn[self.forward] + '\n'
+                output_string2 = 'Sequencing plaform for ' + os.path.basename(self.reverse) + \
+                    ' is ' + platform_dicn[self.reverse]
                 output_string = output_string1 + output_string2
         
         return output_string

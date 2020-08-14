@@ -14,18 +14,18 @@ class OrganismDetection():
         self.output_dir = output_dir
 
 
-    def refseq_masher_string(self, forward, reverse):
-        if reverse is None:
-            ref_str = 'refseq_masher matches ' + forward
-        elif reverse.endswith('fastq') or reverse.endswith('fq'):
-            ref_str = 'refseq_masher matches ' + forward + ' ' + reverse
+    def __refseq_masher_string(self):
+        if self.reverse is None:
+            ref_str = 'refseq_masher matches ' + self.forward
+        elif self.reverse.endswith('fastq') or self.reverse.endswith('fq'):
+            ref_str = 'refseq_masher matches ' + self.forward + ' ' + self.reverse
         
         return ref_str
 
 
-    def refseq_masher_func(self, ref_str, output_dir):
-        refseq_out = os.path.join(output_dir, 'refseq.out')
-        refseq_log = os.path.join(output_dir, 'refseq.log')
+    def __refseq_masher_func(self, ref_str):
+        refseq_out = os.path.join(self.output_dir, 'refseq.out')
+        refseq_log = os.path.join(self.output_dir, 'refseq.log')
         stdout = open(refseq_out, 'w+')
         stderr = open(refseq_log, 'w+')
         try:
@@ -36,7 +36,7 @@ class OrganismDetection():
         return refseq_out, rc
 
 
-    def identify_organism(self, refseq_out):
+    def __identify_organism(self, refseq_out):
         '''Initiating counting of output organisms'''
         organism_counter_uniq = defaultdict(int)
         total_organism_count = 0
@@ -56,7 +56,7 @@ class OrganismDetection():
                         total_organism_count += 1
                     except Exception:
                         pass
-        
+
         try:
             '''Output organism with highest number of occurrences'''
             mx = max(organism_counter_uniq.values())
@@ -65,7 +65,7 @@ class OrganismDetection():
                     probability[key] = round(value/total_organism_count , 2)
         except Exception:
             pass
-        
+
         org_string = ''
         for key, value in probability.items():
             org_string += key + ' (probability : ' + str(value) + '), '
@@ -73,10 +73,10 @@ class OrganismDetection():
         return org_string
 
 
-    def major_organism(self, forward, reverse, output_dir):
-        refseq_string = self.refseq_masher_string(forward, reverse)
-        refseq_out, return_code = self.refseq_masher_func(refseq_string, output_dir)
-        major_org = self.identify_organism(refseq_out)
+    def major_organism(self):
+        refseq_string = self.__refseq_masher_string()
+        refseq_out, return_code = self.__refseq_masher_func(refseq_string)
+        major_org = self.__identify_organism(refseq_out)
 
         output_string = 'Major reference organism is/are {}. Return code {}'.format(major_org, return_code)
 

@@ -17,11 +17,11 @@ class FastqCheck():
         self.reverse = reverse
 
 
-    def fastq_extn_check(self, forward, reverse):
-        if reverse is None:
-            file_list = [forward]
+    def __fastq_extn_check(self):
+        if self.reverse is None:
+            file_list = [self.forward]
         else:
-            file_list = [forward, reverse]
+            file_list = [self.forward, self.reverse]
         f_name_dicn = {}
         fastq_ext = ['fastq', 'fq']
         for f_name in file_list:
@@ -37,19 +37,19 @@ class FastqCheck():
         return f_name_dicn
 
 
-    def fastq_status(self, f_name_dicn):
+    def __fastq_status(self, f_name_dicn):
         status = {}
         for file in f_name_dicn:
             if (f_name_dicn[file] == GZ_TRUE):
                 with gzip.open(file, mode='rt') as open_file:
-                    status[file] = self.fastq_line_check(open_file)
+                    status[file] = self.__fastq_line_check(open_file)
             elif (f_name_dicn[file] == GZ_FALSE):
                 with open(file, mode='r') as open_file:
-                    status[file] = self.fastq_line_check(open_file)
+                    status[file] = self.__fastq_line_check(open_file)
         return status
 
 
-    def fastq_line_check(self, open_file):
+    def __fastq_line_check(self, open_file):
         count_line = 0
         fastq = {}
         fastq_attr = defaultdict(int)
@@ -89,15 +89,15 @@ class FastqCheck():
         return fastq[open_file]
 
 
-    def fastq_input_check(self, forward, reverse):
-        extn_dicn = self.fastq_extn_check(forward, reverse)
-        status_dicn = self.fastq_status(extn_dicn)
-        
+    def fastq_input_check(self):
+        extn_dicn = self.__fastq_extn_check()
+        status_dicn = self.__fastq_status(extn_dicn)
+
         output_string = 'Read/s is/are valid fastq files..proceeding..'
         status = True
 
-        if not status_dicn[forward] or \
-            reverse is not None and not status_dicn[reverse]:
+        if not status_dicn[self.forward] or \
+            self.reverse is not None and not status_dicn[self.reverse]:
                 output_string = 'Either one or both of forward/reverse reads are invalid fastq files..exiting..'
                 status = False
 

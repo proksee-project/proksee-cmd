@@ -12,18 +12,18 @@ class Assembler():
         self.output_dir = output_dir
 
 
-    def skesa_string(self, forward, reverse):
-        if reverse is None:
-            skesa_str = 'skesa --fastq ' + forward + ' --use_paired_ends'
-        elif reverse.endswith('fastq') or reverse.endswith('fq'):
-            skesa_str = 'skesa --fastq ' + forward + ',' + reverse
+    def __skesa_string(self):
+        if self.reverse is None:
+            skesa_str = 'skesa --fastq ' + self.forward + ' --use_paired_ends'
+        elif self.reverse.endswith('fastq') or self.reverse.endswith('fq'):
+            skesa_str = 'skesa --fastq ' + self.forward + ',' + self.reverse
         
         return skesa_str
 
 
-    def skesa_func(self, skesa_str, output_dir):
-        skesa_out = open(os.path.join(output_dir,'skesa.out'), 'w+')
-        skesa_log = open(os.path.join(output_dir,'skesa.log'), 'w+')
+    def __skesa_func(self, skesa_str):
+        skesa_out = open(os.path.join(self.output_dir,'skesa.out'), 'w+')
+        skesa_log = open(os.path.join(self.output_dir,'skesa.log'), 'w+')
         try:
             rc = subprocess.check_call(skesa_str, shell=True, \
                 stdout=skesa_out, stderr=skesa_log)
@@ -33,9 +33,9 @@ class Assembler():
         return rc
     
     
-    def perform_assembly(self, forward, reverse, output_dir):
-        skesa_string = self.skesa_string(forward, reverse)
-        return_code = self.skesa_func(skesa_string, output_dir)
+    def perform_assembly(self):
+        skesa_string = self.__skesa_string()
+        return_code = self.__skesa_func(skesa_string)
         output_string = 'SKESA assembled reads and log files written ' + \
             'to output directory. Return code {}'.format(return_code)
         

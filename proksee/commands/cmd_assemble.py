@@ -38,7 +38,7 @@ def cli(ctx, forward, reverse, output_dir):
     # Step 1: Check if the forward and reverse reads are valid fastq files
     # Pass the forward and reverse data to fastq check module and check
     fastq_check = FastqCheck(forward, reverse)
-    fastq_string, fastq_bool = fastq_check.fastq_input_check(forward, reverse)
+    fastq_string, fastq_bool = fastq_check.fastq_input_check()
     if not fastq_bool:
         sys.exit(fastq_string)
     else:
@@ -46,13 +46,13 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 1: Platform detection
         # Pass forward and reverse datasets to platform detection module and ensure that both files are of the same platform
         platform_identify = PlatformIdentify(forward, reverse)
-        platform = platform_identify.identify_platform(forward, reverse)
+        platform = platform_identify.identify_platform()
         print(platform)
 
         # Step 2: Quality Check
         # Pass forward and reverse datasets to quality check module and calculate quality statistics
         read_filtering = ReadFiltering(forward, reverse, output_dir)
-        filtering = read_filtering.filter_read(forward, reverse, output_dir)
+        filtering = read_filtering.filter_read()
         print(filtering)
 
         forward_filtered = os.path.join(output_dir, 'fwd_filtered.fastq')
@@ -65,12 +65,11 @@ def cli(ctx, forward, reverse, output_dir):
         # Pass forward and reverse datasets to organism detection module and return the dominate genus and species
         organism_identify = OrganismDetection(forward_filtered, reverse_filtered, \
             output_dir)
-        major_organism = organism_identify.major_organism(forward_filtered, \
-            reverse_filtered, output_dir)
+        major_organism = organism_identify.major_organism()
         print(major_organism)
 
         # Step 4: Assembly (Only skesa for now)
         # Pass forward and reverse datasets to assembly module and return a path to the results or paths to specific files
         assembler = Assembler(forward_filtered, reverse_filtered, output_dir)
-        assembly = assembler.perform_assembly(forward_filtered, reverse_filtered, output_dir)
+        assembly = assembler.perform_assembly()
         print(assembly)
