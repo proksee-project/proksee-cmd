@@ -15,7 +15,7 @@ class Assembler():
     def __skesa_string(self):
         if self.reverse is None:
             skesa_str = 'skesa --fastq ' + self.forward + ' --use_paired_ends'
-        elif self.reverse.endswith('fastq') or self.reverse.endswith('fq'):
+        else:
             skesa_str = 'skesa --fastq ' + self.forward + ',' + self.reverse
         
         return skesa_str

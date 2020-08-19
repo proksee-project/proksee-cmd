@@ -133,3 +133,7 @@ dmypy.json
 *.fq
 *.fastq.gz
 *.fq.gz
+
+#Other files in test
+*.txt
+*.jpg

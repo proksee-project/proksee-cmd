@@ -20,7 +20,7 @@ class ReadFiltering():
         if self.reverse is None:
             fastp_str = 'fastp -i ' + self.forward + ' -o ' + \
                 out1 + ' -j ' + json + ' -h ' + html
-        elif self.reverse.endswith('fastq') or self.reverse.endswith('fq'):
+        else:
             fastp_str = 'fastp -i ' + self.forward + ' -I ' + \
                 self.reverse + ' -o ' + out1 + ' -O ' + \
                 out2 + ' -j ' + json + ' -h ' + html

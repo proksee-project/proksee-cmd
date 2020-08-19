@@ -17,7 +17,7 @@ class OrganismDetection():
     def __refseq_masher_string(self):
         if self.reverse is None:
             ref_str = 'refseq_masher matches ' + self.forward
-        elif self.reverse.endswith('fastq') or self.reverse.endswith('fq'):
+        else:
             ref_str = 'refseq_masher matches ' + self.forward + ' ' + self.reverse
         
         return ref_str

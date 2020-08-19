@@ -1,10 +1,12 @@
 import os
 import gzip
 import sys
+from proksee.utilities import FastqCheck
+
 
 # Declaring global variables based on zipped or unzipped files
-GZ_FALSE = 0
-GZ_TRUE = 1
+GZ_TRUE = 0
+GZ_FALSE = 1
 
 
 class PlatformIdentify():
@@ -12,26 +14,6 @@ class PlatformIdentify():
     def __init__(self, forward, reverse):
         self.forward = forward
         self.reverse = reverse
-
-    # Checking files for valid fastq extension, passing to dictionary
-    def __fastq_extn_check(self):
-        if self.reverse is None:
-            file_list = [self.forward]
-        else:
-            file_list = [self.forward, self.reverse]
-        f_name_dicn = {}
-        fastq_ext = ['fastq', 'fq']
-        for f_name in file_list:
-            array_f = f_name.split('.')
-            try:
-                if (array_f[-2] in fastq_ext and array_f[-1] == 'gz'):
-                    f_name_dicn[f_name] = GZ_TRUE
-                elif (array_f[-1] in fastq_ext):
-                    f_name_dicn[f_name] = GZ_FALSE
-            except IndexError:
-                pass
-        
-        return f_name_dicn
 
 
     # Identifying sequencing platform based on read
@@ -72,7 +54,9 @@ class PlatformIdentify():
 
     # Integrate functions to another function to output sequencing platform
     def identify_platform(self):
-        f_name_dicn = self.__fastq_extn_check()
+        
+        fastq_object = FastqCheck(self.forward, self.reverse)
+        f_name_dicn = fastq_object._FastqCheck__fastq_extn_check()
         platform_dicn = self.__platform_output(f_name_dicn)
         if self.reverse is None:
             output_string = 'Sequencing plaform for ' + os.path.basename(self.forward) + \
