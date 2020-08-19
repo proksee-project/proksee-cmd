@@ -37,3 +37,9 @@ def test_identify_organism():
     expected_string = 'Escherichia coli (probability : 1.0), '
     assert expected_string == method_string
 
+
+def test_major_organism():
+    refseq_output_string = 'Major reference organism is/are Escherichia coli ' + \
+        '(probability : 1.0), . Return code ' + str(refseq_func_good_rc)
+    method_string = organism_identify_good.major_organism()
+    assert refseq_output_string == method_string
