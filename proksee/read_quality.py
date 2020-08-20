@@ -31,7 +31,7 @@ class ReadFiltering():
     def __fastp_func(self, fastp_str):
         fastp_log = open(os.path.join(self.output_dir, 'fastp.log'), 'w+')
         try:
-            rc = subprocess.call(fastp_str, shell=True, stderr=fastp_log)    
+            rc = subprocess.check_call(fastp_str, shell=True, stderr=fastp_log)    
         except subprocess.CalledProcessError as e:
             raise e
 

@@ -29,7 +29,7 @@ class OrganismDetection():
         stdout = open(refseq_out, 'w+')
         stderr = open(refseq_log, 'w+')
         try:
-            rc = subprocess.call(ref_str, shell=True, stdout=stdout, stderr=stderr)
+            rc = subprocess.check_call(ref_str, shell=True, stdout=stdout, stderr=stderr)
         except subprocess.CalledProcessError as e:
             raise e
 
