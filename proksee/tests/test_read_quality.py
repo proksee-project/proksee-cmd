@@ -51,7 +51,7 @@ def test_fastp_func_badparams():
 
 
 def test_fastp_func_badcommand():
-    fastp_str_bad = 'abra_cadabra (invalid command)'
+    fastp_str_bad = 'conda deactivate && fastp -h'
     with pytest.raises(subprocess.CalledProcessError):
         assert read_filtering_good._ReadFiltering__fastp_func(fastp_str_bad)
 

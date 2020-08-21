@@ -34,11 +34,6 @@ def test_skesa_string_bad():
     assert skesa_str_bad != method_string
 
 
-def test_skesa_func_good():
-    method_rc = assembler_good._Assembler__skesa_func(skesa_str_good)
-    assert skesa_func_good_rc == method_rc
-
-
 def test_skesa_func_badparams():
     skesa_str_test = 'skesa --incorrect params'
     with pytest.raises(subprocess.CalledProcessError):
@@ -52,9 +47,14 @@ def test_skesa_func_badfile():
 
 
 def test_skesa_func_badcommand():
-    skesa_str_test = 'abra_cadabra (invalid command)'
+    skesa_str_test = 'conda deactivate && skesa -h'
     with pytest.raises(subprocess.CalledProcessError):
         assert assembler_good._Assembler__skesa_func(skesa_str_test)
+
+
+def test_skesa_func_good():
+    method_rc = assembler_good._Assembler__skesa_func(skesa_str_good)
+    assert skesa_func_good_rc == method_rc
 
 
 def test_perform_assembly_good():

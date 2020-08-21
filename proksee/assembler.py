@@ -29,7 +29,7 @@ class Assembler():
                 stdout=skesa_out, stderr=skesa_log)
         except subprocess.CalledProcessError as e:
             raise e
-        
+
         return rc
     
     
