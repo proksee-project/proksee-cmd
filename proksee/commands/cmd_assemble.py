@@ -1,7 +1,7 @@
 import click
 import os
 import sys
-
+import subprocess
 
 # import fastq check
 from proksee.utilities import FastqCheck
@@ -65,11 +65,17 @@ def cli(ctx, forward, reverse, output_dir):
         # Pass forward and reverse datasets to organism detection module and return the dominate genus and species
         organism_identify = OrganismDetection(forward_filtered, reverse_filtered, \
             output_dir)
-        major_organism = organism_identify.major_organism()
-        print(major_organism)
+        try:
+            major_organism = organism_identify.major_organism()
+            print(major_organism)
+        except subprocess.CalledProcessError:
+            print('refseq_masher error: File size too small for creating Mash sketch')
 
         # Step 4: Assembly (Only skesa for now)
         # Pass forward and reverse datasets to assembly module and return a path to the results or paths to specific files
         assembler = Assembler(forward_filtered, reverse_filtered, output_dir)
-        assembly = assembler.perform_assembly()
-        print(assembly)
+        try:
+            assembly = assembler.perform_assembly()
+            print(assembly)
+        except subprocess.CalledProcessError:
+            print('Skesa error: Reads too short for selecting minimal kmer length')

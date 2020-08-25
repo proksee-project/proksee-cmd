@@ -64,7 +64,7 @@ class PlatformIdentify():
         return platform_dicn
 
 
-    # Integrate functions to another function to output sequencing platform
+    # Integrate private functions to public function to output sequencing platform
     def identify_platform(self):
         
         '''Creating instance of FastqCheck class'''
@@ -93,7 +93,7 @@ class PlatformIdentify():
             else:
                 output_string1 = 'Sequencing plaform for ' + os.path.basename(self.forward) + \
                     ' is ' + platform_dicn[self.forward] + '\n'
-                output_string2 = 'Sequencing plaform for ' + os.path.basename(self.reverse) + \
+                output_string2 = 'Sequencing platform for ' + os.path.basename(self.reverse) + \
                     ' is ' + platform_dicn[self.reverse]
                 
                 output_string = output_string1 + output_string2

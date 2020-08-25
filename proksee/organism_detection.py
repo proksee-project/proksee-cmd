@@ -32,7 +32,7 @@ class OrganismDetection():
             rc = subprocess.check_call(ref_str, shell=True, stdout=stdout, stderr=stderr)
         except subprocess.CalledProcessError as e:
             raise e
-
+        
         return refseq_out, rc
 
 
@@ -77,7 +77,6 @@ class OrganismDetection():
         refseq_string = self.__refseq_masher_string()
         refseq_out, return_code = self.__refseq_masher_func(refseq_string)
         major_org = self.__identify_organism(refseq_out)
-
         output_string = 'Major reference organism is/are {}. Return code {}'.format(major_org, return_code)
 
         return output_string

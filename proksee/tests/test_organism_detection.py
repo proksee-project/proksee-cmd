@@ -12,13 +12,11 @@ TEST_OUTPUT_DIR = '{}/data/testout'.format(str(START_DIR))
 
 # forward and reverse should be a list of multiple possibilities
 forward_good = os.path.join(TEST_INPUT_DIR, 'SRR7947278_100kpair_reads.fastq')
-reverse_good = None
 
 forward_bad = os.path.join(TEST_INPUT_DIR, 'SRR7947278_5pair_reads.fastq')
-reverse_bad = None
 
-organism_identify_good = OrganismDetection(forward_good, reverse_good, TEST_OUTPUT_DIR)
-organism_identify_bad = OrganismDetection(forward_bad, reverse_bad, TEST_OUTPUT_DIR)
+organism_identify_good = OrganismDetection(forward_good, None, TEST_OUTPUT_DIR)
+organism_identify_bad = OrganismDetection(forward_bad, None, TEST_OUTPUT_DIR)
 
 refseq_string_good = 'refseq_masher matches ' + forward_good
 refseq_func_good_rc = 0
@@ -67,7 +65,7 @@ def test_identify_organism_good():
 
 
 def test_identify_organism_invalid():
-    refseq_out_bad = os.path.join(TEST_INPUT_DIR, 'ramdom.txt')
+    refseq_out_bad = os.path.join(TEST_INPUT_DIR, 'ramdom1')
     with pytest.raises(Exception):
         assert organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
 
