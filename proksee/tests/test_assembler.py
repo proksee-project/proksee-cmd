@@ -14,10 +14,9 @@ forward_good = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_fwd.fastq'
 reverse_good = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_rev.fastq')
 
 forward_bad = os.path.join(TEST_INPUT_DIR, 'SRR7947278_5pair_reads.fastq')
-reverse_bad = None
 
 assembler_good = Assembler(forward_good, reverse_good, TEST_OUTPUT_DIR)
-assembler_bad = Assembler(forward_bad, reverse_bad, TEST_OUTPUT_DIR)
+assembler_bad = Assembler(forward_bad, None, TEST_OUTPUT_DIR)
 
 skesa_str_good = 'skesa --fastq ' + forward_good + ',' + reverse_good
 skesa_func_good_rc = 0

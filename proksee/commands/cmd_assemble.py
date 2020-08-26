@@ -18,6 +18,7 @@ from proksee.organism_detection import OrganismDetection
 # import assembler
 from proksee.assembler import Assembler
 
+
 @click.command('assemble',
                short_help='Assemble reads.')
 @click.argument('forward', required=True,
@@ -25,57 +26,72 @@ from proksee.assembler import Assembler
 @click.argument('reverse', required=False,
                 type=click.Path(exists=True, file_okay=True, dir_okay=False))
 @click.option('-o', '--output_dir', required=True,
-              type=click.Path(exists=False, file_okay=False, dir_okay=True, writable=True))
+              type=click.Path(exists=False, file_okay=False,
+                              dir_okay=True, writable=True))
 @click.pass_context
 def cli(ctx, forward, reverse, output_dir):
 
-    #raise click.UsageError("command not yet implemented")
+    # raise click.UsageError("command not yet implemented")
 
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
-
     # Step 1: Check if the forward and reverse reads are valid fastq files
-    # Pass the forward and reverse data to fastq check module and check
+    # Pass the forward and reverse data to fastq check class and check
     fastq_check = FastqCheck(forward, reverse)
     fastq_string, fastq_bool = fastq_check.fastq_input_check()
     if not fastq_bool:
+        '''Program exits if fastq status is False'''
         sys.exit(fastq_string)
     else:
         print(fastq_string)
-        # Step 1: Platform detection
-        # Pass forward and reverse datasets to platform detection module and ensure that both files are of the same platform
+
+        # Step 2: Platform detection
+        # Pass forward and reverse datasets to platform detection class and
+        # output sequencing platform/s
         platform_identify = PlatformIdentify(forward, reverse)
         platform = platform_identify.identify_platform()
         print(platform)
 
-        # Step 2: Quality Check
-        # Pass forward and reverse datasets to quality check module and calculate quality statistics
+        # Step 3: Quality Check
+        # Pass forward and reverse datasets to read filtering class
+        # (with default filters)
         read_filtering = ReadFiltering(forward, reverse, output_dir)
         filtering = read_filtering.filter_read()
         print(filtering)
 
+        '''The next steps are executed on filtered read/s'''
         forward_filtered = os.path.join(output_dir, 'fwd_filtered.fastq')
         if reverse is None:
             reverse_filtered = None
         else:
             reverse_filtered = os.path.join(output_dir, 'rev_filtered.fastq')
 
-        # Step 3: Organism Detection
-        # Pass forward and reverse datasets to organism detection module and return the dominate genus and species
-        organism_identify = OrganismDetection(forward_filtered, reverse_filtered, \
-            output_dir)
+        # Step 4: Organism Detection
+        # Pass forward and reverse filtered reads to organism detection class
+        # and return most frequently occuring reference genome
+        organism_identify = OrganismDetection(forward_filtered,
+                                              reverse_filtered, output_dir)
         try:
             major_organism = organism_identify.major_organism()
             print(major_organism)
-        except subprocess.CalledProcessError:
-            print('refseq_masher error: File size too small for creating Mash sketch')
 
-        # Step 4: Assembly (Only skesa for now)
-        # Pass forward and reverse datasets to assembly module and return a path to the results or paths to specific files
+            '''Catch exception if input reads are too short for
+            reference genome estimation'''
+        except subprocess.CalledProcessError:
+            print('refseq_masher error: File size too small for \
+            creating Mash sketch')
+
+        # Step 5: Assembly (Only skesa for now)
+        # Pass forward and reverse filtered reads to assembler class
+        # and return a finished genome assembly within output path
         assembler = Assembler(forward_filtered, reverse_filtered, output_dir)
         try:
             assembly = assembler.perform_assembly()
             print(assembly)
+
+            '''Catch exception if input reads are short for skesa kmer
+            estimation'''
         except subprocess.CalledProcessError:
-            print('Skesa error: Reads too short for selecting minimal kmer length')
+            print('Skesa error: Reads too short for selecting minimal \
+            kmer length')
