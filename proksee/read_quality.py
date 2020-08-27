@@ -68,7 +68,7 @@ class ReadFiltering():
         return_code = self.__fastp_func(fastp_string)
 
         '''Creating fastp completion output string'''
-        output_string = 'FASTP filtered reads written to output directory.' + \
+        output_string = 'FASTP filtered reads written to output directory. ' + \
             'Return code {}'.format(return_code)
 
         return output_string

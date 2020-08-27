@@ -159,7 +159,7 @@ class FastqCheck():
         if (not status_dicn[self.forward] or
                 self.reverse is not None and not status_dicn[self.reverse]):
             output_string = 'Either one or both of forward/reverse reads' + \
-                'are invalid fastq files..exiting..'
+                ' are invalid fastq files..exiting..'
             status = False
 
         return (output_string, status)

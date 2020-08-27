@@ -113,7 +113,7 @@ class OrganismDetection():
         major_org = self.__identify_organism(refseq_out)
 
         '''Creating refseq_masher output string'''
-        output_string = 'Major reference organism is/are {}.' \
+        output_string = 'Major reference organism is/are {}. ' \
             'Return code {}'.format(major_org, return_code)
 
         return output_string
