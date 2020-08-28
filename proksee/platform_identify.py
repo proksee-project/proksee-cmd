@@ -94,29 +94,22 @@ class PlatformIdentify():
 
         '''Creating output string for forward only if reverse is None'''
         if self.reverse is None:
-            output_string = 'Sequencing plaform for ' + \
-                os.path.basename(self.forward) + ' is ' + \
+            output_string = 'Sequencing plaform for ' + os.path.basename(self.forward) + ' is ' + \
                 platform_dicn[self.forward]
 
             '''Checking conditions if reverse is specified'''
         else:
 
-            '''Creating output string if forward and reverse platforms are
-            same'''
+            '''Creating output string if forward and reverse platforms are same'''
             if platform_dicn[self.forward] == platform_dicn[self.reverse]:
-                output_string = 'Sequencing plaform for ' + \
-                    os.path.basename(self.forward) + ' and ' + \
-                    os.path.basename(self.reverse) + ' are same: ' + \
-                    platform_dicn[self.forward]
+                output_string = 'Sequencing plaform for ' + os.path.basename(self.forward) + ' and ' + \
+                    os.path.basename(self.reverse) + ' are same: ' + platform_dicn[self.forward]
 
-                '''Creating output string if forward and reverse platforms
-                are different'''
+                '''Creating output string if forward and reverse platforms are different'''
             else:
-                output_string1 = 'Sequencing plaform for ' + \
-                    os.path.basename(self.forward) + ' is ' + \
+                output_string1 = 'Sequencing plaform for ' + os.path.basename(self.forward) + ' is ' + \
                     platform_dicn[self.forward] + '\n'
-                output_string2 = 'Sequencing platform for ' + \
-                    os.path.basename(self.reverse) + ' is ' + \
+                output_string2 = 'Sequencing platform for ' + os.path.basename(self.reverse) + ' is ' + \
                     platform_dicn[self.reverse]
                 output_string = output_string1 + output_string2
 

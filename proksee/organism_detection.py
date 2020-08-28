@@ -37,8 +37,7 @@ class OrganismDetection():
             ref_str = 'refseq_masher matches ' + self.forward
 
         else:
-            ref_str = 'refseq_masher matches ' + self.forward + \
-                      ' ' + self.reverse
+            ref_str = 'refseq_masher matches ' + self.forward + ' ' + self.reverse
 
         return ref_str
 
@@ -52,8 +51,7 @@ class OrganismDetection():
         '''Running refseq_masher as a subprocess module. Capturing return code.
         Raising error otherwise'''
         try:
-            rc = subprocess.check_call(ref_str, shell=True,
-                                       stdout=stdout, stderr=refseq_log)
+            rc = subprocess.check_call(ref_str, shell=True, stdout=stdout, stderr=refseq_log)
         except subprocess.CalledProcessError as e:
             raise e
 
@@ -76,10 +74,8 @@ class OrganismDetection():
                     col2 = line.split('\t')[1]
 
                     try:
-                        '''Joining genus and species name, counting unique
-                        and total occurrences'''
-                        test_organism = col2.split(' ')[0] + ' ' + \
-                            col2.split(' ')[1]
+                        '''Joining genus and species name, counting unique and total occurrences'''
+                        test_organism = col2.split(' ')[0] + ' ' + col2.split(' ')[1]
                         organism_counter_uniq[test_organism] += 1
                         total_organism_count += 1
 
@@ -92,14 +88,12 @@ class OrganismDetection():
             for key, value in organism_counter_uniq.items():
                 if value == mx:
 
-                    '''Calculating probability of organism/s with max
-                    occurences'''
+                    '''Calculating probability of organism/s with max occurences'''
                     probability[key] = round(value/total_organism_count, 2)
         except Exception:
             pass
 
-        '''Appending major reference organism/s name/s and probability values
-        to output string'''
+        '''Appending major reference organism/s name/s and probability values to output string'''
         org_string = ''
         for key, value in probability.items():
             org_string += key + ' (probability : ' + str(value) + '), '
@@ -113,7 +107,6 @@ class OrganismDetection():
         major_org = self.__identify_organism(refseq_out)
 
         '''Creating refseq_masher output string'''
-        output_string = 'Major reference organism is/are {}. ' \
-            'Return code {}'.format(major_org, return_code)
+        output_string = 'Major reference organism is/are {}. Return code {}'.format(major_org, return_code)
 
         return output_string

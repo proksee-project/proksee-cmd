@@ -126,8 +126,7 @@ class FastqCheck():
                             if len_four == len_two:
                                 fastq_attr_count += 1
 
-                            '''For text readable but invalid fastq files
-                            len_two will not hold'''
+                            '''For text readable but invalid fastq files len_two will not hold'''
                         except UnboundLocalError:
                             pass
 
@@ -156,10 +155,8 @@ class FastqCheck():
         '''boolean is false if either conditions are not met
         1. forward status is False
         2. reverse is specified and reverse status is False'''
-        if (not status_dicn[self.forward] or
-                self.reverse is not None and not status_dicn[self.reverse]):
-            output_string = 'Either one or both of forward/reverse reads' + \
-                ' are invalid fastq files..exiting..'
+        if (not status_dicn[self.forward] or self.reverse is not None and not status_dicn[self.reverse]):
+            output_string = 'Either one or both of forward/reverse reads are invalid fastq files..exiting..'
             status = False
 
         return (output_string, status)

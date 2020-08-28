@@ -30,10 +30,8 @@ TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
 TEST_OUTPUT_DIR = '{}/data/testout'.format(str(START_DIR))
 
 # Using real fastq files from illumina public data
-forward_good = os.path.join(TEST_INPUT_DIR,
-                            'NA12878_NextSeq2000_100k_fwd.fastq')
-reverse_good = os.path.join(TEST_INPUT_DIR,
-                            'NA12878_NextSeq2000_100k_rev.fastq')
+forward_good = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_fwd.fastq')
+reverse_good = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_rev.fastq')
 
 # Using a small truncated read data for catching exceptions
 forward_bad = os.path.join(TEST_INPUT_DIR, 'SRR7947278_5pair_reads.fastq')
@@ -56,8 +54,7 @@ class TestAssembler():
 
     # Test for negating bad skesa string
     def test_skesa_string_bad(self):
-        skesa_str_bad = 'skesa --fastq ' + forward_bad + \
-            '--use_paired_ends(deleted whitespace)'
+        skesa_str_bad = 'skesa --fastq ' + forward_bad + '--use_paired_ends(deleted whitespace)'
         method_string = assembler_bad._Assembler__skesa_string()
         assert skesa_str_bad != method_string
 
@@ -86,9 +83,8 @@ class TestAssembler():
 
     # Test for Assembler class method integrating all methods
     def test_perform_assembly_good(self):
-        skesa_output_string = 'SKESA assembled reads and log files ' + \
-            'written to output directory. Return code ' + \
-            str(skesa_func_good_rc)
+        skesa_output_string = 'SKESA assembled reads and log files written ' + \
+            'to output directory. Return code ' + str(skesa_func_good_rc)
         method_string = assembler_good.perform_assembly()
         assert skesa_output_string == method_string
 

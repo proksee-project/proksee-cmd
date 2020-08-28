@@ -49,8 +49,7 @@ class Assembler():
         '''Running skesa as a subprocess module. Capturing return code.
         Raising error otherwise'''
         try:
-            rc = subprocess.check_call(skesa_str, shell=True,
-                                       stdout=skesa_out, stderr=skesa_log)
+            rc = subprocess.check_call(skesa_str, shell=True, stdout=skesa_out, stderr=skesa_log)
         except subprocess.CalledProcessError as e:
             raise e
 

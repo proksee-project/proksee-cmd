@@ -53,8 +53,7 @@ class ReadFiltering():
         '''Creating fastp log file'''
         fastp_log = open(os.path.join(self.output_dir, 'fastp.log'), 'w+')
 
-        '''Running fastp as a subprocess module. Capturing return code. Raising error
-        otherwise'''
+        '''Running fastp as a subprocess module. Capturing return code. Raising error otherwise'''
         try:
             rc = subprocess.check_call(fastp_str, shell=True, stderr=fastp_log)
         except subprocess.CalledProcessError as e:
