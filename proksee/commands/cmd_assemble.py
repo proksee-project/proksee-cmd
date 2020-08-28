@@ -1,6 +1,5 @@
 import click
 import os
-import sys
 import subprocess
 
 # import fastq check
@@ -42,23 +41,23 @@ def cli(ctx, forward, reverse, output_dir):
     fastq_string, fastq_bool = fastq_check.fastq_input_check()
     if not fastq_bool:
         '''Program exits if fastq status is False'''
-        sys.exit(fastq_string)
+        raise click.UsageError(fastq_string)
     else:
-        print(fastq_string)
+        click.echo(fastq_string)
 
         # Step 2: Platform detection
         # Pass forward and reverse datasets to platform detection class and
         # output sequencing platform/s
         platform_identify = PlatformIdentify(forward, reverse)
         platform = platform_identify.identify_platform()
-        print(platform)
+        click.echo(platform)
 
         # Step 3: Quality Check
         # Pass forward and reverse datasets to read filtering class
         # (with default filters)
         read_filtering = ReadFiltering(forward, reverse, output_dir)
         filtering = read_filtering.filter_read()
-        print(filtering)
+        click.echo(filtering)
 
         '''The next steps are executed on filtered read/s'''
         forward_filtered = os.path.join(output_dir, 'fwd_filtered.fastq')
@@ -70,17 +69,14 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 4: Organism Detection
         # Pass forward and reverse filtered reads to organism detection class
         # and return most frequently occuring reference genome
-        organism_identify = OrganismDetection(forward_filtered,
-                                              reverse_filtered, output_dir)
+        organism_identify = OrganismDetection(forward_filtered, reverse_filtered, output_dir)
         try:
             major_organism = organism_identify.major_organism()
-            print(major_organism)
+            click.echo(major_organism)
 
-            '''Catch exception if input reads are too short for
-            reference genome estimation'''
+            '''Catch exception if input reads are too short for reference genome estimation'''
         except subprocess.CalledProcessError:
-            print('refseq_masher error: File size too small for \
-            creating Mash sketch')
+            raise click.UsageError('refseq_masher error: File size too small for creating Mash sketch')
 
         # Step 5: Assembly (Only skesa for now)
         # Pass forward and reverse filtered reads to assembler class
@@ -90,8 +86,6 @@ def cli(ctx, forward, reverse, output_dir):
             assembly = assembler.perform_assembly()
             print(assembly)
 
-            '''Catch exception if input reads are short for skesa kmer
-            estimation'''
+            '''Catch exception if input reads are short for skesa kmer estimation'''
         except subprocess.CalledProcessError:
-            print('Skesa error: Reads too short for selecting minimal \
-            kmer length')
+            raise click.UsageError('Skesa error: Reads too short for selecting minimal kmer length')
