@@ -20,6 +20,7 @@ specific language governing permissions and limitations under the License.
 import os
 import gzip
 from proksee.utilities import FastqCheck
+import re
 
 # Declaring global variables based on zipped or unzipped files
 GZ_TRUE = 0
@@ -53,10 +54,69 @@ class PlatformIdentify():
         '''Assigning sequencing platform/s based on first line patterns'''
         if len(chars_ill) == 3:
             platform = 'Ion Torrent'
+
         elif len(chars_ill) > 4:
-            platform = 'Illumina'
+            '''Recent illumina fastq have the format 
+            @<instrument>:<run number>:<flowcell ID>:<lane>:<tile>:<xpos>:<y-pos> 
+            <read>:<is filtered>:<control number>:<index>'''
+            if len(chars_ill) == 10:
+                illumina_attr = 0
+
+                instrument_num = re.match(r'^@[a-zA-Z0-9_]', chars_ill[0])
+                if instrument_num is not None:
+                    illumina_attr += 1
+
+                run = re.match(r'^\d+$', chars_ill[1])
+                if run is not None:
+                    illumina_attr += 1
+
+                flowcell_id = re.match(r'^[a-zA-Z0-9]', chars_ill[2])
+                if flowcell_id is not None:
+                    illumina_attr += 1
+
+                for n in range(3,6):
+                    lane_to_xpos = re.match(r'^\d+$', chars_ill[n])
+                    if lane_to_xpos is not None:
+                        illumina_attr += 1
+
+                filtered = re.match(r'^[YN]$', chars_ill[7])
+                if filtered is not None:
+                    illumina_attr += 1
+
+                control_num = re.match(r'^\d+$', chars_ill[8])
+                if control_num is not None:
+                    illumina_attr += 1
+
+                if illumina_attr == 8:
+                    platform = 'Illumina'
+                else:
+                    platform = 'Unidentifiable'
+
+                '''Older illumina fastq have the format
+                @<machine_id>:<lane>:<tile>:<x_coord>:<y_coord>#<index>/<read>'''
+            elif len(chars_ill) == 5:
+                illumina_attr = 0
+
+                machine_id = re.match(r'^@[a-zA-Z0-9_]', chars_ill[0])
+                if machine_id is not None:
+                    illumina_attr += 1
+
+                for n in range(1,4):
+                    lane_to_xpos = re.match(r'^\d+$', chars_ill[n])
+                    if lane_to_xpos is not None:
+                        illumina_attr += 1
+
+                if illumina_attr == 4:
+                    platform = 'Illumina'
+                else:
+                    platform = 'Unidentifiable'
+
+            else:
+                platform = 'Unidentifiable'
+
         elif len(chars_pac) > 2:
             platform = 'Pacbio'
+        
         else:
             platform = 'Unidentifiable'
 
