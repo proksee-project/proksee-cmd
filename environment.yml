@@ -1,0 +1,12 @@
+name: proksee
+channels:
+- bioconda
+- defaults
+dependencies:
+- python=3.7
+- fastp
+- skesa
+- refseq_masher
+- pip:
+- pip:
+  - .

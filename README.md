@@ -13,8 +13,12 @@ Currently `proksee` performs the following tasks:
 - Identifying reference genome of the filtered sequence files using `refseq_masher`, which creates a Mash sketch   using MinHash algorithm and further processing of refseq_masher output to identify the most probable reference  genome organism.    
 - Constructing a de-novo sequence assembly using `skesa`, which performs assembly on the filtered fastq read files using optimal k-mer length based on DeBruijn graphs.  
 
-Users are recommended to install `fastp`, `refseq_masher` and `skesa` as bioconda packages using  
-`conda install -c bioconda [package_name]`  
+Users are recommended to install packages `fastp`, `refseq_masher` and `skesa` in a conda environment as follows:  
+`conda env create -f environment.yml`
+`conda activate ENV_NAME`
+
+Where `ENV_NAME` is the name of the environment defined in the `environment.yml` file  
+
 
 
 

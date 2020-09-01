@@ -49,25 +49,16 @@ class ReadFiltering():
         return fastp_str
 
     # Method for running fastp command
-    def __fastp_func(self, fastp_str):
+    def fastp_func(self):
         '''Creating fastp log file'''
         fastp_log = open(os.path.join(self.output_dir, 'fastp.log'), 'w+')
+        fastp_string = self.__fastp_string()
 
-        '''Running fastp as a subprocess module. Capturing return code. Raising error otherwise'''
+        '''Running fastp as a subprocess module. Raising error otherwise'''
         try:
-            rc = subprocess.check_call(fastp_str, shell=True, stderr=fastp_log)
+            subprocess.check_call(fastp_string, shell=True, stderr=fastp_log)
+            output_string = 'FASTP filtered reads written to output directory'
         except subprocess.CalledProcessError as e:
             raise e
-
-        return rc
-
-    # Method for integrating private functions
-    def filter_read(self):
-        fastp_string = self.__fastp_string()
-        return_code = self.__fastp_func(fastp_string)
-
-        '''Creating fastp completion output string'''
-        output_string = 'FASTP filtered reads written to output directory. ' + \
-            'Return code {}'.format(return_code)
 
         return output_string

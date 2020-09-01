@@ -29,9 +29,6 @@ from proksee.assembler import Assembler
                               dir_okay=True, writable=True))
 @click.pass_context
 def cli(ctx, forward, reverse, output_dir):
-
-    # raise click.UsageError("command not yet implemented")
-
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
@@ -56,7 +53,7 @@ def cli(ctx, forward, reverse, output_dir):
         # Pass forward and reverse datasets to read filtering class
         # (with default filters)
         read_filtering = ReadFiltering(forward, reverse, output_dir)
-        filtering = read_filtering.filter_read()
+        filtering = read_filtering.fastp_func()
         click.echo(filtering)
 
         '''The next steps are executed on filtered read/s'''
@@ -75,17 +72,17 @@ def cli(ctx, forward, reverse, output_dir):
             click.echo(major_organism)
 
             '''Catch exception if input reads are too short for reference genome estimation'''
-        except subprocess.CalledProcessError:
-            raise click.UsageError('refseq_masher error: File size too small for creating Mash sketch')
+        except Exception:
+            raise click.UsageError('encountered errors running refseq_masher, this may have been caused by too small of file reads')
 
         # Step 5: Assembly (Only skesa for now)
         # Pass forward and reverse filtered reads to assembler class
         # and return a finished genome assembly within output path
         assembler = Assembler(forward_filtered, reverse_filtered, output_dir)
         try:
-            assembly = assembler.perform_assembly()
+            assembly = assembler.skesa_func()
             print(assembly)
 
             '''Catch exception if input reads are short for skesa kmer estimation'''
-        except subprocess.CalledProcessError:
-            raise click.UsageError('Skesa error: Reads too short for selecting minimal kmer length')
+        except Exception:
+            raise click.UsageError('encountered errors running skesa, this may have been caused by too small of file reads')

@@ -48,15 +48,13 @@ class OrganismDetection():
         refseq_log = open(os.path.join(self.output_dir, 'refseq.log'), 'w+')
         stdout = open(refseq_out, 'w+')
 
-        '''Running refseq_masher as a subprocess module. Capturing return code.
+        '''Running refseq_masher as a subprocess module. Returning output file.
         Raising error otherwise'''
         try:
-            rc = subprocess.check_call(ref_str, shell=True, stdout=stdout, stderr=refseq_log)
+            subprocess.check_call(ref_str, shell=True, stdout=stdout, stderr=refseq_log)
+            return refseq_out
         except subprocess.CalledProcessError as e:
             raise e
-
-        '''Returning tuple of refseq_masher output file and return code'''
-        return refseq_out, rc
 
     # Method for identifying major reference genome from refseq_masher output
     def __identify_organism(self, refseq_out):
@@ -71,29 +69,33 @@ class OrganismDetection():
 
                 '''Leaving out blank lines and isolating 2nd column'''
                 if len(line.strip()) > 0:
-                    col2 = line.split('\t')[1]
 
+                    '''Splitting 2nd column by spaces to get organism name'''
                     try:
+                        list_col2 = line.split('\t')[1].split(' ')
+
                         '''Joining genus and species name, counting unique and total occurrences'''
-                        test_organism = col2.split(' ')[0] + ' ' + col2.split(' ')[1]
+                        test_organism = list_col2[0] + ' ' + list_col2[1]
                         organism_counter_uniq[test_organism] += 1
                         total_organism_count += 1
 
-                    except Exception:
+                        '''Raising exception if second column does not contain spaces'''
+                    except IndexError:
                         pass
 
-        try:
-            '''Output organism with highest number of occurrences'''
+        '''Output organism with highest number of occurrences'''
+        if organism_counter_uniq:
             mx = max(organism_counter_uniq.values())
             for key, value in organism_counter_uniq.items():
                 if value == mx:
 
                     '''Calculating probability of organism/s with max occurences'''
                     probability[key] = round(value/total_organism_count, 2)
-        except Exception:
-            pass
 
-        '''Appending major reference organism/s name/s and probability values to output string'''
+        else:
+            pass
+        
+            '''Appending major reference organism/s name/s and probability values to output string'''
         org_string = ''
         for key, value in probability.items():
             org_string += key + ' (probability : ' + str(value) + '), '
@@ -103,10 +105,10 @@ class OrganismDetection():
     # Method for integrating private functions
     def major_organism(self):
         refseq_string = self.__refseq_masher_string()
-        refseq_out, return_code = self.__refseq_masher_func(refseq_string)
+        refseq_out = self.__refseq_masher_func(refseq_string)
         major_org = self.__identify_organism(refseq_out)
 
         '''Creating refseq_masher output string'''
-        output_string = 'Major reference organism is/are {}. Return code {}'.format(major_org, return_code)
+        output_string = 'Major reference organism is/are {}'.format(major_org)
 
         return output_string

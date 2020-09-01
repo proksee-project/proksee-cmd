@@ -41,27 +41,17 @@ class Assembler():
         return skesa_str
 
     # Method for running skesa command
-    def __skesa_func(self, skesa_str):
+    def skesa_func(self):
         '''Creating skesa output and log files'''
         skesa_out = open(os.path.join(self.output_dir, 'skesa.out'), 'w+')
         skesa_log = open(os.path.join(self.output_dir, 'skesa.log'), 'w+')
+        skesa_string = self.__skesa_string()
 
-        '''Running skesa as a subprocess module. Capturing return code.
-        Raising error otherwise'''
+        '''Running skesa as a subprocess module. Raising error otherwise'''
         try:
-            rc = subprocess.check_call(skesa_str, shell=True, stdout=skesa_out, stderr=skesa_log)
+            subprocess.check_call(skesa_string, shell=True, stdout=skesa_out, stderr=skesa_log)
+            output_string = 'SKESA assembled reads and log files written to output directory'
         except subprocess.CalledProcessError as e:
             raise e
-
-        return rc
-
-    # Method for integrating private functions
-    def perform_assembly(self):
-        skesa_string = self.__skesa_string()
-        return_code = self.__skesa_func(skesa_string)
-
-        '''Creating skesa completion output string'''
-        output_string = 'SKESA assembled reads and log files written ' + \
-            'to output directory. Return code {}'.format(return_code)
 
         return output_string

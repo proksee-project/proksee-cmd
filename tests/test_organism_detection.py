@@ -21,7 +21,6 @@ organism_identify_bad = OrganismDetection(forward_bad, None, TEST_OUTPUT_DIR)
 
 # Defining variables for successful executions of OrganismDetection modules
 refseq_string_good = 'refseq_masher matches ' + forward_good
-refseq_func_good_rc = 0
 refseq_out_good = os.path.join(TEST_OUTPUT_DIR, 'refseq.out')
 
 
@@ -58,9 +57,8 @@ class TestReforg():
 
     # Test for refseq_masher function with real fastq file
     def test_refseq_func_good(self):
-        method_tuple = organism_identify_good._OrganismDetection__refseq_masher_func(refseq_string_good)
-        refseq_func_tuple = (refseq_out_good, refseq_func_good_rc)
-        assert refseq_func_tuple == method_tuple
+        method_refseq = organism_identify_good._OrganismDetection__refseq_masher_func(refseq_string_good)
+        assert refseq_out_good == method_refseq
 
     # Test for expected major organism
     def test_identify_organism_good(self):
@@ -70,9 +68,10 @@ class TestReforg():
 
     # Test for identifying major organism from incorrect intermediate file
     def test_identify_organism_invalid(self):
-        refseq_out_bad = os.path.join(TEST_INPUT_DIR, 'ramdom1')
-        with pytest.raises(Exception):
-            assert organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
+        refseq_out_bad = os.path.join(TEST_INPUT_DIR, 'random1')
+        method_string = organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
+        expected_string = ''
+        assert expected_string == method_string
 
     # Idenfying major organism from custom file with one organism as output
     def test_identify_organism_drafted_solo(self):
@@ -91,7 +90,7 @@ class TestReforg():
     # Test for OrganismDetection class method integrating all methods
     def test_major_organism_good(self):
         refseq_output_string = 'Major reference organism is/are Escherichia coli ' + \
-            '(probability : 1.0), . Return code ' + str(refseq_func_good_rc)
+            '(probability : 1.0), '
         method_string = organism_identify_good.major_organism()
         assert refseq_output_string == method_string
 
