@@ -62,7 +62,7 @@ class PlatformIdentify():
             if len(chars_ill) == 10:
                 illumina_attr = 0
 
-                instrument_num = re.match(r'^@[a-zA-Z0-9_]', chars_ill[0])
+                instrument_num = re.match(r'^@[a-zA-Z0-9_]+$', chars_ill[0])
                 if instrument_num is not None:
                     illumina_attr += 1
 
@@ -70,7 +70,7 @@ class PlatformIdentify():
                 if run is not None:
                     illumina_attr += 1
 
-                flowcell_id = re.match(r'^[a-zA-Z0-9]', chars_ill[2])
+                flowcell_id = re.match(r'^[a-zA-Z0-9]+$', chars_ill[2])
                 if flowcell_id is not None:
                     illumina_attr += 1
 
@@ -97,7 +97,7 @@ class PlatformIdentify():
             elif len(chars_ill) == 5:
                 illumina_attr = 0
 
-                machine_id = re.match(r'^@[a-zA-Z0-9_]', chars_ill[0])
+                machine_id = re.match(r'^@[a-zA-Z0-9_]+$', chars_ill[0])
                 if machine_id is not None:
                     illumina_attr += 1
 
