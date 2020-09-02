@@ -94,7 +94,7 @@ class OrganismDetection():
 
         else:
             pass
-        
+
             '''Appending major reference organism/s name/s and probability values to output string'''
         org_string = ''
         for key, value in probability.items():

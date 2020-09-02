@@ -1,6 +1,5 @@
 import click
 import os
-import subprocess
 
 # import fastq check
 from proksee.utilities import FastqCheck
@@ -53,7 +52,7 @@ def cli(ctx, forward, reverse, output_dir):
         # Pass forward and reverse datasets to read filtering class
         # (with default filters)
         read_filtering = ReadFiltering(forward, reverse, output_dir)
-        filtering = read_filtering.fastp_func()
+        filtering = read_filtering.filter_read()
         click.echo(filtering)
 
         '''The next steps are executed on filtered read/s'''
@@ -73,16 +72,18 @@ def cli(ctx, forward, reverse, output_dir):
 
             '''Catch exception if input reads are too short for reference genome estimation'''
         except Exception:
-            raise click.UsageError('encountered errors running refseq_masher, this may have been caused by too small of file reads')
+            raise click.UsageError('encountered errors running refseq_masher, \
+                this may have been caused by too small of file reads')
 
         # Step 5: Assembly (Only skesa for now)
         # Pass forward and reverse filtered reads to assembler class
         # and return a finished genome assembly within output path
         assembler = Assembler(forward_filtered, reverse_filtered, output_dir)
         try:
-            assembly = assembler.skesa_func()
+            assembly = assembler.perform_assembly()
             print(assembly)
 
             '''Catch exception if input reads are short for skesa kmer estimation'''
         except Exception:
-            raise click.UsageError('encountered errors running skesa, this may have been caused by too small of file reads')
+            raise click.UsageError('encountered errors running skesa, \
+                this may have been caused by too small of file reads')

@@ -31,7 +31,6 @@ TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
 TEST_OUTPUT_DIR = '{}/data/testout'.format(str(START_DIR))
 JSON = os.path.join(TEST_OUTPUT_DIR, 'fastp.json')
 HTML = os.path.join(TEST_OUTPUT_DIR, 'fastp.html')
-RETURN_CODE = 0
 
 # Using paired fastq files from illumina public data
 forward1 = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_fwd.fastq')
@@ -52,6 +51,7 @@ reverse_filt = os.path.join(TEST_OUTPUT_DIR, 'rev_filtered.fastq')
 fastp_str1 = 'fastp -i ' + forward1 + ' -I ' + reverse1 + ' -o ' + forward_filt + ' -O ' + \
     reverse_filt + ' -j ' + JSON + ' -h ' + HTML
 fastp_str2 = 'fastp -i ' + forward2 + ' -o ' + forward_filt + ' -j ' + JSON + ' -h ' + HTML
+fastp_func_good = 'FASTP filtered reads'
 
 
 class TestReadFilter():
@@ -69,8 +69,8 @@ class TestReadFilter():
 
     # Test for fastp function with paired illumina reads
     def test_fastp_func1_good(self):
-        method_rc = read_filtering1._ReadFiltering__fastp_func(fastp_str1)
-        assert RETURN_CODE == method_rc
+        method_func_good = read_filtering1._ReadFiltering__fastp_func(fastp_str1)
+        assert fastp_func_good == method_func_good
 
     # Test for fastp function with incorrect parameters
     def test_fastp_func1_badparams(self):
@@ -86,7 +86,7 @@ class TestReadFilter():
 
     # Test for ReadFiltering class method integrating all methods
     def test_filter_read1_good(self):
-        fastp_output_string_good = 'FASTP filtered reads written to output directory. Return code ' + str(RETURN_CODE)
+        fastp_output_string_good = 'FASTP filtered reads ' + 'written to output directory'
         method_string = read_filtering1.filter_read()
         assert fastp_output_string_good == method_string
 
@@ -104,11 +104,11 @@ class TestReadFilter():
 
     # Test for fastp function with single read
     def test_fastp_func2_good(self):
-        method_rc = read_filtering2._ReadFiltering__fastp_func(fastp_str2)
-        assert RETURN_CODE == method_rc
+        method_func_good = read_filtering2._ReadFiltering__fastp_func(fastp_str2)
+        assert fastp_func_good == method_func_good
 
     # Test for ReadFiltering integrating method with single read
     def test_filter_read2_good(self):
-        fastp_output_string_good = 'FASTP filtered reads written to output directory. Return code ' + str(RETURN_CODE)
+        fastp_output_string_good = 'FASTP filtered reads' + ' written to output directory'
         method_string = read_filtering2.filter_read()
         assert fastp_output_string_good == method_string

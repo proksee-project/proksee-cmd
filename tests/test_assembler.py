@@ -42,7 +42,7 @@ assembler_bad = Assembler(forward_bad, None, TEST_OUTPUT_DIR)
 
 # Defining variables for successful executions of Assembler class methods
 skesa_str_good = 'skesa --fastq ' + forward_good + ',' + reverse_good
-skesa_func_good_rc = 0
+skesa_func_good = 'SKESA assembled reads and log files'
 
 
 class TestAssembler():
@@ -78,13 +78,12 @@ class TestAssembler():
 
     # Test for skesa function with real fastq files
     def test_skesa_func_good(self):
-        method_rc = assembler_good._Assembler__skesa_func(skesa_str_good)
-        assert skesa_func_good_rc == method_rc
+        method_func_good = assembler_good._Assembler__skesa_func(skesa_str_good)
+        assert skesa_func_good == method_func_good
 
     # Test for Assembler class method integrating all methods
     def test_perform_assembly_good(self):
-        skesa_output_string = 'SKESA assembled reads and log files written ' + \
-            'to output directory. Return code ' + str(skesa_func_good_rc)
+        skesa_output_string = 'SKESA assembled reads and log files ' + 'written to output directory'
         method_string = assembler_good.perform_assembly()
         assert skesa_output_string == method_string
 

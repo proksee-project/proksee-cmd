@@ -111,7 +111,7 @@ class FastqCheck():
                 elif count_line == 3:
                     three = re.match(r'^\+.*', line)
 
-                    '''Third line beings with + followed by optional'''
+                    '''Third line begins with + followed by optional'''
                     if three is not None:
                         fastq_attr_count += 1
 

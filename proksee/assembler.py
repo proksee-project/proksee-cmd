@@ -33,6 +33,9 @@ class Assembler():
     # Creating skesa command to be executed
     def __skesa_string(self):
         if self.reverse is None:
+
+            '''The flag --use_paired_ends is rightfully used for interleaved reads
+            For non-interleaved reads, the flag (or not) doesn't affect output'''
             skesa_str = 'skesa --fastq ' + self.forward + ' --use_paired_ends'
 
         else:
@@ -41,17 +44,24 @@ class Assembler():
         return skesa_str
 
     # Method for running skesa command
-    def skesa_func(self):
+    def __skesa_func(self, skesa_str):
         '''Creating skesa output and log files'''
         skesa_out = open(os.path.join(self.output_dir, 'skesa.out'), 'w+')
         skesa_log = open(os.path.join(self.output_dir, 'skesa.log'), 'w+')
-        skesa_string = self.__skesa_string()
 
         '''Running skesa as a subprocess module. Raising error otherwise'''
         try:
-            subprocess.check_call(skesa_string, shell=True, stdout=skesa_out, stderr=skesa_log)
-            output_string = 'SKESA assembled reads and log files written to output directory'
+            subprocess.check_call(skesa_str, shell=True, stdout=skesa_out, stderr=skesa_log)
+            success = 'SKESA assembled reads and log files'
         except subprocess.CalledProcessError as e:
             raise e
+
+        return success
+
+    # Method for integrating private functions
+    def perform_assembly(self):
+        skesa_string = self.__skesa_string()
+        skesa_func = self.__skesa_func(skesa_string)
+        output_string = skesa_func + ' written to output directory'
 
         return output_string

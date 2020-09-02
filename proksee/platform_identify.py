@@ -56,8 +56,8 @@ class PlatformIdentify():
             platform = 'Ion Torrent'
 
         elif len(chars_ill) > 4:
-            '''Recent illumina fastq have the format 
-            @<instrument>:<run number>:<flowcell ID>:<lane>:<tile>:<xpos>:<y-pos> 
+            '''Recent illumina fastq have the format
+            @<instrument>:<run number>:<flowcell ID>:<lane>:<tile>:<xpos>:<y-pos>
             <read>:<is filtered>:<control number>:<index>'''
             if len(chars_ill) == 10:
                 illumina_attr = 0
@@ -74,7 +74,7 @@ class PlatformIdentify():
                 if flowcell_id is not None:
                     illumina_attr += 1
 
-                for n in range(3,6):
+                for n in range(3, 6):
                     lane_to_xpos = re.match(r'^\d+$', chars_ill[n])
                     if lane_to_xpos is not None:
                         illumina_attr += 1
@@ -101,7 +101,7 @@ class PlatformIdentify():
                 if machine_id is not None:
                     illumina_attr += 1
 
-                for n in range(1,4):
+                for n in range(1, 4):
                     lane_to_xpos = re.match(r'^\d+$', chars_ill[n])
                     if lane_to_xpos is not None:
                         illumina_attr += 1
@@ -116,7 +116,7 @@ class PlatformIdentify():
 
         elif len(chars_pac) > 2:
             platform = 'Pacbio'
-        
+
         else:
             platform = 'Unidentifiable'
 
