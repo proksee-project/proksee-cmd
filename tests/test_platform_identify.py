@@ -42,6 +42,15 @@ platform_object2 = PlatformIdentify(forward2, reverse2)
 # Declaring another instance of PlatformIdenfity class with forward only
 platform_object3 = PlatformIdentify(forward2, None)
 
+# Declaring illumina specific true and false snippet files
+illum1 = os.path.join(TEST_INPUT_DIR, 'NA12878_illuminatruesnippet.fastq')
+illum2 = os.path.join(TEST_INPUT_DIR, 'NA12878_illuminatamperedsnippet1.fastq')
+illum3 = os.path.join(TEST_INPUT_DIR, 'NA12878_illuminatamperedsnippet2.fastq')
+
+# Declaring two instances of PlatformIdentify class with illumina snippet files
+platform_object4 = PlatformIdentify(illum1, illum2)
+platform_object5 = PlatformIdentify(illum2, illum3)
+
 
 class TestPlatIden():
 
@@ -95,4 +104,17 @@ class TestPlatIden():
     def test_identify_platform3(self):
         output_string_good = 'Sequencing plaform for ATCC_MSA-1003_16S_5reads.fastq.gz is Pacbio'
         method_string = platform_object3.identify_platform()
+        assert output_string_good == method_string
+
+    # Tests for integrating method for good and bad illumina snippets
+    def test_identify_platform4(self):
+        output_string_good = 'Sequencing plaform for NA12878_illuminatruesnippet.fastq ' + \
+            'is Illumina\nSequencing platform for NA12878_illuminatamperedsnippet1.fastq is Unidentifiable'
+        method_string = platform_object4.identify_platform()
+        assert output_string_good == method_string
+
+    def test_identify_platform5(self):
+        output_string_good = 'Sequencing plaform for NA12878_illuminatamperedsnippet1.fastq and ' + \
+            'NA12878_illuminatamperedsnippet2.fastq are same: Unidentifiable'
+        method_string = platform_object5.identify_platform()
         assert output_string_good == method_string

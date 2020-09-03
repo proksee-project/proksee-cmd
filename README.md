@@ -15,9 +15,9 @@ Currently `proksee` performs the following tasks:
 
 Users are recommended to install packages `fastp`, `refseq_masher` and `skesa` in a conda environment as follows:  
 `conda env create -f environment.yml`
-`conda activate ENV_NAME`
+`conda activate proksee`
 
-Where `ENV_NAME` is the name of the environment defined in the `environment.yml` file  
+
 
 
 
