@@ -81,8 +81,8 @@ class TestReforg():
     # Test for expected major organism
     def test_identify_organism_good(self):
         method_string = organism_identify_good._OrganismDetection__identify_organism(refseq_out_good)
-        expected_string = 'Escherichia coli (probability : 1.0), '
-        assert expected_string == method_string
+        expected_string = 'Escherichia coli (probability : 1.0),'
+        assert expected_string == method_string.strip()
 
     # Test for identifying major organism from incorrect intermediate file
     def test_identify_organism_invalid(self):
@@ -102,15 +102,15 @@ class TestReforg():
     def test_identify_organism_drafted_tie(self):
         refseq_out_bad = os.path.join(TEST_INPUT_DIR, 'refseq_fancysnakes2.out')
         method_string = organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
-        expected_string = 'Madame White (probability : 0.22), Master Viper (probability : 0.22), '
-        assert expected_string == method_string
+        expected_string = 'Madame White (probability : 0.22), Master Viper (probability : 0.22),'
+        assert expected_string == method_string.strip()
 
     # Test for OrganismDetection class method integrating all methods
     def test_major_organism_good(self):
         refseq_output_string = 'Major reference organism is/are Escherichia coli ' + \
-            '(probability : 1.0), '
+            '(probability : 1.0),'
         method_string = organism_identify_good.major_organism()
-        assert refseq_output_string == method_string
+        assert refseq_output_string == method_string.strip()
 
     # Test for failed integrating method
     def test_major_organism_bad(self):
