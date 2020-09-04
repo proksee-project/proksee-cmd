@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.6]
+        python-version: [3.7]
     steps:
     - uses: actions/checkout@v2
       with:
@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.6]
+        python-version: [3.7]
     steps:
     - uses: actions/checkout@v2
       with:
@@ -40,16 +40,10 @@ jobs:
         environment-file: environment.yml
         python-version: ${{ matrix.python-version }}
         auto-activate-base: false
-    - name: Test mash
-      shell: bash -l {0}
-      run: mash --help
-    - name: Test refseq_masher
-      shell: bash -l {0}
-      run: refseq_masher matches tests/data/SRR7947278_100kpair_reads.fastq
     - name: Install tox
       shell: bash -l {0}
       run: pip install tox
     - name: Run tests
       shell: bash -l {0}
-      run: tox -e py36
+      run: tox -e py37
 

@@ -4,10 +4,10 @@ channels:
 - bioconda
 - defaults
 dependencies:
-- python=3.6
+- python=3.7
 - fastp
 - skesa
-- refseq_masher=0.1.1
+- refseq_masher
 - pip
 - pip:
   - .
