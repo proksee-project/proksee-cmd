@@ -6,7 +6,7 @@ dependencies:
 - python=3.6
 - fastp
 - skesa
-- refseq_masher
+- refseq_masher=0.1.1
 - pip
 - pip:
   - .
