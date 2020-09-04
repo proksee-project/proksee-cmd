@@ -1,5 +1,6 @@
 name: proksee
 channels:
+- conda-forge
 - bioconda
 - defaults
 dependencies:
@@ -7,6 +8,6 @@ dependencies:
 - fastp
 - skesa
 - refseq_masher
-- pip:
+- pip
 - pip:
   - .
