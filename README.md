@@ -14,7 +14,7 @@ Currently `proksee` performs the following tasks:
 - Constructing a de-novo sequence assembly using `skesa`, which performs assembly on the filtered fastq read files using optimal k-mer length based on DeBruijn graphs.  
 
 Users are recommended to install packages `fastp`, `refseq_masher` and `skesa` in a conda environment as follows:  
-`conda env create -f environment.yml`
+`conda env create -f environment.yml`  
 `conda activate proksee`
 
 
