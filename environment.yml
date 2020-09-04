@@ -1,5 +1,6 @@
 name: proksee
 channels:
+- conda-forge
 - bioconda
 - defaults
 dependencies:
