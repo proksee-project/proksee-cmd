@@ -40,6 +40,9 @@ jobs:
         environment-file: environment.yml
         python-version: ${{ matrix.python-version }}
         auto-activate-base: false
+    - name: Test refseq_masher
+      shell: bash -l {0}
+      run: refseq_masher --help
     - name: Install tox
       shell: bash -l {0}
       run: pip install tox
