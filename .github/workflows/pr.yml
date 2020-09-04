@@ -33,12 +33,11 @@ jobs:
       with:
         fetch-depth: 1
     - uses: goanpeca/setup-miniconda@v1
-        with:
-          auto-update-conda: true
-          activate-environment: proksee
-          environment-file: environemnt.yml
-          python-version: ${{ matrix.python-version }}
-          auto-activate-base: false
+      with:
+        activate-environment: proksee
+        environment-file: environemnt.yml
+        python-version: ${{ matrix.python-version }}
+        auto-activate-base: false
     - name: Install tox
       shell: bash -l {0}
       run: pip install tox
