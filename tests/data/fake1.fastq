@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:67ad8e98de48f8656256823e1e37482b0d7152949fa1abb010c72101538809ce
-size 58
+This is not a valid fastq header
+ATGCCTAG
++
+!@#$READGH.

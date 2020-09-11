@@ -1,3 +1,4 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:5732974d99bf8baf1d686183d60400e11c18062d8ec20623c972862ef8ec3b08
-size 78
+@This is a valid fastq header
+But the nucleotides are invalid
++
+!@#$READGH.
