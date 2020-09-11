@@ -33,8 +33,8 @@ JSON = os.path.join(TEST_OUTPUT_DIR, 'fastp.json')
 HTML = os.path.join(TEST_OUTPUT_DIR, 'fastp.html')
 
 # Using paired fastq files from illumina public data
-forward1 = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_fwd.fastq')
-reverse1 = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_rev.fastq')
+forward1 = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
+reverse1 = os.path.join(TEST_INPUT_DIR, 'NA12878_rev.fastq')
 
 # Using pacbio single read
 forward2 = os.path.join(TEST_INPUT_DIR, 'ATCC_MSA-1003_16S_5reads.fastq.gz')

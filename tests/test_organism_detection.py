@@ -29,16 +29,17 @@ START_DIR = Path(__file__).parent.absolute()
 TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
 TEST_OUTPUT_DIR = '{}/data/testout'.format(str(START_DIR))
 
-# Specifying single read fastq with latter being truncated
-forward_good = os.path.join(TEST_INPUT_DIR, 'SRR7947278_100kpair_reads.fastq')
+# Specifying paired reads and a single truncated read
+forward_good = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
+reverse_good = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
 forward_bad = os.path.join(TEST_INPUT_DIR, 'SRR7947278_5pair_reads.fastq')
 
 # Declaring instances of OrganismDetection class
-organism_identify_good = OrganismDetection(forward_good, None, TEST_OUTPUT_DIR)
+organism_identify_good = OrganismDetection(forward_good, reverse_good, TEST_OUTPUT_DIR)
 organism_identify_bad = OrganismDetection(forward_bad, None, TEST_OUTPUT_DIR)
 
 # Defining variables for successful executions of OrganismDetection modules
-refseq_string_good = 'refseq_masher matches ' + forward_good
+refseq_string_good = 'refseq_masher matches ' + forward_good + ' ' + reverse_good
 refseq_out_good = os.path.join(TEST_OUTPUT_DIR, 'refseq.out')
 
 
@@ -81,7 +82,9 @@ class TestReforg():
     # Test for expected major organism
     def test_identify_organism_good(self):
         method_string = organism_identify_good._OrganismDetection__identify_organism(refseq_out_good)
-        expected_string = 'Escherichia coli (probability : 1.0), '
+        expected_string = 'Chirostoma humboldtianum (probability : 0.2), Crenimugil crenilabis (probability : 0.2),' + \
+            ' Choaspes benjaminii (probability : 0.2), Engaeus sericatus (probability : 0.2),' + \
+            ' Euastacus spinifer (probability : 0.2), '
         assert expected_string == method_string
 
     # Test for identifying major organism from incorrect intermediate file
@@ -107,8 +110,9 @@ class TestReforg():
 
     # Test for OrganismDetection class method integrating all methods
     def test_major_organism_good(self):
-        refseq_output_string = 'Major reference organism is/are Escherichia coli ' + \
-            '(probability : 1.0), '
+        refseq_output_string = 'Major reference organism is/are Chirostoma humboldtianum (probability : 0.2), ' + \
+            'Crenimugil crenilabis (probability : 0.2), Choaspes benjaminii (probability : 0.2), ' + \
+            'Engaeus sericatus (probability : 0.2), Euastacus spinifer (probability : 0.2), '
         method_string = organism_identify_good.major_organism()
         assert refseq_output_string == method_string
 

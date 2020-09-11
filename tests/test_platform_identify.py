@@ -28,8 +28,8 @@ START_DIR = Path(__file__).parent.absolute()
 TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
 
 # Using real fastq files from illumina public data
-forward1 = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_fwd.fastq')
-reverse1 = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_rev.fastq')
+forward1 = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
+reverse1 = os.path.join(TEST_INPUT_DIR, 'NA12878_rev.fastq')
 
 # Using a real pacbio fastq file and another customized fastq file
 forward2 = os.path.join(TEST_INPUT_DIR, 'ATCC_MSA-1003_16S_5reads.fastq.gz')
@@ -72,8 +72,8 @@ class TestPlatIden():
 
     # Test for PlatformIdentify class method integrating all methods
     def test_identify_platform1(self):
-        output_string_good = 'Sequencing plaform for NA12878_NextSeq2000_100k_fwd.fastq and ' + \
-            'NA12878_NextSeq2000_100k_rev.fastq are same: Illumina'
+        output_string_good = 'Sequencing plaform for NA12878_fwd.fastq and ' + \
+            'NA12878_rev.fastq are same: Illumina'
         method_string = platform_object1.identify_platform()
         assert output_string_good == method_string
 

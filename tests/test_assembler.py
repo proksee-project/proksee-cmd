@@ -30,8 +30,8 @@ TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
 TEST_OUTPUT_DIR = '{}/data/testout'.format(str(START_DIR))
 
 # Using real fastq files from illumina public data
-forward_good = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_fwd.fastq')
-reverse_good = os.path.join(TEST_INPUT_DIR, 'NA12878_NextSeq2000_100k_rev.fastq')
+forward_good = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
+reverse_good = os.path.join(TEST_INPUT_DIR, 'NA12878_rev.fastq')
 
 # Using a small truncated read data for catching exceptions
 forward_bad = os.path.join(TEST_INPUT_DIR, 'SRR7947278_5pair_reads.fastq')
