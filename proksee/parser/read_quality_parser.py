@@ -21,8 +21,19 @@ import json
 from proksee.read_quality import ReadQuality
 
 
-# FASTP JSON has a lot of information we might want to use
 def parse_read_quality_from_fastp(fastp_file):
+    """
+    Parses a FASTP JSON file and creates a ReadQuality object from that information.
+
+    PARAMETERS:
+
+        fastp_file (str): the file location of the FASTP JSON file
+
+    RETURNS:
+
+        read_quality (ReadQuality): a ReadQuality object summarizing the information in the FASTP JSON file.
+    """
+
     print("Parsing...")
 
     with open(fastp_file) as file:

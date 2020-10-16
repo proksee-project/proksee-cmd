@@ -23,10 +23,9 @@ from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
 
 class TestReadQualityParser:
 
-    # !!!!!
     def test_valid_fastp_file(self):
 
-        # Create a valid FASTP file
+        # Create a valid FASTP JSON file
         valid_fastp_file = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "fastp.json")
 
