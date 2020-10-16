@@ -34,21 +34,30 @@ def parse_read_quality_from_fastp(fastp_file):
         read_quality (ReadQuality): a ReadQuality object summarizing the information in the FASTP JSON file.
     """
 
-    print("Parsing...")
+    SUMMARY = "summary"
+    AFTER = "after_filtering"
+
+    TOTAL_READS = "total_reads"
+    TOTAL_BASES = "total_bases"
+    Q20_BASES = "q20_bases"
+    Q30_BASES = "q30_bases"
+    READ1_MEDIAN_LENGTH = "read1_mean_length"
+    READ2_MEDIAN_LENGTH = "read2_mean_length"
+    GC_CONTENT = "gc_content"
 
     with open(fastp_file) as file:
         data = json.load(file)
 
-    summary = data["summary"]
-    after = summary["after_filtering"]
+    summary = data[SUMMARY]  # Summary information about the quality.
+    after = summary[AFTER]  # Quality of the reads, after filtering.
 
-    total_reads = after["total_reads"]
-    total_bases = after["total_bases"]
-    q20_bases = after["q20_bases"]
-    q30_bases = after["q30_bases"]
-    forward_median_length = after["read1_mean_length"]
-    reverse_median_length = after["read2_mean_length"] if "read2_mean_length" in after else 0
-    gc_content = after["gc_content"]
+    total_reads = after[TOTAL_READS]
+    total_bases = after[TOTAL_BASES]
+    q20_bases = after[Q20_BASES]
+    q30_bases = after[Q30_BASES]
+    forward_median_length = after[READ1_MEDIAN_LENGTH]
+    reverse_median_length = after[READ2_MEDIAN_LENGTH] if READ2_MEDIAN_LENGTH in after else 0
+    gc_content = after[GC_CONTENT]
 
     read_quality = ReadQuality(total_reads, total_bases, q20_bases, q30_bases, forward_median_length,
                                reverse_median_length, gc_content)
