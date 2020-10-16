@@ -69,3 +69,10 @@ class ReadFiltering():
         output_string = fastp_func + ' written to output directory'
 
         return output_string
+
+
+class ReadQuality():
+
+    def __init__(self):
+        return
+
