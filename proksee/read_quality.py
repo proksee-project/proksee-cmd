@@ -1,9 +1,14 @@
 '''
-Copyright:
+Copyright Government of Canada 2020
 
-University of Manitoba & National Microbiology Laboratory, Canada, 2020
+Written by:
 
-Written by: Arnab Saha Mandal
+Arnab Saha Mandal
+    University of Manitoba
+    National Microbiology Laboratory, Public Health Agency of Canada
+
+Eric Marinier
+    National Microbiology Laboratory, Public Health Agency of Canada
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License. You may obtain a copy of the
@@ -71,8 +76,20 @@ class ReadFiltering():
         return output_string
 
 
-class ReadQuality():
+class ReadQuality:
 
-    def __init__(self):
-        return
+    def __init__(self, total_reads, total_bases, q20_bases, q30_bases, forward_median_length, reverse_median_length,
+                 gc_content):
 
+        self.total_reads = total_reads
+        self.total_bases = total_bases
+        self.q20_bases = q20_bases
+        self.q30_bases = q30_bases
+
+        self.q20_rate = q20_bases / total_bases
+        self.q30_rate = q30_bases / total_bases
+
+        self.forward_median_length = forward_median_length
+        self.reverse_median_length = reverse_median_length
+
+        self.gc_content = gc_content

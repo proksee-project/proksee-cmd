@@ -28,6 +28,18 @@ def parse_read_quality_from_fastp(fastp_file):
     with open(fastp_file) as file:
         data = json.load(file)
 
-    print(data["summary"]["after_filtering"]["q20_bases"])
+    summary = data["summary"]
+    after = summary["after_filtering"]
 
-    return data
+    total_reads = after["total_reads"]
+    total_bases = after["total_bases"]
+    q20_bases = after["q20_bases"]
+    q30_bases = after["q30_bases"]
+    forward_median_length = after["read1_mean_length"]
+    reverse_median_length = after["read2_mean_length"] if "read2_mean_length" in after else 0
+    gc_content = after["gc_content"]
+
+    read_quality = ReadQuality(total_reads, total_bases, q20_bases, q30_bases, forward_median_length,
+                               reverse_median_length, gc_content)
+
+    return read_quality
