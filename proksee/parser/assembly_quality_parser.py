@@ -16,7 +16,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee.assembly_quality import AssemblyQuality
+from proksee.assembly_evaluator import AssemblyQuality
 
 
 def parse_assembly_quality_from_quast_report(quast_file):
