@@ -68,6 +68,10 @@ class AssemblyEvaluator:
 
 
         """
+
+        if not os.path.exists(self.contigs_filename):
+            raise FileNotFoundError("File not found: " + self.contigs_filename)
+
         quast_command = "quast " + self.contigs_filename + " -o " + self.quast_directory
         quast_out = open(os.path.join(self.output_directory, "quast.out"), "w+")
         quast_err = open(os.path.join(self.output_directory, "quast.err"), "w+")

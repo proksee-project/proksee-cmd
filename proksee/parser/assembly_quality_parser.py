@@ -16,16 +16,17 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import os
 from proksee.assembly_evaluator import AssemblyQuality
 
 
-def parse_assembly_quality_from_quast_report(quast_file):
+def parse_assembly_quality_from_quast_report(quast_filename):
     """
     Parses a QUAST TSV-format report file and creates an AssemblyQuality object from that information.
 
     PARAMETERS:
 
-        quast_file (str): the file location of the QUAST TSV-format file
+        quast_filename (str): the filename of the QUAST TSV-format file
 
     RETURNS:
 
@@ -42,7 +43,10 @@ def parse_assembly_quality_from_quast_report(quast_file):
 
     report = {}
 
-    with open(quast_file) as file:
+    if not os.path.exists(quast_filename):
+        raise FileNotFoundError("File not found: " + quast_filename)
+
+    with open(quast_filename) as file:
         for line in file:
             tokens = line.split("\t")
             key = tokens[0]

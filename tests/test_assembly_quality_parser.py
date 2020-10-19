@@ -17,6 +17,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
+import pytest
 
 from proksee.parser.assembly_quality_parser import parse_assembly_quality_from_quast_report
 
@@ -24,15 +25,28 @@ from proksee.parser.assembly_quality_parser import parse_assembly_quality_from_q
 class TestAssemblyQualityParser:
 
     def test_valid_quast_file(self):
+        """
+        Tests the parser with a valid QUAST file.
+        """
 
-        # Create a valid QUAST TSV file
-        valid_quast_file = os.path.join(os.path.dirname(
+        valid_quast_filename = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "report.tsv")
 
-        assembly_quality = parse_assembly_quality_from_quast_report(valid_quast_file)
+        assembly_quality = parse_assembly_quality_from_quast_report(valid_quast_filename)
 
         assert assembly_quality.num_contigs == 1
         assert assembly_quality.n50 == 1249
         assert assembly_quality.n75 == 1249
         assert assembly_quality.l50 == 1
         assert assembly_quality.l75 == 1
+
+    def test_missing_quast_file(self):
+        """
+        Tests the parser with a missing file. This should raise a FileNotFound exception.
+        """
+
+        missing_filename = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "missing.file")
+
+        with pytest.raises(FileNotFoundError):
+            parse_assembly_quality_from_quast_report(missing_filename)
