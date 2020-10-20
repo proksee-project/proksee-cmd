@@ -31,21 +31,35 @@ class ExpertSystem:
     ATTRIBUTES
         platform (str): The sequence platform used to sequence the reads.
         organism (str): The name of the organism to be assembled.
-        read_quality (ReadQuality): A ReadQuality object encapsulating information about read quality.
     """
 
-    def __init__(self, platform, organism, read_quality):
+    def __init__(self, platform, organism):
         """
         Initializes the expert system.
 
         PARAMETERS
             platform (str): The sequence platform used to sequence the reads.
             organism (str): The name of the organism to be assembled.
-            read_quality (ReadQuality): A ReadQuality object encapsulating information about read quality.
         """
 
         self.platform = platform
         self.organism = organism
-        self.read_quality = read_quality
+
+        return
+
+    def evaluate_reads(self, read_quality):
+        """
+        PARAMETERS
+            read_quality (ReadQuality): A ReadQuality object encapsulating information about read quality.
+        """
+
+        return
+
+    def evaluate_assembly(self, assembly_database):
+        """
+        PARAMETERS
+            assembly_database (AssemblyDatabase): An AssemblyDatabase object containing assembly statistics for various
+                species.
+        """
 
         return

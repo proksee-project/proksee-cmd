@@ -34,6 +34,8 @@ class AssemblyDatabase:
         database_filename (str): the filename of the database
     """
 
+    # Constants for different assembly statistics. These are used both to identify position in parsing,
+    # and as unique identifiers in dictionaries.
     SPECIES = 0
     CONTIGS_MEAN = 1
     CONTIGS_STD = 2
