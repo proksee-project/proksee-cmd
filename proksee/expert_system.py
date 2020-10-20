@@ -22,6 +22,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import scipy.stats as stats
+
 
 class ExpertSystem:
     """
@@ -55,11 +57,28 @@ class ExpertSystem:
 
         return
 
-    def evaluate_assembly(self, assembly_database):
+    def evaluate_assembly(self, assembly_quality, assembly_database):
         """
         PARAMETERS
-            assembly_database (AssemblyDatabase): An AssemblyDatabase object containing assembly statistics for various
-                species.
+            assembly_quality (AssemblyQuality): An object representing the quality of an assembly.
+            assembly_database (AssemblyDatabase): An object containing assembly statistics for various species.
         """
+
+        if assembly_database.contains(self.organism):
+
+            n50 = assembly_quality.n50
+            n50_mean = assembly_database.get_n50_mean()
+            n50_std = assembly_database.get_n50_std()
+
+            z = (n50 - n50_mean) / n50_std
+            p = stats.norm.cdf(z)
+
+            p = 1 - p if p > 0 else p  # Correcting CDF "sided-ness"
+
+            print("N50 P = " + str(p))
+
+        else:
+
+            print("The species is not present in the database.")
 
         return

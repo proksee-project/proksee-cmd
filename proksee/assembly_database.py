@@ -3,10 +3,6 @@ Copyright Government of Canada 2020
 
 Written by:
 
-Arnab Saha Mandal
-    University of Manitoba
-    National Microbiology Laboratory, Public Health Agency of Canada
-
 Eric Marinier
     National Microbiology Laboratory, Public Health Agency of Canada
 
@@ -82,7 +78,20 @@ class AssemblyDatabase:
 
                 self.database[species] = information
 
-        print(self.database)
+    def contains(self, species):
+        """
+        Returns whether or not the database contains the species.
+
+        PARAMETERS
+            species (str): The species, represented as a string.
+
+        RETURNS
+            present (bool): Whether or not the species is represented in the database.
+        """
+
+        present = True if species in self.database else False
+
+        return present
 
     def get_contigs_mean(self, species):
         """

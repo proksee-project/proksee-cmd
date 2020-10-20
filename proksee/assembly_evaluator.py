@@ -19,6 +19,8 @@ specific language governing permissions and limitations under the License.
 import os
 import subprocess
 
+from proksee.parser.assembly_quality_parser import parse_assembly_quality_from_quast_report
+
 
 class AssemblyEvaluator:
     """
@@ -53,7 +55,7 @@ class AssemblyEvaluator:
         Evaluates the quality of an assembly.
 
         RETURNS
-            report (str): a short report string in natural language, indicating the effect of running the evaluation
+            assembly_quality (AssemblyQuality): an AssemblyQuality object containing measures of the assembly
 
         POST
             The program QUAST will be run to evaluate the assembly.
@@ -78,7 +80,10 @@ class AssemblyEvaluator:
 
         try:
             subprocess.check_call(quast_command, shell=True, stdout=quast_out, stderr=quast_err)
-            report = "Evaluated the quality of the assembled contigs."
+            print("Evaluated the quality of the assembled contigs.")
+
+            # Create an AssemblyQuality object to return.
+            assembly_quality = parse_assembly_quality_from_quast_report(self.quast_report_filename)
 
         except subprocess.CalledProcessError as error:
             raise error
@@ -86,41 +91,4 @@ class AssemblyEvaluator:
         quast_out.close()
         quast_err.close()
 
-        return report
-
-
-class AssemblyQuality:
-    """
-    A class representing the quality of an assembly.
-
-    ATTRIBUTES:
-        num_contigs (int): the number of contigs in the assembly
-        n50 (int): shortest contig needed to cover 50% of the assembly
-        n75 (int): shortest contig needed to cover 75% of the assembly
-        l50 (int): the length of the shortest contig needed to cover 50% of the assembly
-        l75 (int): the length of the shortest contig needed to cover 75% of the assembly
-        gc_content (float): the GC-ratio of the bases in the assembly
-    """
-
-    def __init__(self, num_contigs, n50, n75, l50, l75, gc_content):
-        """
-        Initializes the AssemblyQuality object.
-
-        PARAMETERS:
-            num_contigs (int): the number of contigs in the assembly
-            n50 (int): shortest contig needed to cover 50% of the assembly
-            n75 (int): shortest contig needed to cover 75% of the assembly
-            l50 (int): the length of the shortest contig needed to cover 50% of the assembly
-            l75 (int): the length of the shortest contig needed to cover 75% of the assembly
-            gc_content (float): the GC-ratio of the bases in the assembly
-        """
-
-        self.num_contigs = num_contigs
-
-        self.n50 = n50
-        self.n75 = n75
-
-        self.l50 = l50
-        self.l75 = l75
-
-        self.gc_content = gc_content
+        return assembly_quality

@@ -25,22 +25,15 @@ specific language governing permissions and limitations under the License.
 import click
 import os
 
-# import fastq check
-from proksee.utilities import FastqCheck
-
-# import platform detection
-from proksee.platform_identify import PlatformIdentify
-
-# import quality module
-from proksee.read_quality import ReadFiltering
-
-# import organism detection
-from proksee.organism_detection import OrganismDetection
-
-# import assembler
-from proksee.assembler import Assembler
-
 from proksee.assembly_evaluator import AssemblyEvaluator
+from proksee.assembly_database import AssemblyDatabase
+
+from proksee.utilities import FastqCheck
+from proksee.platform_identify import PlatformIdentify
+from proksee.read_quality import ReadFiltering
+from proksee.organism_detection import OrganismDetection
+from proksee.assembler import Assembler
+from proksee.expert_system import ExpertSystem
 
 
 @click.command('assemble',
@@ -114,12 +107,19 @@ def cli(ctx, forward, reverse, output_dir):
             raise click.UsageError('encountered errors running skesa, \
                 this may have been caused by too small of file reads')
 
+
         # Step 6: Evaluate Assembly
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
-
+        
         try:
-            report = assembly_evaluator.evaluate()
-            print(report)
+            assembly_quality = assembly_evaluator.evaluate()
 
         except Exception:
             raise click.UsageError("Encountered an error when evaluating the assembly.")
+
+        # Step 7: Expert System
+        expert = ExpertSystem(platform, major_organism)
+
+        assembly_database = AssemblyDatabase(
+            "/home/CSCScience.ca/emarinier/projects/proksee-cmd/tests/data/fake_assembly_data.csv")
+        expert.evaluate_assembly(assembly_quality, assembly_database)
