@@ -32,20 +32,20 @@ class ExpertSystem:
 
     ATTRIBUTES
         platform (str): The sequence platform used to sequence the reads.
-        organism (str): The name of the organism to be assembled.
+        species (str): The name of the species to be assembled.
     """
 
-    def __init__(self, platform, organism):
+    def __init__(self, platform, species):
         """
         Initializes the expert system.
 
         PARAMETERS
             platform (str): The sequence platform used to sequence the reads.
-            organism (str): The name of the organism to be assembled.
+            species (str): The name of the species to be assembled.
         """
 
         self.platform = platform
-        self.organism = organism
+        self.species = species
 
         return
 
@@ -64,7 +64,7 @@ class ExpertSystem:
             assembly_database (AssemblyDatabase): An object containing assembly statistics for various species.
         """
 
-        if assembly_database.contains(self.organism):
+        if assembly_database.contains(self.species):
 
             n50 = assembly_quality.n50
             n50_mean = assembly_database.get_n50_mean()
@@ -79,6 +79,7 @@ class ExpertSystem:
 
         else:
 
+            print(self.species)
             print("The species is not present in the database.")
 
         return
