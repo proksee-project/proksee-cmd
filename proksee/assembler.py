@@ -28,7 +28,7 @@ import subprocess
 
 class Assembler:
     """
-    A class representing the a sequence assembler.
+    A class representing a sequence assembler.
 
     ATTRIBUTES:
         forward (str): the filename of the forward reads
