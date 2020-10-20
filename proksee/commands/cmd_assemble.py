@@ -1,3 +1,27 @@
+"""
+Copyright Government of Canada 2020
+
+Written by:
+
+Arnab Saha Mandal
+    University of Manitoba
+    National Microbiology Laboratory, Public Health Agency of Canada
+
+Eric Marinier
+    National Microbiology Laboratory, Public Health Agency of Canada
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this work except in compliance with the License. You may obtain a copy of the
+License at:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+"""
+
 import click
 import os
 
@@ -15,6 +39,8 @@ from proksee.organism_detection import OrganismDetection
 
 # import assembler
 from proksee.assembler import Assembler
+
+from proksee.assembly_evaluator import AssemblyEvaluator
 
 
 @click.command('assemble',
@@ -87,3 +113,13 @@ def cli(ctx, forward, reverse, output_dir):
         except Exception:
             raise click.UsageError('encountered errors running skesa, \
                 this may have been caused by too small of file reads')
+
+        # Step 6: Evaluate Assembly
+        assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
+
+        try:
+            report = assembly_evaluator.evaluate()
+            print(report)
+
+        except Exception:
+            raise click.UsageError("Encountered an error when evaluating the assembly.")
