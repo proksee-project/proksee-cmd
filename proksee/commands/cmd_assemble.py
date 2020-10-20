@@ -107,10 +107,9 @@ def cli(ctx, forward, reverse, output_dir):
             raise click.UsageError('encountered errors running skesa, \
                 this may have been caused by too small of file reads')
 
-
         # Step 6: Evaluate Assembly
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
-        
+
         try:
             assembly_quality = assembly_evaluator.evaluate()
 
