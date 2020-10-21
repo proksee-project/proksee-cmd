@@ -86,8 +86,8 @@ def cli(ctx, forward, reverse, output_dir):
         # and return most frequently occuring reference genome
         organism_identify = OrganismDetection(forward_filtered, reverse_filtered, output_dir)
         try:
-            major_organism = organism_identify.major_organism()
-            click.echo(major_organism)
+            species_list = organism_identify.major_organism()
+            click.echo("Major reference organism is/are {}".format(species_list))
 
             '''Catch exception if input reads are too short for reference genome estimation'''
         except Exception:
@@ -117,7 +117,7 @@ def cli(ctx, forward, reverse, output_dir):
             raise click.UsageError("Encountered an error when evaluating the assembly.")
 
         # Step 7: Expert System
-        expert = ExpertSystem(platform, major_organism)
+        expert = ExpertSystem(platform, species_list[0])
 
         assembly_database = AssemblyDatabase(
             "/home/CSCScience.ca/emarinier/projects/proksee-cmd/tests/data/fake_assembly_data.csv")

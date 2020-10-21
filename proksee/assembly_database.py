@@ -101,7 +101,7 @@ class AssemblyDatabase:
             contigs_mean (int): The mean number of contigs or None if the species does not exist in the database.
         """
 
-        return self.database[species][self.CONTIGS_MEAN] if species in self.database else None
+        return int(self.database[species][self.CONTIGS_MEAN]) if species in self.database else None
 
     def get_contigs_std(self, species):
         """
@@ -112,7 +112,7 @@ class AssemblyDatabase:
                 database.
         """
 
-        return self.database[species][self.CONTIGS_STD] if species in self.database else None
+        return float(self.database[species][self.CONTIGS_STD]) if species in self.database else None
 
     def get_assembly_size_mean(self, species):
         """
@@ -122,7 +122,7 @@ class AssemblyDatabase:
             assembly_size_mean (int): The mean assembly size or None if the species does not exist in the database.
         """
 
-        return self.database[species][self.ASSEMBLY_SIZE_MEAN] if species in self.database else None
+        return int(self.database[species][self.ASSEMBLY_SIZE_MEAN]) if species in self.database else None
 
     def get_assembly_size_std(self, species):
         """
@@ -133,7 +133,7 @@ class AssemblyDatabase:
                 in the database.
         """
 
-        return self.database[species][self.ASSEMBLY_SIZE_STD] if species in self.database else None
+        return float(self.database[species][self.ASSEMBLY_SIZE_STD]) if species in self.database else None
 
     def get_n50_mean(self, species):
         """
@@ -143,7 +143,7 @@ class AssemblyDatabase:
             n50_mean (int): The mean n50 or None if the species does not exist in the database.
         """
 
-        return self.database[species][self.N50_MEAN] if species in self.database else None
+        return int(self.database[species][self.N50_MEAN]) if species in self.database else None
 
     def get_n50_std(self, species):
         """
@@ -153,4 +153,4 @@ class AssemblyDatabase:
             n50_std (float): The standard deviation of the n50 or None if the species does not exist in the database.
         """
 
-        return self.database[species][self.N50_STD] if species in self.database else None
+        return float(self.database[species][self.N50_STD]) if species in self.database else None

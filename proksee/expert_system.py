@@ -32,7 +32,7 @@ class ExpertSystem:
 
     ATTRIBUTES
         platform (str): The sequence platform used to sequence the reads.
-        species (str): The name of the species to be assembled.
+        species (species): The species to make decisions about.
     """
 
     def __init__(self, platform, species):
@@ -41,7 +41,7 @@ class ExpertSystem:
 
         PARAMETERS
             platform (str): The sequence platform used to sequence the reads.
-            species (str): The name of the species to be assembled.
+            species (species): The species to make decisions about.
         """
 
         self.platform = platform
@@ -64,22 +64,26 @@ class ExpertSystem:
             assembly_database (AssemblyDatabase): An object containing assembly statistics for various species.
         """
 
-        if assembly_database.contains(self.species):
+        species_name = self.species.name
+
+        if assembly_database.contains(species_name):
 
             n50 = assembly_quality.n50
-            n50_mean = assembly_database.get_n50_mean()
-            n50_std = assembly_database.get_n50_std()
+            n50_mean = assembly_database.get_n50_mean(species_name)
+            n50_std = assembly_database.get_n50_std(species_name)
 
             z = (n50 - n50_mean) / n50_std
             p = stats.norm.cdf(z)
 
-            p = 1 - p if p > 0 else p  # Correcting CDF "sided-ness"
+            if z > 0:
+                p = 1 - p
+                print("We expect {0:.0%} similar assemblies would have a greater N50.".format(p))
 
-            print("N50 P = " + str(p))
+            else:
+                print("We except {0:.2%} similar assemblies would have a smaller N50.".format(p))
 
         else:
 
-            print(self.species)
-            print("The species is not present in the database.")
+            print(self.species.name + " is not present in the database.")
 
         return

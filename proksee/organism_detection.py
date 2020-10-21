@@ -22,6 +22,9 @@ import subprocess
 from collections import defaultdict
 
 
+from proksee.species import Species
+
+
 # Defining organism detection class for identifying reference genome organism
 class OrganismDetection():
 
@@ -96,19 +99,25 @@ class OrganismDetection():
             pass
 
             '''Appending major reference organism/s name/s and probability values to output string'''
-        org_string = ''
-        for key, value in probability.items():
-            org_string += key + ' (probability : ' + str(value) + '), '
 
-        return org_string
+        species_list = []
+
+        for key, value in probability.items():
+            name = key
+            confidence = value
+            species_list.append(Species(name, confidence))
+
+        species_list.sort(key=lambda x: x.confidence, reverse=True)
+
+        return species_list
 
     # Method for integrating private functions
     def major_organism(self):
         refseq_string = self.__refseq_masher_string()
         refseq_out = self.__refseq_masher_func(refseq_string)
-        major_org = self.__identify_organism(refseq_out)
+        species_list = self.__identify_organism(refseq_out)
 
-        '''Creating refseq_masher output string'''
-        output_string = 'Major reference organism is/are {}'.format(major_org)
+        #'''Creating refseq_masher output string'''
+        #output_string = 'Major reference organism is/are {}'.format(major_org)
 
-        return output_string
+        return species_list
