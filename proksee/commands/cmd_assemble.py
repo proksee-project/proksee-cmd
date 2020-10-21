@@ -121,4 +121,10 @@ def cli(ctx, forward, reverse, output_dir):
 
         assembly_database = AssemblyDatabase(
             "/home/CSCScience.ca/emarinier/projects/proksee-cmd/tests/data/fake_assembly_data.csv")
-        expert.evaluate_assembly(assembly_quality, assembly_database)
+
+        strategy = expert.evaluate_assembly(assembly_quality, assembly_database)
+        click.echo(strategy.report)
+
+        if not strategy.proceed:
+            click.echo("The assembly was unable to proceed.")
+            return

@@ -20,6 +20,8 @@ specific language governing permissions and limitations under the License.
 
 import scipy.stats as stats
 
+from proksee.assembly_strategy import AssemblyStrategy
+
 
 class ExpertSystem:
     """
@@ -55,15 +57,22 @@ class ExpertSystem:
 
     def evaluate_assembly(self, assembly_quality, assembly_database):
         """
+        Evaluates the assembly by comparing it to statistical information about similar assemblies.
+
         PARAMETERS
-            assembly_quality (AssemblyQuality): An object representing the quality of an assembly.
-            assembly_database (AssemblyDatabase): An object containing assembly statistics for various species.
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+
+        RETURN
+            strategy (AssemblyStrategy): the strategy for assembly
         """
 
         N50_LOWER_THRESHOLD = 0.20
         N50_UPPER_THRESHOLD = 0.80
 
         species_name = self.species.name
+        proceed = True
+        report = ""
 
         if assembly_database.contains(species_name):
 
@@ -75,19 +84,24 @@ class ExpertSystem:
             p = stats.norm.cdf(z)
 
             if N50_LOWER_THRESHOLD <= p <= N50_UPPER_THRESHOLD:
-                print("The N50 is comparable to similar assemblies.")
+                report += "The N50 is comparable to similar assemblies.\n"
 
             elif p < N50_LOWER_THRESHOLD:
-                print("The N50 is smaller than expected.")
-                print("We would except {0:.2%} of similar assemblies to have a smaller N50.".format(p))
+                proceed = False
+
+                report += "The N50 is smaller than expected.\n"
+                report += "We would except {0:.2%} of similar assemblies to have a smaller N50.\n".format(p)
 
             else:
                 p = 1 - p
-                print("The N50 is larger than expected.")
-                print("We would except {0:.2%} of similar assemblies to have a larger N50.".format(p))
+                proceed = False
+
+                report += "The N50 is larger than expected.\n"
+                report += "We would except {0:.2%} of similar assemblies to have a larger N50.\n".format(p)
 
         else:
+            proceed = False
 
-            print(self.species.name + " is not present in the database.")
+            report += self.species.name + " is not present in the database.\n"
 
-        return
+        return AssemblyStrategy(proceed, report)
