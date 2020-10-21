@@ -117,7 +117,4 @@ class OrganismDetection():
         refseq_out = self.__refseq_masher_func(refseq_string)
         species_list = self.__identify_organism(refseq_out)
 
-        #'''Creating refseq_masher output string'''
-        #output_string = 'Major reference organism is/are {}'.format(major_org)
-
         return species_list
