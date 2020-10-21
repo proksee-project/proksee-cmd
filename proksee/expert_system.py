@@ -3,10 +3,6 @@ Copyright Government of Canada 2020
 
 Written by:
 
-Arnab Saha Mandal
-    University of Manitoba
-    National Microbiology Laboratory, Public Health Agency of Canada
-
 Eric Marinier
     National Microbiology Laboratory, Public Health Agency of Canada
 
