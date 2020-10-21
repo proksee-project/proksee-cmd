@@ -64,6 +64,9 @@ class ExpertSystem:
             assembly_database (AssemblyDatabase): An object containing assembly statistics for various species.
         """
 
+        N50_LOWER_THRESHOLD = 0.20
+        N50_UPPER_THRESHOLD = 0.80
+
         species_name = self.species.name
 
         if assembly_database.contains(species_name):
@@ -75,12 +78,17 @@ class ExpertSystem:
             z = (n50 - n50_mean) / n50_std
             p = stats.norm.cdf(z)
 
-            if z > 0:
-                p = 1 - p
-                print("We expect {0:.0%} similar assemblies would have a greater N50.".format(p))
+            if N50_LOWER_THRESHOLD <= p <= N50_UPPER_THRESHOLD:
+                print("The N50 is comparable to similar assemblies.")
+
+            elif p < N50_LOWER_THRESHOLD:
+                print("The N50 is smaller than expected.")
+                print("We would except {0:.2%} of similar assemblies to have a smaller N50.".format(p))
 
             else:
-                print("We except {0:.2%} similar assemblies would have a smaller N50.".format(p))
+                p = 1 - p
+                print("The N50 is larger than expected.")
+                print("We would except {0:.2%} of similar assemblies to have a larger N50.".format(p))
 
         else:
 
