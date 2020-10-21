@@ -20,8 +20,8 @@ specific language governing permissions and limitations under the License.
 import os
 from pathlib import Path
 
-# Importing ReadFiltering class from read_quality.py
-from proksee.read_quality import ReadFiltering
+# Importing ReadFilterer class from read_filterer.py
+from proksee.read_filterer import ReadFilterer
 import subprocess
 import pytest
 
@@ -39,15 +39,15 @@ reverse1 = os.path.join(TEST_INPUT_DIR, 'NA12878_rev.fastq')
 # Using pacbio single read
 forward2 = os.path.join(TEST_INPUT_DIR, 'ATCC_MSA-1003_16S_5reads.fastq.gz')
 
-# Defining instances of ReadFiltering class
-read_filtering1 = ReadFiltering(forward1, reverse1, TEST_OUTPUT_DIR)
-read_filtering2 = ReadFiltering(forward2, None, TEST_OUTPUT_DIR)
+# Defining instances of ReadFilterer class
+read_filtering1 = ReadFilterer(forward1, reverse1, TEST_OUTPUT_DIR)
+read_filtering2 = ReadFilterer(forward2, None, TEST_OUTPUT_DIR)
 
 # Defining output filtered reads
 forward_filt = os.path.join(TEST_OUTPUT_DIR, 'fwd_filtered.fastq')
 reverse_filt = os.path.join(TEST_OUTPUT_DIR, 'rev_filtered.fastq')
 
-# Defining fastp expected commands for successful executions of ReadFiltering class methods
+# Defining fastp expected commands for successful executions of ReadFilterer class methods
 fastp_str1 = 'fastp -i ' + forward1 + ' -I ' + reverse1 + ' -o ' + forward_filt + ' -O ' + \
     reverse_filt + ' -j ' + JSON + ' -h ' + HTML
 fastp_str2 = 'fastp -i ' + forward2 + ' -o ' + forward_filt + ' -j ' + JSON + ' -h ' + HTML
@@ -58,33 +58,33 @@ class TestReadFilter():
 
     # Test for checking good fastp string
     def test_fastp_string1_good(self):
-        method_string_good = read_filtering1._ReadFiltering__fastp_string()
+        method_string_good = read_filtering1._ReadFilterer__fastp_string()
         assert fastp_str1 == method_string_good
 
     # Test for negating bad fastp string
     def test_fastp_string1_bad(self):
         fastp_str_bad = 'fastp -i ' + forward1
-        method_string_good = read_filtering1._ReadFiltering__fastp_string()
+        method_string_good = read_filtering1._ReadFilterer__fastp_string()
         assert fastp_str_bad != method_string_good
 
     # Test for fastp function with paired illumina reads
     def test_fastp_func1_good(self):
-        method_func_good = read_filtering1._ReadFiltering__fastp_func(fastp_str1)
+        method_func_good = read_filtering1._ReadFilterer__fastp_func(fastp_str1)
         assert fastp_func_good == method_func_good
 
     # Test for fastp function with incorrect parameters
     def test_fastp_func1_badparams(self):
         fastp_str_bad = 'fastp --incorrect params'
         with pytest.raises(subprocess.CalledProcessError):
-            assert read_filtering1._ReadFiltering__fastp_func(fastp_str_bad)
+            assert read_filtering1._ReadFilterer__fastp_func(fastp_str_bad)
 
     # Test for fastp function when fastp isn't installed
     def test_fastp_func1_badcommand(self):
         fastp_str_bad = 'conda deactivate && fastp -h'
         with pytest.raises(subprocess.CalledProcessError):
-            assert read_filtering1._ReadFiltering__fastp_func(fastp_str_bad)
+            assert read_filtering1._ReadFilterer__fastp_func(fastp_str_bad)
 
-    # Test for ReadFiltering class method integrating all methods
+    # Test for ReadFilterer class method integrating all methods
     def test_filter_read1_good(self):
         fastp_output_string_good = 'FASTP filtered reads ' + 'written to output directory'
         method_string = read_filtering1.filter_read()
@@ -93,21 +93,21 @@ class TestReadFilter():
     # Test for failed integrating method
     def test_filter_read1_bad(self):
         forward_bad = 'does_not_exist.fastq'
-        read_filtering_bad = ReadFiltering(forward_bad, None, TEST_OUTPUT_DIR)
+        read_filtering_bad = ReadFilterer(forward_bad, None, TEST_OUTPUT_DIR)
         with pytest.raises(subprocess.CalledProcessError):
             assert read_filtering_bad.filter_read()
 
     # Test for fastp string with single read
     def test_fastp_string2_good(self):
-        method_string_good = read_filtering2._ReadFiltering__fastp_string()
+        method_string_good = read_filtering2._ReadFilterer__fastp_string()
         assert fastp_str2 == method_string_good
 
     # Test for fastp function with single read
     def test_fastp_func2_good(self):
-        method_func_good = read_filtering2._ReadFiltering__fastp_func(fastp_str2)
+        method_func_good = read_filtering2._ReadFilterer__fastp_func(fastp_str2)
         assert fastp_func_good == method_func_good
 
-    # Test for ReadFiltering integrating method with single read
+    # Test for ReadFilterer integrating method with single read
     def test_filter_read2_good(self):
         fastp_output_string_good = 'FASTP filtered reads' + ' written to output directory'
         method_string = read_filtering2.filter_read()

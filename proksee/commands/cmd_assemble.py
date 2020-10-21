@@ -30,7 +30,7 @@ from proksee.assembly_database import AssemblyDatabase
 
 from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentify
-from proksee.read_quality import ReadFiltering
+from proksee.read_filterer import ReadFilterer
 from proksee.organism_detection import OrganismDetection
 from proksee.assembler import Assembler
 from proksee.expert_system import ExpertSystem
@@ -70,7 +70,7 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 3: Quality Check
         # Pass forward and reverse datasets to read filtering class
         # (with default filters)
-        read_filtering = ReadFiltering(forward, reverse, output_dir)
+        read_filtering = ReadFilterer(forward, reverse, output_dir)
         filtering = read_filtering.filter_read()
         click.echo(filtering)
 
