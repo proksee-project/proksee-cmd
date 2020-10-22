@@ -22,6 +22,8 @@ specific language governing permissions and limitations under the License.
 import os
 import subprocess
 
+from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
+
 
 # Defining read filtering class for filtering reads using fastp
 class ReadFilterer():
@@ -71,3 +73,9 @@ class ReadFilterer():
         output_string = fastp_func + ' written to output directory'
 
         return output_string
+
+    def summarize_quality(self):
+        json_file = os.path.join(self.output_dir, "fastp.json")
+        read_quality = parse_read_quality_from_fastp(json_file)
+
+        return read_quality

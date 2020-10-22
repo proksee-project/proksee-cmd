@@ -51,20 +51,38 @@ class ExpertSystem:
         """
         PARAMETERS
             read_quality (ReadQuality): A ReadQuality object encapsulating information about read quality.
+
+        RETURNS
+            strategy (AssemblyStrategy): An assembly strategy, based on the information about the reads.
         """
 
-        return
+        MIN_Q30_RATE = 0.80
+
+        proceed = True
+        report = ""
+
+        if read_quality.q30_rate < MIN_Q30_RATE:
+            proceed = False
+
+            report += "The read quality is too low.\n"
+            report += "The rate of Q30 bases is: " + str(read_quality.q30_rate) + "\n"
+
+        else:
+            report += "The read quality is acceptable.\n"
+
+        return AssemblyStrategy(proceed, report)
 
     def evaluate_assembly(self, assembly_quality, assembly_database):
         """
         Evaluates the assembly by comparing it to statistical information about similar assemblies.
 
         PARAMETERS
-            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
-            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+            assembly_quality (AssemblyQuality): An object representing the quality of an assembly.
+            assembly_database (AssemblyDatabase): An object containing assembly statistics for various species.
 
         RETURN
-            strategy (AssemblyStrategy): the strategy for assembly
+            strategy (AssemblyStrategy): The strategy for assembly, based on the information provided from a
+                previous assembly.
         """
 
         N50_LOWER_THRESHOLD = 0.20

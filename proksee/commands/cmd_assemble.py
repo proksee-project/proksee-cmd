@@ -72,6 +72,8 @@ def cli(ctx, forward, reverse, output_dir):
         # (with default filters)
         read_filtering = ReadFilterer(forward, reverse, output_dir)
         filtering = read_filtering.filter_read()
+        read_quality = filtering.summarize_quality()
+
         click.echo(filtering)
 
         '''The next steps are executed on filtered read/s'''
@@ -93,6 +95,15 @@ def cli(ctx, forward, reverse, output_dir):
         except Exception:
             raise click.UsageError('encountered errors running refseq_masher, \
                 this may have been caused by too small of file reads')
+
+        # Evaluate reads to determine assembly strategy.
+        expert = ExpertSystem(platform, species_list[0])
+        strategy = expert.evaluate_reads(read_quality)
+        click.echo(strategy.report)
+
+        if not strategy.proceed:
+            click.echo("The assembly was unable to proceed.")
+            return
 
         # Step 5: Assembly (Only skesa for now)
         # Pass forward and reverse filtered reads to assembler class
@@ -116,9 +127,7 @@ def cli(ctx, forward, reverse, output_dir):
         except Exception:
             raise click.UsageError("Encountered an error when evaluating the assembly.")
 
-        # Step 7: Expert System
-        expert = ExpertSystem(platform, species_list[0])
-
+        # Step 7: Slow Assembly
         assembly_database = AssemblyDatabase(
             "/home/CSCScience.ca/emarinier/projects/proksee-cmd/tests/data/fake_assembly_data.csv")
 
