@@ -39,8 +39,6 @@ from proksee.expert_system import ExpertSystem
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "tests", "data",
                              "fake_assembly_data.csv")
 
-from proksee.assembly_evaluator import AssemblyEvaluator
-
 
 @click.command('assemble',
                short_help='Assemble reads.')
