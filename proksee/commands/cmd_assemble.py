@@ -25,15 +25,19 @@ specific language governing permissions and limitations under the License.
 import click
 import os
 
+from pathlib import Path
+
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.assembly_database import AssemblyDatabase
-
 from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentify
 from proksee.read_filterer import ReadFilterer
 from proksee.organism_detection import OrganismDetection
 from proksee.assembler import Assembler
 from proksee.expert_system import ExpertSystem
+
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "tests", "data",
+                             "fake_assembly_data.csv")
 
 
 @click.command('assemble',
@@ -128,8 +132,7 @@ def cli(ctx, forward, reverse, output_dir):
             raise click.UsageError("Encountered an error when evaluating the assembly.")
 
         # Step 7: Slow Assembly
-        assembly_database = AssemblyDatabase(
-            "/home/CSCScience.ca/emarinier/projects/proksee-cmd/tests/data/fake_assembly_data.csv")
+        assembly_database = AssemblyDatabase(DATABASE_PATH)
 
         strategy = expert.evaluate_assembly(assembly_quality, assembly_database)
         click.echo(strategy.report)
