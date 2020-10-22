@@ -1,0 +1,4 @@
+Organism Name,Number of Contigs (m),Number of Contigs (s),Assembly Size (m),Assembly Size (s),N50 (m),N50 (s)
+Escherichia coli,120,30,5000000,300000,150000,40000
+Listeria monocytogenes,17,5,3090857,23000,543161,75000
+Staphylococcus aureus,4,3,2884032,250000,2000000,2000000

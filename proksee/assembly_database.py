@@ -18,6 +18,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import os
 import csv
 
 
@@ -50,6 +51,9 @@ class AssemblyDatabase:
 
         self.database = {}
         self.database_filename = database_filename
+
+        if not os.path.exists(database_filename):
+            raise FileNotFoundError(str(database_filename) + " not found!")
 
         self.load()
 
