@@ -56,16 +56,16 @@ class ExpertSystem:
             strategy (AssemblyStrategy): An assembly strategy, based on the information about the reads.
         """
 
-        MIN_Q30_RATE = 0.80
+        MIN_Q20_RATE = 0.60
 
         proceed = True
         report = ""
 
-        if read_quality.q30_rate < MIN_Q30_RATE:
+        if read_quality.q20_rate < MIN_Q20_RATE:
             proceed = False
 
             report += "The read quality is too low.\n"
-            report += "The rate of Q30 bases is: " + str(read_quality.q30_rate) + "\n"
+            report += "The rate of Q20 bases is: " + str(read_quality.q20_rate) + "\n"
 
         else:
             report += "The read quality is acceptable.\n"

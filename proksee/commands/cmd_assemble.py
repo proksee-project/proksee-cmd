@@ -70,11 +70,11 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 3: Quality Check
         # Pass forward and reverse datasets to read filtering class
         # (with default filters)
-        read_filtering = ReadFilterer(forward, reverse, output_dir)
-        filtering = read_filtering.filter_read()
-        read_quality = filtering.summarize_quality()
+        read_filterer = ReadFilterer(forward, reverse, output_dir)
+        output = read_filterer.filter_read()
+        read_quality = read_filterer.summarize_quality()
 
-        click.echo(filtering)
+        click.echo(output)
 
         '''The next steps are executed on filtered read/s'''
         forward_filtered = os.path.join(output_dir, 'fwd_filtered.fastq')
