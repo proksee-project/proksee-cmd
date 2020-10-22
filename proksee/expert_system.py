@@ -25,12 +25,12 @@ from proksee.assembly_strategy import AssemblyStrategy
 
 class ExpertSystem:
     """
-    A class representing an expert system for evaluating assembly data and deciding how to perform a high-quality
-    assembly.
+    A class representing an expert system for evaluating read or assembly data and deciding how to perform a
+        high-quality assembly.
 
     ATTRIBUTES
         platform (str): The sequence platform used to sequence the reads.
-        species (species): The species to make decisions about.
+        species (species): The species to be assembled.
     """
 
     def __init__(self, platform, species):
@@ -39,7 +39,7 @@ class ExpertSystem:
 
         PARAMETERS
             platform (str): The sequence platform used to sequence the reads.
-            species (species): The species to make decisions about.
+            species (species): The species to be assembled.
         """
 
         self.platform = platform
@@ -50,7 +50,7 @@ class ExpertSystem:
     def evaluate_reads(self, read_quality):
         """
         PARAMETERS
-            read_quality (ReadQuality): A ReadQuality object encapsulating information about read quality.
+            read_quality (ReadQuality): An object encapsulating information about read quality.
 
         RETURNS
             strategy (AssemblyStrategy): An assembly strategy, based on the information about the reads.
@@ -74,14 +74,15 @@ class ExpertSystem:
 
     def evaluate_assembly(self, assembly_quality, assembly_database):
         """
-        Evaluates the assembly by comparing it to statistical information about similar assemblies.
+        Evaluates the assembly by comparing it to statistical information in an assembly database about similar
+            assemblies.
 
         PARAMETERS
             assembly_quality (AssemblyQuality): An object representing the quality of an assembly.
             assembly_database (AssemblyDatabase): An object containing assembly statistics for various species.
 
         RETURN
-            strategy (AssemblyStrategy): The strategy for assembly, based on the information provided from a
+            strategy (AssemblyStrategy): A strategy for assembly, based on the information provided from a
                 previous assembly.
         """
 

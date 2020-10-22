@@ -31,7 +31,7 @@ class AssemblyDatabase:
     """
 
     # Constants for different assembly statistics. These are used both to identify position in parsing,
-    # and as unique identifiers in dictionaries.
+    # and as unique identifiers for dictionaries.
     SPECIES = 0
     CONTIGS_MEAN = 1
     CONTIGS_STD = 2
@@ -56,13 +56,16 @@ class AssemblyDatabase:
     def load(self):
         """
         Loads the database.
+
+        POST
+            The database will be loaded from file and accessible by this object.
         """
 
         self.database = {}
 
         with open(self.database_filename) as csv_file:
             reader = csv.reader(csv_file, delimiter=',')
-            next(reader)  # skip headers
+            next(reader)  # skip header
 
             for row in reader:
                 species = row[self.SPECIES]
@@ -83,10 +86,10 @@ class AssemblyDatabase:
         Returns whether or not the database contains the species.
 
         PARAMETERS
-            species (str): The species, represented as a string.
+            species (str): the species, represented as a string
 
         RETURNS
-            present (bool): Whether or not the species is represented in the database.
+            present (bool): whether or not the species is represented in the database
         """
 
         present = True if species in self.database else False
@@ -95,21 +98,21 @@ class AssemblyDatabase:
 
     def get_contigs_mean(self, species):
         """
-        Returns the mean contigs for a given species.
+        Returns the mean contigs for assemblies of the given species.
 
         RETURNS
-            contigs_mean (int): The mean number of contigs or None if the species does not exist in the database.
+            contigs_mean (int): the mean number of contigs or None if the species does not exist in the database
         """
 
         return int(self.database[species][self.CONTIGS_MEAN]) if species in self.database else None
 
     def get_contigs_std(self, species):
         """
-        Returns the standard deviation of contigs for a given species.
+        Returns the standard deviation of contigs for assemblies of the given species.
 
         RETURNS
-            contigs_std (float): The standard deviation of contigs or None if the species does not exist in the
-                database.
+            contigs_std (float): the standard deviation of contigs or None if the species does not exist in the
+                database
         """
 
         return float(self.database[species][self.CONTIGS_STD]) if species in self.database else None
@@ -119,7 +122,7 @@ class AssemblyDatabase:
         Returns the mean assembly size for a given species.
 
         RETURNS
-            assembly_size_mean (int): The mean assembly size or None if the species does not exist in the database.
+            assembly_size_mean (int): the mean assembly size or None if the species does not exist in the database
         """
 
         return int(self.database[species][self.ASSEMBLY_SIZE_MEAN]) if species in self.database else None
@@ -129,28 +132,28 @@ class AssemblyDatabase:
         Returns the standard deviation of the assembly size for a given species.
 
         RETURNS
-            assembly_size_std (float): The standard deviation of assembly size or None if the species does not exist
-                in the database.
+            assembly_size_std (float): the standard deviation of assembly size or None if the species does not exist
+                in the database
         """
 
         return float(self.database[species][self.ASSEMBLY_SIZE_STD]) if species in self.database else None
 
     def get_n50_mean(self, species):
         """
-        Returns the mean n50 for a given species.
+        Returns the mean n50 for assemblies of the given species.
 
         RETURNS
-            n50_mean (int): The mean n50 or None if the species does not exist in the database.
+            n50_mean (int): the mean n50 or None if the species does not exist in the database
         """
 
         return int(self.database[species][self.N50_MEAN]) if species in self.database else None
 
     def get_n50_std(self, species):
         """
-        Returns the standard deviation of the n50 for a given species.
+        Returns the standard deviation of the n50 for assemblies of the given species.
 
         RETURNS
-            n50_std (float): The standard deviation of the n50 or None if the species does not exist in the database.
+            n50_std (float): the standard deviation of the n50 or None if the species does not exist in the database
         """
 
         return float(self.database[species][self.N50_STD]) if species in self.database else None

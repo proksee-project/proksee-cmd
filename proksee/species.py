@@ -19,11 +19,11 @@ specific language governing permissions and limitations under the License.
 
 class Species:
     """
-    A class representing a species.
+    A class representing a biological species.
 
     ATTRIBUTES
-        name (str): The name of the species.
-        confidence (flat): The confidence of the species assignment, between 0 and 1.
+        name (str): the name of the species
+        confidence (float): the confidence of the species assignment, between 0 and 1
     """
 
     def __init__(self, name, confidence):
@@ -31,8 +31,8 @@ class Species:
         Initializes the species.
 
         PARAMETERS
-            name (str): The name of the species.
-            confidence (flat): The confidence of the species assignment, between 0 and 1.
+            name (str): the name of the species.
+            confidence (float): the confidence of the species assignment, between 0 and 1
         """
 
         self.name = name

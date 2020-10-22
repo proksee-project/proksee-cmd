@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 
 class ReadQuality:
     """
-    A class representing the quality of reads.
+    A class containing a variety of read quality metrics.
 
     ATTRIBUTES:
 

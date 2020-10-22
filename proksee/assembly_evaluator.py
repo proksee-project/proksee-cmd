@@ -24,10 +24,10 @@ from proksee.parser.assembly_quality_parser import parse_assembly_quality_from_q
 
 class AssemblyEvaluator:
     """
-    A class representing the quality of an assembly.
+    A class representing an evaluation tool for evaluating an assembly.
 
     ATTRIBUTES
-        contigs_filename (str): the filename of the contigs file
+        contigs_filename (str): the filename of the contigs
         output_directory (str): the filename of the output directory
         quast_directory (str): the filename of the quast directory, which is a subdirectory of output_directory
     """
@@ -55,7 +55,8 @@ class AssemblyEvaluator:
         Evaluates the quality of an assembly.
 
         RETURNS
-            assembly_quality (AssemblyQuality): an AssemblyQuality object containing measures of the assembly
+            assembly_quality (AssemblyQuality): an AssemblyQuality object containing measures of quality for the
+                assembly
 
         POST
             The program QUAST will be run to evaluate the assembly.
@@ -67,8 +68,6 @@ class AssemblyEvaluator:
             related files.
 
             The file located at self.quast_report_filename will contain a QUAST report if execution was successful.
-
-
         """
 
         if not os.path.exists(self.contigs_filename):
@@ -82,7 +81,6 @@ class AssemblyEvaluator:
             subprocess.check_call(quast_command, shell=True, stdout=quast_out, stderr=quast_err)
             print("Evaluated the quality of the assembled contigs.")
 
-            # Create an AssemblyQuality object to return.
             assembly_quality = parse_assembly_quality_from_quast_report(self.quast_report_filename)
 
         except subprocess.CalledProcessError as error:

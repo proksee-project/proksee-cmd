@@ -19,11 +19,11 @@ specific language governing permissions and limitations under the License.
 
 class AssemblyStrategy:
     """
-    This class represents the an assembly strategy to follow.
+    This class represents the strategy for an assembly to follow.
 
     ATTRIBUTES
         proceed (bool): whether or not to proceed with assembly
-        report (str): a long text report
+        report (str): a plain-language report of the assembly strategy
     """
 
     def __init__(self, proceed, report):
