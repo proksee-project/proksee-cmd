@@ -97,3 +97,41 @@ class TestExpertSystem:
         strategy = system.evaluate_assembly(assembly_quality, database)
 
         assert not strategy.proceed
+
+    def test_evaluate_assembly_too_big(self):
+        """
+        Tests the expert system's evaluation of an assembly that seems to be too large.
+        """
+
+        PLATFORM = "Illumina"
+        SPECIES = Species("Staphylococcus aureus", 1.0)
+        QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "big_assembly.tsv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
+                                     "fake_assembly_data.csv")
+
+        system = ExpertSystem(PLATFORM, SPECIES)
+        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
+        database = AssemblyDatabase(DATABASE_PATH)
+
+        strategy = system.evaluate_assembly(assembly_quality, database)
+
+        assert not strategy.proceed
+
+    def test_evaluate_assembly_missing_species(self):
+        """
+        Tests the expert system's evaluation when a species is not present in the database.
+        """
+
+        PLATFORM = "Illumina"
+        SPECIES = Species("ABCDEFG987", 1.0)
+        QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
+                                     "fake_assembly_data.csv")
+
+        system = ExpertSystem(PLATFORM, SPECIES)
+        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
+        database = AssemblyDatabase(DATABASE_PATH)
+
+        strategy = system.evaluate_assembly(assembly_quality, database)
+
+        assert not strategy.proceed
