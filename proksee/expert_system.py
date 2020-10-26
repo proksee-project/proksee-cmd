@@ -22,6 +22,7 @@ import scipy.stats as stats
 
 from proksee.assembly_strategy import AssemblyStrategy
 from proksee.skesa_assembler import SkesaAssembler
+from proksee.spades_assembler import SpadesAssembler
 
 
 class ExpertSystem:
@@ -135,6 +136,6 @@ class ExpertSystem:
 
             report += self.species.name + " is not present in the database.\n"
 
-        assembler = SkesaAssembler(self.forward, self.reverse, self.output_directory)
+        assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
 
         return AssemblyStrategy(proceed, assembler, report)

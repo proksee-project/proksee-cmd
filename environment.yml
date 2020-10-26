@@ -10,6 +10,7 @@ dependencies:
 - refseq_masher
 - quast
 - scipy
+- spades
 - pip
 - pip:
   - .

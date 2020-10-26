@@ -37,8 +37,16 @@ class Assembler(ABC):
         log_filename (str): the filename of the logfile
     """
 
-    # Defining __init__ method with reads and output directory parameters
     def __init__(self, forward, reverse, output_dir):
+        """
+        Initializes the abstract assembler.
+
+        ATTRIBUTES:
+            forward (str): the filename of the forward reads
+            reverse (str): the filename of the reverse reads
+            output_dir (str): the filename of the output directory
+        """
+
         self.forward = forward
         self.reverse = reverse
         self.output_dir = output_dir
@@ -47,4 +55,11 @@ class Assembler(ABC):
 
     @abstractmethod
     def assemble(self):
+        """
+        Assembles the reads.
+
+        POST
+            If completed without error, the reads will be assembled and output will be written to the output directory.
+        """
+
         pass
