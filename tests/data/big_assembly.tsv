@@ -1,0 +1,22 @@
+Assembly	skesa.out
+# contigs (>= 0 bp)	1
+# contigs (>= 1000 bp)	1
+# contigs (>= 5000 bp)	1
+# contigs (>= 10000 bp)	1
+# contigs (>= 25000 bp)	1
+# contigs (>= 50000 bp)	1
+Total length (>= 0 bp)	10000000
+Total length (>= 1000 bp)	10000000
+Total length (>= 5000 bp)	10000000
+Total length (>= 10000 bp)	10000000
+Total length (>= 25000 bp)	10000000
+Total length (>= 50000 bp)	10000000
+# contigs	1
+Largest contig	10000000
+Total length	10000000
+GC (%)	30.74
+N50	10000000
+N75	10000000
+L50	1
+L75	1
+# N's per 100 kbp	0.00

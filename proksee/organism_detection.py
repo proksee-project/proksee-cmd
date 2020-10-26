@@ -1,9 +1,14 @@
-'''
-Copyright:
+"""
+Copyright Government of Canada 2020
 
-University of Manitoba & National Microbiology Laboratory, Canada, 2020
+Written by:
 
-Written by: Arnab Saha Mandal
+Arnab Saha Mandal
+    University of Manitoba
+    National Microbiology Laboratory, Public Health Agency of Canada
+
+Eric Marinier
+    National Microbiology Laboratory, Public Health Agency of Canada
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License. You may obtain a copy of the
@@ -15,11 +20,14 @@ Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-'''
+"""
 
 import os
 import subprocess
 from collections import defaultdict
+
+
+from proksee.species import Species
 
 
 # Defining organism detection class for identifying reference genome organism
@@ -96,19 +104,22 @@ class OrganismDetection():
             pass
 
             '''Appending major reference organism/s name/s and probability values to output string'''
-        org_string = ''
-        for key, value in probability.items():
-            org_string += key + ' (probability : ' + str(value) + '), '
 
-        return org_string
+        species_list = []
+
+        for key, value in probability.items():
+            name = key
+            confidence = value
+            species_list.append(Species(name, confidence))
+
+        species_list.sort(key=lambda x: x.confidence, reverse=True)
+
+        return species_list
 
     # Method for integrating private functions
     def major_organism(self):
         refseq_string = self.__refseq_masher_string()
         refseq_out = self.__refseq_masher_func(refseq_string)
-        major_org = self.__identify_organism(refseq_out)
+        species_list = self.__identify_organism(refseq_out)
 
-        '''Creating refseq_masher output string'''
-        output_string = 'Major reference organism is/are {}'.format(major_org)
-
-        return output_string
+        return species_list

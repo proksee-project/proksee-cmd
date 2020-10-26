@@ -25,22 +25,19 @@ specific language governing permissions and limitations under the License.
 import click
 import os
 
-# import fastq check
-from proksee.utilities import FastqCheck
-
-# import platform detection
-from proksee.platform_identify import PlatformIdentify
-
-# import quality module
-from proksee.read_quality import ReadFiltering
-
-# import organism detection
-from proksee.organism_detection import OrganismDetection
-
-# import assembler
-from proksee.assembler import Assembler
+from pathlib import Path
 
 from proksee.assembly_evaluator import AssemblyEvaluator
+from proksee.assembly_database import AssemblyDatabase
+from proksee.utilities import FastqCheck
+from proksee.platform_identify import PlatformIdentify
+from proksee.read_filterer import ReadFilterer
+from proksee.organism_detection import OrganismDetection
+from proksee.assembler import Assembler
+from proksee.expert_system import ExpertSystem
+
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "tests", "data",
+                             "fake_assembly_data.csv")
 
 
 @click.command('assemble',
@@ -77,9 +74,11 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 3: Quality Check
         # Pass forward and reverse datasets to read filtering class
         # (with default filters)
-        read_filtering = ReadFiltering(forward, reverse, output_dir)
-        filtering = read_filtering.filter_read()
-        click.echo(filtering)
+        read_filterer = ReadFilterer(forward, reverse, output_dir)
+        output = read_filterer.filter_read()
+        read_quality = read_filterer.summarize_quality()
+
+        click.echo(output)
 
         '''The next steps are executed on filtered read/s'''
         forward_filtered = os.path.join(output_dir, 'fwd_filtered.fastq')
@@ -93,13 +92,22 @@ def cli(ctx, forward, reverse, output_dir):
         # and return most frequently occuring reference genome
         organism_identify = OrganismDetection(forward_filtered, reverse_filtered, output_dir)
         try:
-            major_organism = organism_identify.major_organism()
-            click.echo(major_organism)
+            species_list = organism_identify.major_organism()
+            click.echo("Major reference organism is/are {}".format(species_list))
 
             '''Catch exception if input reads are too short for reference genome estimation'''
         except Exception:
             raise click.UsageError('encountered errors running refseq_masher, \
                 this may have been caused by too small of file reads')
+
+        # Evaluate reads to determine assembly strategy.
+        expert = ExpertSystem(platform, species_list[0])
+        strategy = expert.evaluate_reads(read_quality)
+        click.echo(strategy.report)
+
+        if not strategy.proceed:
+            click.echo("The assembly was unable to proceed.")
+            return
 
         # Step 5: Assembly (Only skesa for now)
         # Pass forward and reverse filtered reads to assembler class
@@ -118,8 +126,17 @@ def cli(ctx, forward, reverse, output_dir):
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
 
         try:
-            report = assembly_evaluator.evaluate()
-            print(report)
+            assembly_quality = assembly_evaluator.evaluate()
 
         except Exception:
             raise click.UsageError("Encountered an error when evaluating the assembly.")
+
+        # Step 7: Slow Assembly
+        assembly_database = AssemblyDatabase(DATABASE_PATH)
+
+        strategy = expert.evaluate_assembly(assembly_quality, assembly_database)
+        click.echo(strategy.report)
+
+        if not strategy.proceed:
+            click.echo("The assembly was unable to proceed.")
+            return

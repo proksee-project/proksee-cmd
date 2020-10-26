@@ -1,9 +1,8 @@
-'''
-Copyright:
+"""
+Copyright Government of Canada 2020
 
-University of Manitoba & National Microbiology Laboratory, Canada, 2020
-
-Written by: Arnab Saha Mandal
+Written by: Eric Marinier, National Microbiology Laboratory,
+            Public Health Agency of Canada
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License. You may obtain a copy of the
@@ -15,57 +14,51 @@ Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-'''
-
-import os
-import subprocess
+"""
 
 
-# Defining read filtering class for filtering reads using fastp
-class ReadFiltering():
+class ReadQuality:
+    """
+    A class containing a variety of read quality metrics.
 
-    # Defining __init__ method with reads and output directory parameters
-    def __init__(self, forward, reverse, output_dir):
-        self.forward = forward
-        self.reverse = reverse
-        self.output_dir = output_dir
+    ATTRIBUTES:
 
-    # Creating fastp command to be executed
-    def __fastp_string(self):
-        '''specifying fixed output files for fastp'''
-        out1 = os.path.join(self.output_dir, 'fwd_filtered.fastq')
-        out2 = os.path.join(self.output_dir, 'rev_filtered.fastq')
-        json = os.path.join(self.output_dir, 'fastp.json')
-        html = os.path.join(self.output_dir, 'fastp.html')
+            total_reads (int): the total number of reads
+            total_bases (int): the total number of bases in all reads
+            q20_bases (int): the number of bases with quality 20 or greater
+            q30_bases (int): the number of bases with quality 30 or greater
+            q20_rate (float): the rate of bases with quality 20 or greater
+            q30_rate (float): the rate of bases with quality 30 or greater
+            forward_median_length (float): median length of the forward reads
+            reverse_median_length (float): median length of the reverse reads
+            gc_content (float): the GC-ratio of the bases in all reads
+    """
 
-        '''Creating fastp command based on absence/presence of reverse read'''
-        if self.reverse is None:
-            fastp_str = 'fastp -i ' + self.forward + ' -o ' + \
-                out1 + ' -j ' + json + ' -h ' + html
-        else:
-            fastp_str = 'fastp -i ' + self.forward + ' -I ' + self.reverse + \
-                ' -o ' + out1 + ' -O ' + out2 + ' -j ' + json + ' -h ' + html
+    def __init__(self, total_reads, total_bases, q20_bases, q30_bases, forward_median_length, reverse_median_length,
+                 gc_content):
+        """
+        Initializes the ReadQuality object.
 
-        return fastp_str
+        PARAMETERS:
 
-    # Method for running fastp command
-    def __fastp_func(self, fastp_str):
-        '''Creating fastp log file'''
-        fastp_log = open(os.path.join(self.output_dir, 'fastp.log'), 'w+')
+            total_reads (int): the total number of reads
+            total_bases (int): the total number of bases in all reads
+            q20_bases (int): the number of bases with quality 20 or greater
+            q30_bases (int): the number of bases with quality 30 or greater
+            forward_median_length (float): median length of the forward reads
+            reverse_median_length (float): median length of the reverse reads
+            gc_content (float): the GC-ratio of the bases in all reads
+        """
 
-        '''Running fastp as a subprocess module. Raising error otherwise'''
-        try:
-            subprocess.check_call(fastp_str, shell=True, stderr=fastp_log)
-            success = 'FASTP filtered reads'
-        except subprocess.CalledProcessError as e:
-            raise e
+        self.total_reads = total_reads
+        self.total_bases = total_bases
+        self.q20_bases = q20_bases
+        self.q30_bases = q30_bases
 
-        return success
+        self.q20_rate = q20_bases / total_bases
+        self.q30_rate = q30_bases / total_bases
 
-    # Method for integrating private functions
-    def filter_read(self):
-        fastp_string = self.__fastp_string()
-        fastp_func = self.__fastp_func(fastp_string)
-        output_string = fastp_func + ' written to output directory'
+        self.forward_median_length = forward_median_length
+        self.reverse_median_length = reverse_median_length
 
-        return output_string
+        self.gc_content = gc_content

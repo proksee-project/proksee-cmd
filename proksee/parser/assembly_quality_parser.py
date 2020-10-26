@@ -17,7 +17,8 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
-from proksee.assembly_evaluator import AssemblyQuality
+
+from proksee.assembly_quality import AssemblyQuality
 
 
 def parse_assembly_quality_from_quast_report(quast_filename):

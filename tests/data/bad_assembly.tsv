@@ -1,0 +1,22 @@
+Assembly	skesa.out
+# contigs (>= 0 bp)	3336
+# contigs (>= 1000 bp)	473
+# contigs (>= 5000 bp)	3
+# contigs (>= 10000 bp)	0
+# contigs (>= 25000 bp)	0
+# contigs (>= 50000 bp)	0
+Total length (>= 0 bp)	2112401
+Total length (>= 1000 bp)	744430
+Total length (>= 5000 bp)	16472
+Total length (>= 10000 bp)	0
+Total length (>= 25000 bp)	0
+Total length (>= 50000 bp)	0
+# contigs	1609
+Largest contig	5948
+Total length	1548836
+GC (%)	30.74
+N50	972
+N75	723
+L50	504
+L75	968
+# N's per 100 kbp	0.00

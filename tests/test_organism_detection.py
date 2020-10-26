@@ -81,40 +81,39 @@ class TestReforg():
 
     # Test for expected major organism
     def test_identify_organism_good(self):
-        method_string = organism_identify_good._OrganismDetection__identify_organism(refseq_out_good)
-        expected_string = 'Chirostoma humboldtianum (probability : 0.2), Crenimugil crenilabis (probability : 0.2),' + \
-            ' Choaspes benjaminii (probability : 0.2), Engaeus sericatus (probability : 0.2),' + \
-            ' Euastacus spinifer (probability : 0.2), '
-        assert expected_string == method_string
+        result = organism_identify_good._OrganismDetection__identify_organism(refseq_out_good)
+        expected_string = '[Chirostoma humboldtianum (0.2), Crenimugil crenilabis (0.2),' + \
+            ' Choaspes benjaminii (0.2), Engaeus sericatus (0.2),' + ' Euastacus spinifer (0.2)]'
+        assert expected_string == str(result)
 
     # Test for identifying major organism from incorrect intermediate file
     def test_identify_organism_invalid(self):
         refseq_out_bad = os.path.join(TEST_INPUT_DIR, 'random1')
-        method_string = organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
-        expected_string = ''
-        assert expected_string == method_string
+        result = organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
+        expected_string = '[]'
+        assert expected_string == str(result)
 
     # Idenfying major organism from custom file with one organism as output
     def test_identify_organism_drafted_solo(self):
         refseq_out_bad = os.path.join(TEST_INPUT_DIR, 'refseq_fancysnakes1.out')
-        method_string = organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
-        expected_string = 'Asmodeus Poisonteeth (probability : 0.29), '
-        assert expected_string == method_string
+        result = organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
+        expected_string = '[Asmodeus Poisonteeth (0.29)]'
+        assert expected_string == str(result)
 
     # Identifying major organism from custom file with two organisms as output
     def test_identify_organism_drafted_tie(self):
         refseq_out_bad = os.path.join(TEST_INPUT_DIR, 'refseq_fancysnakes2.out')
-        method_string = organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
-        expected_string = 'Madame White (probability : 0.22), Master Viper (probability : 0.22), '
-        assert expected_string == method_string
+        result = organism_identify_good._OrganismDetection__identify_organism(refseq_out_bad)
+        expected_string = '[Madame White (0.22), Master Viper (0.22)]'
+        assert expected_string == str(result)
 
     # Test for OrganismDetection class method integrating all methods
     def test_major_organism_good(self):
-        refseq_output_string = 'Major reference organism is/are Chirostoma humboldtianum (probability : 0.2), ' + \
-            'Crenimugil crenilabis (probability : 0.2), Choaspes benjaminii (probability : 0.2), ' + \
-            'Engaeus sericatus (probability : 0.2), Euastacus spinifer (probability : 0.2), '
-        method_string = organism_identify_good.major_organism()
-        assert refseq_output_string == method_string
+        refseq_output_string = '[Chirostoma humboldtianum (0.2), ' + \
+            'Crenimugil crenilabis (0.2), Choaspes benjaminii (0.2), ' + \
+            'Engaeus sericatus (0.2), Euastacus spinifer (0.2)]'
+        result = organism_identify_good.major_organism()
+        assert refseq_output_string == str(result)
 
     # Test for failed integrating method
     def test_major_organism_bad(self):
