@@ -33,8 +33,6 @@ class Assembler(ABC):
         forward (str): the filename of the forward reads
         reverse (str): the filename of the reverse reads
         output_dir (str): the filename of the output directory
-        contigs_filename (str): the filename of the assembled contigs
-        log_filename (str): the filename of the logfile
     """
 
     def __init__(self, forward, reverse, output_dir):
@@ -50,8 +48,6 @@ class Assembler(ABC):
         self.forward = forward
         self.reverse = reverse
         self.output_dir = output_dir
-        self.contigs_filename = ""
-        self.log_filename = ""
 
     @abstractmethod
     def assemble(self):
