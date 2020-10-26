@@ -21,6 +21,7 @@ specific language governing permissions and limitations under the License.
 import scipy.stats as stats
 
 from proksee.assembly_strategy import AssemblyStrategy
+from proksee.skesa_assembler import SkesaAssembler
 
 
 class ExpertSystem:
@@ -29,31 +30,40 @@ class ExpertSystem:
         high-quality assembly.
 
     ATTRIBUTES
-        platform (str): The sequence platform used to sequence the reads.
-        species (species): The species to be assembled.
+        platform (str): the sequence platform used to sequence the reads
+        species (species): the species to be assembled
+        forward (str): the filename of the forward reads to be assembled
+        reverse (str): the filename of the reverse reads to be assembled
+        output_directory (str): the directory to use for program output
     """
 
-    def __init__(self, platform, species):
+    def __init__(self, platform, species, forward, reverse, output_directory):
         """
         Initializes the expert system.
 
         PARAMETERS
-            platform (str): The sequence platform used to sequence the reads.
-            species (species): The species to be assembled.
+            platform (str): the sequence platform used to sequence the reads
+            species (species): the species to be assembled
+            forward (str): the filename of the forward reads to be assembled
+            reverse (str): the filename of the reverse reads to be assembled
+            output_directory (str): the directory to use for program output
         """
 
         self.platform = platform
         self.species = species
+        self.forward = forward
+        self.reverse = reverse
+        self.output_directory = output_directory
 
         return
 
-    def evaluate_reads(self, read_quality):
+    def create_fast_assembly_strategy(self, read_quality):
         """
         PARAMETERS
-            read_quality (ReadQuality): An object encapsulating information about read quality.
+            read_quality (ReadQuality): an object encapsulating information about read quality
 
         RETURNS
-            strategy (AssemblyStrategy): An assembly strategy, based on the information about the reads.
+            strategy (AssemblyStrategy): an assembly strategy, based on the information about the reads
         """
 
         MIN_Q20_RATE = 0.60
@@ -70,20 +80,22 @@ class ExpertSystem:
         else:
             report += "The read quality is acceptable.\n"
 
-        return AssemblyStrategy(proceed, report)
+        assembler = SkesaAssembler(self.forward, self.reverse, self.output_directory)
 
-    def evaluate_assembly(self, assembly_quality, assembly_database):
+        return AssemblyStrategy(proceed, assembler, report)
+
+    def create_full_assembly_strategy(self, assembly_quality, assembly_database):
         """
         Evaluates the assembly by comparing it to statistical information in an assembly database about similar
             assemblies.
 
         PARAMETERS
-            assembly_quality (AssemblyQuality): An object representing the quality of an assembly.
-            assembly_database (AssemblyDatabase): An object containing assembly statistics for various species.
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
 
         RETURN
-            strategy (AssemblyStrategy): A strategy for assembly, based on the information provided from a
-                previous assembly.
+            strategy (AssemblyStrategy): a strategy for assembly, based on the information provided from a
+                previous assembly
         """
 
         N50_LOWER_THRESHOLD = 0.20
@@ -123,4 +135,6 @@ class ExpertSystem:
 
             report += self.species.name + " is not present in the database.\n"
 
-        return AssemblyStrategy(proceed, report)
+        assembler = SkesaAssembler(self.forward, self.reverse, self.output_directory)
+
+        return AssemblyStrategy(proceed, assembler, report)

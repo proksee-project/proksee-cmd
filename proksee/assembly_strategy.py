@@ -23,17 +23,20 @@ class AssemblyStrategy:
 
     ATTRIBUTES
         proceed (bool): whether or not to proceed with assembly
+        assembler (Assembler): the assembler to use when assembling
         report (str): a plain-language report of the assembly strategy
     """
 
-    def __init__(self, proceed, report):
+    def __init__(self, proceed, assembler, report):
         """
         Initialize the AssemblyStrategy object.
 
         PARAMETERS
             proceed(bool): whether or not to proceed with assembly
+            assembler (Assembler): the assembler to use when assembling
             report (str): a plain-language report of the assembly strategy
         """
 
         self.proceed = proceed
+        self.assembler = assembler
         self.report = report
