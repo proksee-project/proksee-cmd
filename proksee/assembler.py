@@ -22,6 +22,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import os
 from abc import ABC, abstractmethod
 
 
@@ -44,6 +45,9 @@ class Assembler(ABC):
             reverse (str): the filename of the reverse reads
             output_dir (str): the filename of the output directory
         """
+
+        if not os.path.isfile(forward):
+            raise FileNotFoundError(str(forward) + " not found.")
 
         self.forward = forward
         self.reverse = reverse

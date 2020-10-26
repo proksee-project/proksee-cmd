@@ -38,8 +38,8 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
-        REVERSE = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         FASTP_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_reads.json")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
@@ -56,8 +56,8 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
-        REVERSE = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         FASTP_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_reads.json")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
@@ -74,8 +74,8 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
-        REVERSE = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
                                      "fake_assembly_data.csv")
@@ -95,8 +95,8 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
-        REVERSE = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
                                      "fake_assembly_data.csv")
@@ -116,8 +116,8 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
-        REVERSE = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "big_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
                                      "fake_assembly_data.csv")
@@ -137,8 +137,8 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("ABCDEFG987", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
-        REVERSE = os.path.join(INPUT_DIR, "PLACEHOLDER.fastq")
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
                                      "fake_assembly_data.csv")
