@@ -112,8 +112,8 @@ def cli(ctx, forward, reverse, output_dir):
         assembler = strategy.assembler
 
         try:
-            assembly = assembler.assemble()
-            print(assembly)
+            output = assembler.assemble()
+            click.echo(output)
 
             '''Catch exception if input reads are short for skesa kmer estimation'''
         except Exception:
@@ -141,6 +141,12 @@ def cli(ctx, forward, reverse, output_dir):
 
         click.echo("Performing full assembly.")
         assembler = strategy.assembler
-        assembler.assemble()
+
+        try:
+            output = assembler.assemble()
+            click.echo(output)
+
+        except Exception:
+            raise click.UsageError("Encountered an error when assembling the reads.")
 
         click.echo("Complete.")

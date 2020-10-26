@@ -54,6 +54,9 @@ class Assembler(ABC):
         """
         Assembles the reads.
 
+        RETURNS
+            output (str): an output string reporting the result back to the user
+
         POST
             If completed without error, the reads will be assembled and output will be written to the output directory.
         """
