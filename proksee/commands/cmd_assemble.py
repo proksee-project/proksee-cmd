@@ -36,8 +36,8 @@ from proksee.organism_detection import OrganismDetection
 from proksee.assembler import Assembler
 from proksee.expert_system import ExpertSystem
 
-DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "tests", "data",
-                             "fake_assembly_data.csv")
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "database",
+                             "database.csv")
 
 
 @click.command('assemble',

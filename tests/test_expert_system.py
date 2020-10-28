@@ -68,8 +68,8 @@ class TestExpertSystem:
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -87,8 +87,8 @@ class TestExpertSystem:
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -106,8 +106,8 @@ class TestExpertSystem:
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "big_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -125,8 +125,8 @@ class TestExpertSystem:
         PLATFORM = "Illumina"
         SPECIES = Species("ABCDEFG987", 1.0)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)

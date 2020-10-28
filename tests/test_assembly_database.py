@@ -30,18 +30,31 @@ class TestAssemblyDatabase:
         Tests the database with a valid file.
         """
 
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
         SPECIES = "Staphylococcus aureus"
 
         database = AssemblyDatabase(DATABASE_PATH)
 
-        assert database.get_n50_mean(SPECIES) == 2000000
-        assert database.get_n50_std(SPECIES) == 2000000
-        assert database.get_assembly_size_mean(SPECIES) == 2884032
-        assert database.get_assembly_size_std(SPECIES) == 250000
-        assert database.get_contigs_mean(SPECIES) == 4
-        assert database.get_contigs_std(SPECIES) == 3
+        assert database.get_n50_05(SPECIES) == 32344
+        assert database.get_n50_20(SPECIES) == 91861
+        assert database.get_n50_80(SPECIES) == 371530
+        assert database.get_n50_95(SPECIES) == 1055547
+
+        assert database.get_contig_05(SPECIES) == 12
+        assert database.get_contig_20(SPECIES) == 26
+        assert database.get_contig_80(SPECIES) == 86
+        assert database.get_contig_95(SPECIES) == 227
+
+        assert database.get_l50_05(SPECIES) == 2
+        assert database.get_l50_20(SPECIES) == 3
+        assert database.get_l50_80(SPECIES) == 10
+        assert database.get_l50_95(SPECIES) == 27
+
+        assert database.get_length_05(SPECIES) == 2706770
+        assert database.get_length_20(SPECIES) == 2763701
+        assert database.get_length_80(SPECIES) == 2886993
+        assert database.get_length_95(SPECIES) == 2945015
 
         return
 
