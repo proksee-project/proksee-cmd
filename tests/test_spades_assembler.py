@@ -29,38 +29,49 @@ OUTPUT_DIR = TEST_INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "ou
 class TestSpadesAssembler:
 
     def test_assemble_good_reads(self):
+        """
+        Tests the SPAdes assembler class when reads are good.
+        """
 
         forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
         reverse_filename = None
-        contigs_filename = os.path.join(OUTPUT_DIR, "contigs.fasta")
+
+        assembler = SpadesAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+        contigs_filename = assembler.get_contigs_filename()
 
         # Remove previous assembly if it exists:
         if os.path.isfile(contigs_filename):
             os.remove(contigs_filename)
 
-        assembler = SpadesAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
         assembler.assemble()
 
         # Check that the assembly produced a contigs file.
         assert os.path.isfile(contigs_filename)
 
     def test_assemble_good_paired_reads(self):
+        """
+        Tests the SPAdes assembler class when paired reads are good.
+        """
 
         forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
         reverse_filename = os.path.join(INPUT_DIR, "NA12878_rev.fastq")
-        contigs_filename = os.path.join(OUTPUT_DIR, "contigs.fasta")
+
+        assembler = SpadesAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+        contigs_filename = assembler.get_contigs_filename()
 
         # Remove previous assembly if it exists:
         if os.path.isfile(contigs_filename):
             os.remove(contigs_filename)
 
-        assembler = SpadesAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
         assembler.assemble()
 
         # Check that the assembly produced a contigs file.
         assert os.path.isfile(contigs_filename)
 
     def test_assemble_missing_reads(self):
+        """
+        Tests the SPAdes assembler class when reads are missing.
+        """
 
         forward_filename = os.path.join(INPUT_DIR, "missing.file")
         reverse_filename = None

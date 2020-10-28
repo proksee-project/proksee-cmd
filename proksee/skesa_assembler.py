@@ -33,9 +33,12 @@ class SkesaAssembler(Assembler):
     A class representing a Skesa assembler.
     """
 
+    DIRECTORY_NAME = "skesa"
+
     # Defining __init__ method with reads and output directory parameters
     def __init__(self, forward, reverse, output_dir):
-        super().__init__(forward, reverse, output_dir)
+        skesa_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
+        super().__init__(forward, reverse, skesa_directory)
 
     # Creating skesa command to be executed
     def __skesa_string(self):
@@ -52,6 +55,10 @@ class SkesaAssembler(Assembler):
 
     # Method for running skesa command
     def __skesa_func(self, skesa_str):
+
+        if not os.path.isdir(self.output_dir):
+            os.mkdir(self.output_dir)
+
         # Creating skesa output and log files
         self.contigs_filename = os.path.join(self.output_dir, 'skesa.out')
         skesa_out = open(self.contigs_filename, 'w+')
@@ -69,8 +76,28 @@ class SkesaAssembler(Assembler):
         return success
 
     def assemble(self):
+        """
+        Assembles the reads.
+
+        RETURNS
+            output (str): an output string reporting the result back to the user
+
+        POST
+            If completed without error, the output will be placed in the output directory.
+        """
+
         skesa_string = self.__skesa_string()
         skesa_func = self.__skesa_func(skesa_string)
         output_string = skesa_func + ' written to output directory'
 
         return output_string
+
+    def get_contigs_filename(self):
+        """
+        Gets the filename of the assembled contigs.
+
+        RETURNS
+            filename (str): the filename of the assembled contigs
+        """
+
+        return self.contigs_filename

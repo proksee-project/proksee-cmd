@@ -62,7 +62,17 @@ class Assembler(ABC):
             output (str): an output string reporting the result back to the user
 
         POST
-            If completed without error, the reads will be assembled and output will be written to the output directory.
+            If completed without error, the output will be placed in the output directory.
         """
 
+        pass
+
+    @abstractmethod
+    def get_contigs_filename(self):
+        """
+        Gets the filename of the assembled contigs.
+
+        RETURNS
+            filename (str): the filename of the assembled contigs
+        """
         pass

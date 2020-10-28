@@ -29,8 +29,21 @@ class SpadesAssembler(Assembler):
     A class representing a SPAdes assembler.
     """
 
+    DIRECTORY_NAME = "spades"
+
     def __init__(self, forward, reverse, output_dir):
-        super().__init__(forward, reverse, output_dir)
+        """
+        Initializes the SPAdes assembler.
+
+        PARAMETERS
+            forward (str): the filename of the forward reads
+            reverse (str): the filename of the reverse reads
+            output_dir (str): the filename of the output directory
+        """
+        spades_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
+        super().__init__(forward, reverse, spades_directory)
+
+        self.contigs_filename = os.path.join(spades_directory, "contigs.fasta")
 
     def run_spades(self):
         """
@@ -39,6 +52,9 @@ class SpadesAssembler(Assembler):
         POST
             The assembled reads will be written into the output directory.
         """
+
+        if not os.path.isdir(self.output_dir):
+            os.mkdir(self.output_dir)
 
         output_filename = os.path.join(self.output_dir, 'spades.o')
         output = open(output_filename, 'w+')
@@ -69,10 +85,20 @@ class SpadesAssembler(Assembler):
             output (str): an output string reporting the result back to the user
 
         POST
-            If completed without error, the reads will be assembled and output will be written to the output directory.
+            If completed without error, the output will be placed in the output directory.
         """
 
         self.run_spades()
 
         output = "Assembled reads using SPAdes."
         return output
+
+    def get_contigs_filename(self):
+        """
+        Gets the filename of the assembled contigs.
+
+        RETURNS
+            filename (str): the filename of the assembled contigs
+        """
+
+        return self.contigs_filename
