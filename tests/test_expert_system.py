@@ -25,6 +25,9 @@ from proksee.parser.assembly_quality_parser import parse_assembly_quality_from_q
 from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
 from proksee.species import Species
 
+INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
+OUTPUT_DIR = TEST_INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
+
 
 class TestExpertSystem:
 
@@ -35,12 +38,14 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         FASTP_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_reads.json")
 
-        system = ExpertSystem(PLATFORM, SPECIES)
+        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         read_quality = parse_read_quality_from_fastp(FASTP_PATH)
 
-        strategy = system.evaluate_reads(read_quality)
+        strategy = system.create_fast_assembly_strategy(read_quality)
 
         assert strategy.proceed
 
@@ -51,12 +56,14 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         FASTP_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_reads.json")
 
-        system = ExpertSystem(PLATFORM, SPECIES)
+        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         read_quality = parse_read_quality_from_fastp(FASTP_PATH)
 
-        strategy = system.evaluate_reads(read_quality)
+        strategy = system.create_fast_assembly_strategy(read_quality)
 
         assert not strategy.proceed
 
@@ -67,15 +74,17 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
                                      "fake_assembly_data.csv")
 
-        system = ExpertSystem(PLATFORM, SPECIES)
+        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = system.evaluate_assembly(assembly_quality, database)
+        strategy = system.create_full_assembly_strategy(assembly_quality, database)
 
         assert strategy.proceed
 
@@ -86,15 +95,17 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
                                      "fake_assembly_data.csv")
 
-        system = ExpertSystem(PLATFORM, SPECIES)
+        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = system.evaluate_assembly(assembly_quality, database)
+        strategy = system.create_full_assembly_strategy(assembly_quality, database)
 
         assert not strategy.proceed
 
@@ -105,15 +116,17 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("Staphylococcus aureus", 1.0)
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "big_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
                                      "fake_assembly_data.csv")
 
-        system = ExpertSystem(PLATFORM, SPECIES)
+        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = system.evaluate_assembly(assembly_quality, database)
+        strategy = system.create_full_assembly_strategy(assembly_quality, database)
 
         assert not strategy.proceed
 
@@ -124,14 +137,16 @@ class TestExpertSystem:
 
         PLATFORM = "Illumina"
         SPECIES = Species("ABCDEFG987", 1.0)
+        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
                                      "fake_assembly_data.csv")
 
-        system = ExpertSystem(PLATFORM, SPECIES)
+        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = system.evaluate_assembly(assembly_quality, database)
+        strategy = system.create_full_assembly_strategy(assembly_quality, database)
 
         assert not strategy.proceed
