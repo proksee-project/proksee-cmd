@@ -40,6 +40,9 @@ class SkesaAssembler(Assembler):
         skesa_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
         super().__init__(forward, reverse, skesa_directory)
 
+        self.contigs_filename = os.path.join(skesa_directory, 'contigs.fasta')
+        self.log_filename = os.path.join(skesa_directory, 'skesa.log')
+
     # Creating skesa command to be executed
     def __skesa_string(self):
         if self.reverse is None:
@@ -60,10 +63,7 @@ class SkesaAssembler(Assembler):
             os.mkdir(self.output_dir)
 
         # Creating skesa output and log files
-        self.contigs_filename = os.path.join(self.output_dir, 'skesa.out')
         skesa_out = open(self.contigs_filename, 'w+')
-
-        self.log_filename = os.path.join(self.output_dir, 'skesa.log')
         skesa_log = open(self.log_filename, 'w+')
 
         '''Running skesa as a subprocess module. Raising error otherwise'''

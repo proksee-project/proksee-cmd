@@ -149,4 +149,9 @@ def cli(ctx, forward, reverse, output_dir):
         except Exception:
             raise click.UsageError("Encountered an error when assembling the reads.")
 
+        # Move final assembled contigs to the main level of the output directory and rename it.
+        contigs_filename = assembler.get_contigs_filename()
+        contigs_new_filename = os.path.join(output_dir, "contigs.fasta")
+        os.rename(contigs_filename, contigs_new_filename)  # moves and renames
+
         click.echo("Complete.")
