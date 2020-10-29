@@ -36,25 +36,25 @@ class TestAssemblyDatabase:
 
         database = AssemblyDatabase(DATABASE_PATH)
 
-        assert database.get_n50_05(SPECIES) == 32344
-        assert database.get_n50_20(SPECIES) == 91861
-        assert database.get_n50_80(SPECIES) == 371530
-        assert database.get_n50_95(SPECIES) == 1055547
+        assert database.get_n50_quantile(SPECIES, 0.05) == 32344
+        assert database.get_n50_quantile(SPECIES, 0.20) == 91861
+        assert database.get_n50_quantile(SPECIES, 0.80) == 371530
+        assert database.get_n50_quantile(SPECIES, 0.95) == 1055547
 
-        assert database.get_contig_05(SPECIES) == 12
-        assert database.get_contig_20(SPECIES) == 26
-        assert database.get_contig_80(SPECIES) == 86
-        assert database.get_contig_95(SPECIES) == 227
+        assert database.get_contig_quantile(SPECIES, 0.05) == 12
+        assert database.get_contig_quantile(SPECIES, 0.20) == 26
+        assert database.get_contig_quantile(SPECIES, 0.80) == 86
+        assert database.get_contig_quantile(SPECIES, 0.95) == 227
 
-        assert database.get_l50_05(SPECIES) == 2
-        assert database.get_l50_20(SPECIES) == 3
-        assert database.get_l50_80(SPECIES) == 10
-        assert database.get_l50_95(SPECIES) == 27
+        assert database.get_l50_quantile(SPECIES, 0.05) == 2
+        assert database.get_l50_quantile(SPECIES, 0.20) == 3
+        assert database.get_l50_quantile(SPECIES, 0.80) == 10
+        assert database.get_l50_quantile(SPECIES, 0.95) == 27
 
-        assert database.get_length_05(SPECIES) == 2706770
-        assert database.get_length_20(SPECIES) == 2763701
-        assert database.get_length_80(SPECIES) == 2886993
-        assert database.get_length_95(SPECIES) == 2945015
+        assert database.get_length_quantile(SPECIES, 0.05) == 2706770
+        assert database.get_length_quantile(SPECIES, 0.20) == 2763701
+        assert database.get_length_quantile(SPECIES, 0.80) == 2886993
+        assert database.get_length_quantile(SPECIES, 0.95) == 2945015
 
         return
 

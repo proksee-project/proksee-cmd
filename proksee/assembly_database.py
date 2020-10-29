@@ -51,6 +51,12 @@ class AssemblyDatabase:
     LENGTH_80 = 15
     LENGTH_95 = 16
 
+    # Constants acting as dictionary keys for accessing the database information.
+    N50_QUANTILES = "N50_QUANTILES"
+    CONTIGS_QUANTILES = "CONTIGS_QUANTILES"
+    L50_QUANTILES = "L50_QUANTILES"
+    LENGTH_QUANTILES = "LENGTH_QUANTILES"
+
     def __init__(self, database_filename):
         """
         Initializes the database.
@@ -84,23 +90,36 @@ class AssemblyDatabase:
             for row in reader:
                 species = row[self.SPECIES]
 
+                n50_quantiles = {}
+                contigs_quantiles = {}
+                l50_quantiles = {}
+                length_quantiles = {}
+
+                n50_quantiles[0.05] = row[self.N50_05]
+                n50_quantiles[0.20] = row[self.N50_20]
+                n50_quantiles[0.80] = row[self.N50_80]
+                n50_quantiles[0.95] = row[self.N50_95]
+
+                contigs_quantiles[0.05] = row[self.CONTIG_05]
+                contigs_quantiles[0.20] = row[self.CONTIG_20]
+                contigs_quantiles[0.80] = row[self.CONTIG_80]
+                contigs_quantiles[0.95] = row[self.CONTIG_95]
+
+                l50_quantiles[0.05] = row[self.L50_05]
+                l50_quantiles[0.20] = row[self.L50_20]
+                l50_quantiles[0.80] = row[self.L50_80]
+                l50_quantiles[0.95] = row[self.L50_95]
+
+                length_quantiles[0.05] = row[self.LENGTH_05]
+                length_quantiles[0.20] = row[self.LENGTH_20]
+                length_quantiles[0.80] = row[self.LENGTH_80]
+                length_quantiles[0.95] = row[self.LENGTH_95]
+
                 information = {
-                    self.N50_05: row[self.N50_05],
-                    self.N50_20: row[self.N50_20],
-                    self.N50_80: row[self.N50_80],
-                    self.N50_95: row[self.N50_95],
-                    self.CONTIG_05: row[self.CONTIG_05],
-                    self.CONTIG_20: row[self.CONTIG_20],
-                    self.CONTIG_80: row[self.CONTIG_80],
-                    self.CONTIG_95: row[self.CONTIG_95],
-                    self.L50_05: row[self.L50_05],
-                    self.L50_20: row[self.L50_20],
-                    self.L50_80: row[self.L50_80],
-                    self.L50_95: row[self.L50_95],
-                    self.LENGTH_05: row[self.LENGTH_05],
-                    self.LENGTH_20: row[self.LENGTH_20],
-                    self.LENGTH_80: row[self.LENGTH_80],
-                    self.LENGTH_95: row[self.LENGTH_95]
+                    self.N50_QUANTILES: n50_quantiles,
+                    self.CONTIGS_QUANTILES: contigs_quantiles,
+                    self.L50_QUANTILES: l50_quantiles,
+                    self.LENGTH_QUANTILES: length_quantiles
                 }
 
                 self.database[species] = information
@@ -120,162 +139,70 @@ class AssemblyDatabase:
 
         return present
 
-    def get_n50_05(self, species):
+    def get_n50_quantile(self, species, value):
         """
-        Returns the 0.05 quantile for the N50.
+        Returns the N50 quantile for the specified species and quantile value.
 
         RETURNS
-            n50_05 (int): the 0.05 quantile for the N50
+            quantile (int): the N50 quantile for the specified species and quantile value
         """
 
-        return int(self.database[species][self.N50_05]) if species in self.database else None
+        if species in self.database:
+            n50_quantiles = self.database[species][self.N50_QUANTILES]
+            quantile = int(n50_quantiles[value])
 
-    def get_n50_20(self, species):
+        else:
+            quantile = None
+
+        return quantile
+
+    def get_contig_quantile(self, species, value):
         """
-        Returns the 0.20 quantile for the N50.
+        Returns the number of contigs quantile for the specified species and quantile value.
 
         RETURNS
-            n50_20 (int): the 0.20 quantile for the N50
+            quantile (int): the number of contigs quantile for the specified species and quantile value
         """
 
-        return int(self.database[species][self.N50_20]) if species in self.database else None
+        if species in self.database:
+            contigs_quantiles = self.database[species][self.CONTIGS_QUANTILES]
+            quantile = int(contigs_quantiles[value])
 
-    def get_n50_80(self, species):
+        else:
+            quantile = None
+
+        return quantile
+
+    def get_l50_quantile(self, species, value):
         """
-        Returns the 0.80 quantile for the N50.
+        Returns the L50 quantile for the specified species and quantile value.
 
         RETURNS
-            n50_80 (int): the 0.80 quantile for the N50
+            quantile (int): the L50 quantile for the specified species and quantile value
         """
 
-        return int(self.database[species][self.N50_80]) if species in self.database else None
+        if species in self.database:
+            l50_quantiles = self.database[species][self.L50_QUANTILES]
+            quantile = int(l50_quantiles[value])
 
-    def get_n50_95(self, species):
+        else:
+            quantile = None
+
+        return quantile
+
+    def get_length_quantile(self, species, value):
         """
-        Returns the 0.95 quantile for the N50.
+        Returns the assembly length quantile for the specified species and quantile value.
 
         RETURNS
-            n50_95 (int): the 0.95 quantile for the N50
+            quantile (int): the assembly length quantile for the specified species and quantile value
         """
 
-        return int(self.database[species][self.N50_95]) if species in self.database else None
+        if species in self.database:
+            length_quantiles = self.database[species][self.LENGTH_QUANTILES]
+            quantile = int(length_quantiles[value])
 
-    def get_contig_05(self, species):
-        """
-        Returns the 0.05 quantile for the number of contigs.
+        else:
+            quantile = None
 
-        RETURNS
-            contig_05 (int): the 0.05 quantile for the number of contigs
-        """
-
-        return int(self.database[species][self.CONTIG_05]) if species in self.database else None
-
-    def get_contig_20(self, species):
-        """
-        Returns the 0.20 quantile for the number of contigs.
-
-        RETURNS
-            contig_20 (int): the 0.20 quantile for the number of contigs
-        """
-
-        return int(self.database[species][self.CONTIG_20]) if species in self.database else None
-
-    def get_contig_80(self, species):
-        """
-        Returns the 0.80 quantile for the number of contigs.
-
-        RETURNS
-            contig_80 (int): the 0.80 quantile for the number of contigs
-        """
-
-        return int(self.database[species][self.CONTIG_80]) if species in self.database else None
-
-    def get_contig_95(self, species):
-        """
-        Returns the 0.95 quantile for the number of contigs.
-
-        RETURNS
-            contig_95 (int): the 0.95 quantile for the number of contigs
-        """
-
-        return int(self.database[species][self.CONTIG_95]) if species in self.database else None
-
-    def get_l50_05(self, species):
-        """
-        Returns the 0.05 quantile for the L50.
-
-        RETURNS
-            L50_05 (int): the 0.05 quantile for the L50
-        """
-
-        return int(self.database[species][self.L50_05]) if species in self.database else None
-
-    def get_l50_20(self, species):
-        """
-        Returns the 0.20 quantile for the L50.
-
-        RETURNS
-            L50_20 (int): the 0.20 quantile for the L50
-        """
-
-        return int(self.database[species][self.L50_20]) if species in self.database else None
-
-    def get_l50_80(self, species):
-        """
-        Returns the 0.80 quantile for the L50.
-
-        RETURNS
-            L50_80 (int): the 0.80 quantile for the L50
-        """
-
-        return int(self.database[species][self.L50_80]) if species in self.database else None
-
-    def get_l50_95(self, species):
-        """
-        Returns the 0.95 quantile for the L50.
-
-        RETURNS
-            L50_95 (int): the 0.95 quantile for the L50
-        """
-
-        return int(self.database[species][self.L50_95]) if species in self.database else None
-
-    def get_length_05(self, species):
-        """
-        Returns the 0.05 quantile for the assembly length.
-
-        RETURNS
-            length_05 (int): the 0.05 quantile for the assembly length
-        """
-
-        return int(self.database[species][self.LENGTH_05]) if species in self.database else None
-
-    def get_length_20(self, species):
-        """
-        Returns the 0.20 quantile for the assembly length.
-
-        RETURNS
-            length_20 (int): the 0.20 quantile for the assembly length
-        """
-
-        return int(self.database[species][self.LENGTH_20]) if species in self.database else None
-
-    def get_length_80(self, species):
-        """
-        Returns the 0.80 quantile for the assembly length.
-
-        RETURNS
-            length_80 (int): the 0.80 quantile for the assembly length
-        """
-
-        return int(self.database[species][self.LENGTH_80]) if species in self.database else None
-
-    def get_length_95(self, species):
-        """
-        Returns the 0.95 quantile for the assembly length.
-
-        RETURNS
-            length_95 (int): the 0.95 quantile for the assembly length
-        """
-
-        return int(self.database[species][self.LENGTH_95]) if species in self.database else None
+        return quantile

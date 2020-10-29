@@ -104,8 +104,8 @@ class ExpertSystem:
         if assembly_database.contains(species_name):
 
             n50 = assembly_quality.n50
-            n50_20 = assembly_database.get_n50_20(species_name)
-            n50_80 = assembly_database.get_n50_80(species_name)
+            n50_20 = assembly_database.get_n50_quantile(species_name, 0.20)
+            n50_80 = assembly_database.get_n50_quantile(species_name, 0.80)
 
             if n50_20 <= n50 <= n50_80:
                 report += "The N50 is comparable to similar assemblies.\n"
