@@ -58,6 +58,22 @@ class TestAssemblyDatabase:
 
         return
 
+    def test_missing_quantiles(self):
+        """
+        Tests the database by requesting a missing quantiles.
+        """
+
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
+        SPECIES = "Staphylococcus aureus"
+
+        database = AssemblyDatabase(DATABASE_PATH)
+
+        assert database.get_n50_quantile(SPECIES, 0.499) is None
+        assert database.get_contig_quantile(SPECIES, 0.501) is None
+        assert database.get_l50_quantile(SPECIES, 0.707) is None
+        assert database.get_length_quantile(SPECIES, 0.454) is None
+
     def test_missing_database_file(self):
         """
         Tests the database with a missing file.

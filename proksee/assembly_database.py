@@ -145,11 +145,12 @@ class AssemblyDatabase:
 
         RETURNS
             quantile (int): the N50 quantile for the specified species and quantile value
+                returns None if the species on quantile is missing
         """
 
         if species in self.database:
             n50_quantiles = self.database[species][self.N50_QUANTILES]
-            quantile = int(n50_quantiles[value])
+            quantile = int(n50_quantiles[value]) if value in n50_quantiles else None
 
         else:
             quantile = None
@@ -162,11 +163,12 @@ class AssemblyDatabase:
 
         RETURNS
             quantile (int): the number of contigs quantile for the specified species and quantile value
+                returns None if the species on quantile is missing
         """
 
         if species in self.database:
             contigs_quantiles = self.database[species][self.CONTIGS_QUANTILES]
-            quantile = int(contigs_quantiles[value])
+            quantile = int(contigs_quantiles[value]) if value in contigs_quantiles else None
 
         else:
             quantile = None
@@ -179,11 +181,12 @@ class AssemblyDatabase:
 
         RETURNS
             quantile (int): the L50 quantile for the specified species and quantile value
+                returns None if the species on quantile is missing
         """
 
         if species in self.database:
             l50_quantiles = self.database[species][self.L50_QUANTILES]
-            quantile = int(l50_quantiles[value])
+            quantile = int(l50_quantiles[value]) if value in l50_quantiles else None
 
         else:
             quantile = None
@@ -196,11 +199,12 @@ class AssemblyDatabase:
 
         RETURNS
             quantile (int): the assembly length quantile for the specified species and quantile value
+                returns None if the species on quantile is missing
         """
 
         if species in self.database:
             length_quantiles = self.database[species][self.LENGTH_QUANTILES]
-            quantile = int(length_quantiles[value])
+            quantile = int(length_quantiles[value]) if value in length_quantiles else None
 
         else:
             quantile = None
