@@ -18,8 +18,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-import scipy.stats as stats
-
 from proksee.assembly_strategy import AssemblyStrategy
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
@@ -99,9 +97,6 @@ class ExpertSystem:
                 previous assembly
         """
 
-        N50_LOWER_THRESHOLD = 0.20
-        N50_UPPER_THRESHOLD = 0.80
-
         species_name = self.species.name
         proceed = True
         report = ""
@@ -109,27 +104,21 @@ class ExpertSystem:
         if assembly_database.contains(species_name):
 
             n50 = assembly_quality.n50
-            n50_mean = assembly_database.get_n50_mean(species_name)
-            n50_std = assembly_database.get_n50_std(species_name)
+            n50_20 = assembly_database.get_n50_quantile(species_name, 0.20)
+            n50_80 = assembly_database.get_n50_quantile(species_name, 0.80)
 
-            z = (n50 - n50_mean) / n50_std
-            p = stats.norm.cdf(z)
-
-            if N50_LOWER_THRESHOLD <= p <= N50_UPPER_THRESHOLD:
+            if n50_20 <= n50 <= n50_80:
                 report += "The N50 is comparable to similar assemblies.\n"
 
-            elif p < N50_LOWER_THRESHOLD:
+            elif n50 < n50_20:
                 proceed = False
 
-                report += "The N50 is smaller than expected.\n"
-                report += "We would except {0:.2%} of similar assemblies to have a smaller N50.\n".format(p)
+                report += "The N50 is smaller than expected: {}\n".format(n50)
 
             else:
-                p = 1 - p
                 proceed = False
 
-                report += "The N50 is larger than expected.\n"
-                report += "We would except {0:.2%} of similar assemblies to have a larger N50.\n".format(p)
+                report += "The N50 is larger than expected: {}\n".format(n50)
 
         else:
             proceed = False

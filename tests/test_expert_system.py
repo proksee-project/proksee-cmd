@@ -77,8 +77,8 @@ class TestExpertSystem:
         FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
         REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -98,8 +98,8 @@ class TestExpertSystem:
         FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
         REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -119,8 +119,8 @@ class TestExpertSystem:
         FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
         REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "big_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -140,8 +140,8 @@ class TestExpertSystem:
         FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
         REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)

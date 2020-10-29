@@ -30,20 +30,49 @@ class TestAssemblyDatabase:
         Tests the database with a valid file.
         """
 
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data",
-                                     "fake_assembly_data.csv")
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
         SPECIES = "Staphylococcus aureus"
 
         database = AssemblyDatabase(DATABASE_PATH)
 
-        assert database.get_n50_mean(SPECIES) == 2000000
-        assert database.get_n50_std(SPECIES) == 2000000
-        assert database.get_assembly_size_mean(SPECIES) == 2884032
-        assert database.get_assembly_size_std(SPECIES) == 250000
-        assert database.get_contigs_mean(SPECIES) == 4
-        assert database.get_contigs_std(SPECIES) == 3
+        assert database.get_n50_quantile(SPECIES, 0.05) == 32344
+        assert database.get_n50_quantile(SPECIES, 0.20) == 91861
+        assert database.get_n50_quantile(SPECIES, 0.80) == 371530
+        assert database.get_n50_quantile(SPECIES, 0.95) == 1055547
+
+        assert database.get_contig_quantile(SPECIES, 0.05) == 12
+        assert database.get_contig_quantile(SPECIES, 0.20) == 26
+        assert database.get_contig_quantile(SPECIES, 0.80) == 86
+        assert database.get_contig_quantile(SPECIES, 0.95) == 227
+
+        assert database.get_l50_quantile(SPECIES, 0.05) == 2
+        assert database.get_l50_quantile(SPECIES, 0.20) == 3
+        assert database.get_l50_quantile(SPECIES, 0.80) == 10
+        assert database.get_l50_quantile(SPECIES, 0.95) == 27
+
+        assert database.get_length_quantile(SPECIES, 0.05) == 2706770
+        assert database.get_length_quantile(SPECIES, 0.20) == 2763701
+        assert database.get_length_quantile(SPECIES, 0.80) == 2886993
+        assert database.get_length_quantile(SPECIES, 0.95) == 2945015
 
         return
+
+    def test_missing_quantiles(self):
+        """
+        Tests the database by requesting a missing quantiles.
+        """
+
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                     "database.csv")
+        SPECIES = "Staphylococcus aureus"
+
+        database = AssemblyDatabase(DATABASE_PATH)
+
+        assert database.get_n50_quantile(SPECIES, 0.499) is None
+        assert database.get_contig_quantile(SPECIES, 0.501) is None
+        assert database.get_l50_quantile(SPECIES, 0.707) is None
+        assert database.get_length_quantile(SPECIES, 0.454) is None
 
     def test_missing_database_file(self):
         """

@@ -34,12 +34,28 @@ class AssemblyDatabase:
     # Constants for different assembly statistics. These are used both to identify position in parsing,
     # and as unique identifiers for dictionaries.
     SPECIES = 0
-    CONTIGS_MEAN = 1
-    CONTIGS_STD = 2
-    ASSEMBLY_SIZE_MEAN = 3
-    ASSEMBLY_SIZE_STD = 4
-    N50_MEAN = 5
-    N50_STD = 6
+    N50_05 = 1  # the 0.05 quantile of the N50
+    N50_20 = 2  # the 0.20 quantile of the N50
+    N50_80 = 3
+    N50_95 = 4
+    CONTIG_05 = 5   # the 0.05 quantile of the number of contigs
+    CONTIG_20 = 6   # the 0.20 quantile of the number of contigs
+    CONTIG_80 = 7
+    CONTIG_95 = 8
+    L50_05 = 9   # the 0.05 quantile of the L50
+    L50_20 = 10  # the 0.20 quantile of the L50
+    L50_80 = 11
+    L50_95 = 12
+    LENGTH_05 = 13  # the 0.05 quantile of the assembly length
+    LENGTH_20 = 14  # the 0.20 quantile of the assembly length
+    LENGTH_80 = 15
+    LENGTH_95 = 16
+
+    # Constants acting as dictionary keys for accessing the database information.
+    N50_QUANTILES = "N50_QUANTILES"
+    CONTIGS_QUANTILES = "CONTIGS_QUANTILES"
+    L50_QUANTILES = "L50_QUANTILES"
+    LENGTH_QUANTILES = "LENGTH_QUANTILES"
 
     def __init__(self, database_filename):
         """
@@ -74,13 +90,36 @@ class AssemblyDatabase:
             for row in reader:
                 species = row[self.SPECIES]
 
+                n50_quantiles = {}
+                contigs_quantiles = {}
+                l50_quantiles = {}
+                length_quantiles = {}
+
+                n50_quantiles[0.05] = row[self.N50_05]
+                n50_quantiles[0.20] = row[self.N50_20]
+                n50_quantiles[0.80] = row[self.N50_80]
+                n50_quantiles[0.95] = row[self.N50_95]
+
+                contigs_quantiles[0.05] = row[self.CONTIG_05]
+                contigs_quantiles[0.20] = row[self.CONTIG_20]
+                contigs_quantiles[0.80] = row[self.CONTIG_80]
+                contigs_quantiles[0.95] = row[self.CONTIG_95]
+
+                l50_quantiles[0.05] = row[self.L50_05]
+                l50_quantiles[0.20] = row[self.L50_20]
+                l50_quantiles[0.80] = row[self.L50_80]
+                l50_quantiles[0.95] = row[self.L50_95]
+
+                length_quantiles[0.05] = row[self.LENGTH_05]
+                length_quantiles[0.20] = row[self.LENGTH_20]
+                length_quantiles[0.80] = row[self.LENGTH_80]
+                length_quantiles[0.95] = row[self.LENGTH_95]
+
                 information = {
-                    self.CONTIGS_MEAN: row[self.CONTIGS_MEAN],
-                    self.CONTIGS_STD: row[self.CONTIGS_STD],
-                    self.ASSEMBLY_SIZE_MEAN: row[self.ASSEMBLY_SIZE_MEAN],
-                    self.ASSEMBLY_SIZE_STD: row[self.ASSEMBLY_SIZE_STD],
-                    self.N50_MEAN: row[self.N50_MEAN],
-                    self.N50_STD: row[self.N50_STD]
+                    self.N50_QUANTILES: n50_quantiles,
+                    self.CONTIGS_QUANTILES: contigs_quantiles,
+                    self.L50_QUANTILES: l50_quantiles,
+                    self.LENGTH_QUANTILES: length_quantiles
                 }
 
                 self.database[species] = information
@@ -100,64 +139,74 @@ class AssemblyDatabase:
 
         return present
 
-    def get_contigs_mean(self, species):
+    def get_n50_quantile(self, species, value):
         """
-        Returns the mean contigs for assemblies of the given species.
+        Returns the N50 quantile for the specified species and quantile value.
 
         RETURNS
-            contigs_mean (int): the mean number of contigs or None if the species does not exist in the database
+            quantile (int): the N50 quantile for the specified species and quantile value
+                returns None if the species on quantile is missing
         """
 
-        return int(self.database[species][self.CONTIGS_MEAN]) if species in self.database else None
+        if species in self.database:
+            n50_quantiles = self.database[species][self.N50_QUANTILES]
+            quantile = int(n50_quantiles[value]) if value in n50_quantiles else None
 
-    def get_contigs_std(self, species):
+        else:
+            quantile = None
+
+        return quantile
+
+    def get_contig_quantile(self, species, value):
         """
-        Returns the standard deviation of contigs for assemblies of the given species.
+        Returns the number of contigs quantile for the specified species and quantile value.
 
         RETURNS
-            contigs_std (float): the standard deviation of contigs or None if the species does not exist in the
-                database
+            quantile (int): the number of contigs quantile for the specified species and quantile value
+                returns None if the species on quantile is missing
         """
 
-        return float(self.database[species][self.CONTIGS_STD]) if species in self.database else None
+        if species in self.database:
+            contigs_quantiles = self.database[species][self.CONTIGS_QUANTILES]
+            quantile = int(contigs_quantiles[value]) if value in contigs_quantiles else None
 
-    def get_assembly_size_mean(self, species):
+        else:
+            quantile = None
+
+        return quantile
+
+    def get_l50_quantile(self, species, value):
         """
-        Returns the mean assembly size for a given species.
+        Returns the L50 quantile for the specified species and quantile value.
 
         RETURNS
-            assembly_size_mean (int): the mean assembly size or None if the species does not exist in the database
+            quantile (int): the L50 quantile for the specified species and quantile value
+                returns None if the species on quantile is missing
         """
 
-        return int(self.database[species][self.ASSEMBLY_SIZE_MEAN]) if species in self.database else None
+        if species in self.database:
+            l50_quantiles = self.database[species][self.L50_QUANTILES]
+            quantile = int(l50_quantiles[value]) if value in l50_quantiles else None
 
-    def get_assembly_size_std(self, species):
+        else:
+            quantile = None
+
+        return quantile
+
+    def get_length_quantile(self, species, value):
         """
-        Returns the standard deviation of the assembly size for a given species.
+        Returns the assembly length quantile for the specified species and quantile value.
 
         RETURNS
-            assembly_size_std (float): the standard deviation of assembly size or None if the species does not exist
-                in the database
+            quantile (int): the assembly length quantile for the specified species and quantile value
+                returns None if the species on quantile is missing
         """
 
-        return float(self.database[species][self.ASSEMBLY_SIZE_STD]) if species in self.database else None
+        if species in self.database:
+            length_quantiles = self.database[species][self.LENGTH_QUANTILES]
+            quantile = int(length_quantiles[value]) if value in length_quantiles else None
 
-    def get_n50_mean(self, species):
-        """
-        Returns the mean n50 for assemblies of the given species.
+        else:
+            quantile = None
 
-        RETURNS
-            n50_mean (int): the mean n50 or None if the species does not exist in the database
-        """
-
-        return int(self.database[species][self.N50_MEAN]) if species in self.database else None
-
-    def get_n50_std(self, species):
-        """
-        Returns the standard deviation of the n50 for assemblies of the given species.
-
-        RETURNS
-            n50_std (float): the standard deviation of the n50 or None if the species does not exist in the database
-        """
-
-        return float(self.database[species][self.N50_STD]) if species in self.database else None
+        return quantile
