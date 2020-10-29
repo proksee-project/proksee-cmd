@@ -33,7 +33,6 @@ from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentify
 from proksee.read_filterer import ReadFilterer
 from proksee.organism_detection import OrganismDetection
-from proksee.assembler import Assembler
 from proksee.expert_system import ExpertSystem
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "database",
@@ -100,22 +99,21 @@ def cli(ctx, forward, reverse, output_dir):
             raise click.UsageError('encountered errors running refseq_masher, \
                 this may have been caused by too small of file reads')
 
-        # Evaluate reads to determine assembly strategy.
-        expert = ExpertSystem(platform, species_list[0])
-        strategy = expert.evaluate_reads(read_quality)
+        # Evaluate reads to determine a fast assembly strategy.
+        expert = ExpertSystem(platform, species_list[0], forward_filtered, reverse_filtered, output_dir)
+        strategy = expert.create_fast_assembly_strategy(read_quality)
         click.echo(strategy.report)
 
         if not strategy.proceed:
             click.echo("The assembly was unable to proceed.")
             return
 
-        # Step 5: Assembly (Only skesa for now)
-        # Pass forward and reverse filtered reads to assembler class
-        # and return a finished genome assembly within output path
-        assembler = Assembler(forward_filtered, reverse_filtered, output_dir)
+        # Step 5: Perform a fast assembly.
+        assembler = strategy.assembler
+
         try:
-            assembly = assembler.perform_assembly()
-            print(assembly)
+            output = assembler.assemble()
+            click.echo(output)
 
             '''Catch exception if input reads are short for skesa kmer estimation'''
         except Exception:
@@ -134,9 +132,26 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 7: Slow Assembly
         assembly_database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = expert.evaluate_assembly(assembly_quality, assembly_database)
+        strategy = expert.create_full_assembly_strategy(assembly_quality, assembly_database)
         click.echo(strategy.report)
 
         if not strategy.proceed:
             click.echo("The assembly was unable to proceed.")
             return
+
+        click.echo("Performing full assembly.")
+        assembler = strategy.assembler
+
+        try:
+            output = assembler.assemble()
+            click.echo(output)
+
+        except Exception:
+            raise click.UsageError("Encountered an error when assembling the reads.")
+
+        # Move final assembled contigs to the main level of the output directory and rename it.
+        contigs_filename = assembler.get_contigs_filename()
+        contigs_new_filename = os.path.join(output_dir, "contigs.fasta")
+        os.rename(contigs_filename, contigs_new_filename)  # moves and renames
+
+        click.echo("Complete.")
