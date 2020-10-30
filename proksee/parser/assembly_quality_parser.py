@@ -41,6 +41,7 @@ def parse_assembly_quality_from_quast_report(quast_filename):
     L50 = "L50"
     L75 = "L75"
     GC_CONTENT = "GC (%)"
+    TOTAL_LENGTH = "Total length"
 
     report = {}
 
@@ -61,7 +62,8 @@ def parse_assembly_quality_from_quast_report(quast_filename):
     l50 = int(report[L50])
     l75 = int(report[L75])
     gc_content = float(report[GC_CONTENT])
+    total_length = int(report[TOTAL_LENGTH])
 
-    assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content)
+    assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, total_length)
 
     return assembly_quality

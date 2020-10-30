@@ -41,10 +41,10 @@ class TestAssemblyDatabase:
         assert database.get_n50_quantile(SPECIES, 0.80) == 371530
         assert database.get_n50_quantile(SPECIES, 0.95) == 1055547
 
-        assert database.get_contig_quantile(SPECIES, 0.05) == 12
-        assert database.get_contig_quantile(SPECIES, 0.20) == 26
-        assert database.get_contig_quantile(SPECIES, 0.80) == 86
-        assert database.get_contig_quantile(SPECIES, 0.95) == 227
+        assert database.get_contigs_quantile(SPECIES, 0.05) == 12
+        assert database.get_contigs_quantile(SPECIES, 0.20) == 26
+        assert database.get_contigs_quantile(SPECIES, 0.80) == 86
+        assert database.get_contigs_quantile(SPECIES, 0.95) == 227
 
         assert database.get_l50_quantile(SPECIES, 0.05) == 2
         assert database.get_l50_quantile(SPECIES, 0.20) == 3
@@ -70,7 +70,7 @@ class TestAssemblyDatabase:
         database = AssemblyDatabase(DATABASE_PATH)
 
         assert database.get_n50_quantile(SPECIES, 0.499) is None
-        assert database.get_contig_quantile(SPECIES, 0.501) is None
+        assert database.get_contigs_quantile(SPECIES, 0.501) is None
         assert database.get_l50_quantile(SPECIES, 0.707) is None
         assert database.get_length_quantile(SPECIES, 0.454) is None
 

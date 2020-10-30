@@ -85,7 +85,7 @@ class TestExpertSystem:
         database = AssemblyDatabase(DATABASE_PATH)
 
         strategy = system.create_full_assembly_strategy(assembly_quality, database)
-
+        print(strategy.report)
         assert strategy.proceed
 
     def test_evaluate_bad_assembly(self):

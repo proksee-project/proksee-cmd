@@ -98,13 +98,24 @@ class ExpertSystem:
         """
 
         species_name = self.species.name
-        report = ""
+        report = "\n"
 
         if assembly_database.contains(species_name):
 
             n50_evaluation = self.evaluate_n50(assembly_quality, assembly_database)
-            proceed = n50_evaluation.success
             report += n50_evaluation.report
+
+            contigs_evaluation = self.evaluate_num_contigs(assembly_quality, assembly_database)
+            report += contigs_evaluation.report
+
+            l50_evaluation = self.evaluate_l50(assembly_quality, assembly_database)
+            report += l50_evaluation.report
+
+            length_evaluation = self.evaluate_length(assembly_quality, assembly_database)
+            report += length_evaluation.report
+
+            proceed = n50_evaluation.success and contigs_evaluation.success \
+                and l50_evaluation.success and length_evaluation.success
 
         else:
             proceed = False
@@ -132,23 +143,140 @@ class ExpertSystem:
         report = ""
 
         n50 = assembly_quality.n50
-        n50_5 = assembly_database.get_n50_quantile(species_name, 0.05)
+        n50_05 = assembly_database.get_n50_quantile(species_name, 0.05)
         n50_95 = assembly_database.get_n50_quantile(species_name, 0.95)
 
-        if n50_5 <= n50 <= n50_95:
+        if n50_05 <= n50 <= n50_95:
             success = True
             report += "The N50 is comparable to similar assemblies: {}\n".format(n50)
-            report += "The acceptable N50 range is: [{}, {}]\n".format(n50_5, n50_95)
+            report += "The acceptable N50 range is: [{}, {}]\n".format(n50_05, n50_95)
 
-        elif n50 < n50_5:
+        elif n50 < n50_05:
             success = False
             report += "The N50 is smaller than expected: {}\n".format(n50)
-            report += "The N50 lower bound is: {}\n".format(n50_5)
+            report += "The N50 lower bound is: {}\n".format(n50_05)
 
         else:
             success = False
             report += "The N50 is larger than expected: {}\n".format(n50)
             report += "The N50 upper bound is: {}\n".format(n50_95)
+
+        evaluation = self.Evaluation(success, report)
+
+        return evaluation
+
+    def evaluate_num_contigs(self, assembly_quality, assembly_database):
+        """
+        Evaluates the number of contigs of the passed AssemblyQuality against the assembly statistics for the given
+        species in the assembly database.
+
+        PARAMETERS
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+
+        RETURN
+            evaluation (Evaluation): an evaluation of the number of contigs against the assembly database
+        """
+
+        species_name = self.species.name
+        report = ""
+
+        num_contigs = assembly_quality.num_contigs
+        num_contigs_05 = assembly_database.get_contigs_quantile(species_name, 0.05)
+        num_contigs_95 = assembly_database.get_contigs_quantile(species_name, 0.95)
+
+        if num_contigs_05 <= num_contigs <= num_contigs_95:
+            success = True
+            report += "The number of contigs is comparable to similar assemblies: {}\n".format(num_contigs)
+            report += "The acceptable number of contigs range is: [{}, {}]\n".format(num_contigs_05, num_contigs_95)
+
+        elif num_contigs < num_contigs_05:
+            success = False
+            report += "The number of contigs is smaller than expected: {}\n".format(num_contigs)
+            report += "The number of contigs lower bound is: {}\n".format(num_contigs_05)
+
+        else:
+            success = False
+            report += "The number of contigs is larger than expected: {}\n".format(num_contigs)
+            report += "The number of contigs upper bound is: {}\n".format(num_contigs_95)
+
+        evaluation = self.Evaluation(success, report)
+
+        return evaluation
+
+    def evaluate_l50(self, assembly_quality, assembly_database):
+        """
+        Evaluates the L50 of the passed AssemblyQuality against the assembly statistics for the given species in the
+        assembly database.
+
+        PARAMETERS
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+
+        RETURN
+            evaluation (Evaluation): an evaluation of the L50 against the assembly database
+        """
+
+        species_name = self.species.name
+        report = ""
+
+        l50 = assembly_quality.l50
+        l50_05 = assembly_database.get_l50_quantile(species_name, 0.05)
+        l50_95 = assembly_database.get_l50_quantile(species_name, 0.95)
+
+        if l50_05 <= l50 <= l50_95:
+            success = True
+            report += "The L50 is comparable to similar assemblies: {}\n".format(l50)
+            report += "The acceptable L50 range is: [{}, {}]\n".format(l50_05, l50_95)
+
+        elif l50 < l50_05:
+            success = False
+            report += "The L50 is smaller than expected: {}\n".format(l50)
+            report += "The L50 lower bound is: {}\n".format(l50_05)
+
+        else:
+            success = False
+            report += "The L50 is larger than expected: {}\n".format(l50)
+            report += "The L50 upper bound is: {}\n".format(l50_95)
+
+        evaluation = self.Evaluation(success, report)
+
+        return evaluation
+
+    def evaluate_length(self, assembly_quality, assembly_database):
+        """
+        Evaluates the assembly length of the passed AssemblyQuality against the assembly statistics for the given
+        species in the assembly database.
+
+        PARAMETERS
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+
+        RETURN
+            evaluation (Evaluation): an evaluation of the assembly length against the assembly database
+        """
+
+        species_name = self.species.name
+        report = ""
+
+        length = assembly_quality.length
+        length_05 = assembly_database.get_length_quantile(species_name, 0.05)
+        length_95 = assembly_database.get_length_quantile(species_name, 0.95)
+
+        if length_05 <= length <= length_95:
+            success = True
+            report += "The assembly length is comparable to similar assemblies: {}\n".format(length)
+            report += "The acceptable assembly length range is: [{}, {}]\n".format(length_05, length_95)
+
+        elif length < length_05:
+            success = False
+            report += "The assembly length is smaller than expected: {}\n".format(length)
+            report += "The assembly length lower bound is: {}\n".format(length_05)
+
+        else:
+            success = False
+            report += "The assembly length is larger than expected: {}\n".format(length)
+            report += "The assembly length upper bound is: {}\n".format(length_95)
 
         evaluation = self.Evaluation(success, report)
 

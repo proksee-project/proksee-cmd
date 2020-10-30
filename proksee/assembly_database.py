@@ -157,7 +157,7 @@ class AssemblyDatabase:
 
         return quantile
 
-    def get_contig_quantile(self, species, value):
+    def get_contigs_quantile(self, species, value):
         """
         Returns the number of contigs quantile for the specified species and quantile value.
 
