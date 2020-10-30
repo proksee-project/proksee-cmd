@@ -126,6 +126,58 @@ class ExpertSystem:
 
         return AssemblyStrategy(proceed, assembler, report)
 
+    def evaluate_value(self, measurement, value, low_fail, low_warning, high_warning, high_fail):
+        """
+        Evaluates a generic value for a measurement and reports whether or not it is within acceptable bounds.
+
+        PARAMETERS
+            measurement (str): plain-language name of the measurement (ex: "N50")
+            value (comparable): the value to evaluate
+            low_fail (comparable): the lower bound of failure
+            low_warning (comparable): the lower bound for warning
+            high_warning (comparable): the higher bound for warning
+            high_fail (comparable): the higher bound of failure
+
+        RETURNS
+            evaluation (Evaluation): an evaluation of the measurement against the passed thresholds
+        """
+
+        report = ""
+
+        # (-infinity, low_fail] -> low failure
+        if value <= low_fail:
+            success = False
+            report += "FAIL: The {} is smaller than expected: {}\n".format(measurement, value)
+            report += "\tThe {} lower bound is: {}\n".format(measurement, low_fail)
+
+        # (low_fail, low_warning] -> low warning
+        elif value <= low_warning:
+            success = True
+            report += "WARNING: The {} is somewhat smaller than expected: {}\n".format(measurement, value)
+            report += "\tThe {} lower bound is: {}\n".format(measurement, low_fail)
+
+        # (low_warning, high_warning) -> acceptable, no warning
+        elif value < high_warning:
+            success = True
+            report += "PASS: The {} is comparable to similar assemblies: {}\n".format(measurement, value)
+            report += "\tThe acceptable {} range is: ({}, {})\n".format(measurement, low_fail, high_fail)
+
+        # [high_warning, high_fail) -> high warning
+        elif value < high_fail:
+            success = True
+            report += "WARNING: The {} is somewhat larger than expected: {}\n".format(measurement, value)
+            report += "\tThe {} upper bound is: {}\n".format(measurement, high_fail)
+
+        # [high_fail, +infinity) -> high failure
+        elif value >= high_fail:
+            success = False
+            report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
+            report += "\tThe {} upper bound is: {}\n".format(measurement, high_fail)
+
+        evaluation = self.Evaluation(success, report)
+
+        return evaluation
+
     def evaluate_n50(self, assembly_quality, assembly_database):
         """
         Evaluates the N50 of the passed AssemblyQuality against the assembly statistics for the given species in the
@@ -140,28 +192,14 @@ class ExpertSystem:
         """
 
         species_name = self.species.name
-        report = ""
 
         n50 = assembly_quality.n50
-        n50_05 = assembly_database.get_n50_quantile(species_name, 0.05)
-        n50_95 = assembly_database.get_n50_quantile(species_name, 0.95)
+        low_fail = assembly_database.get_n50_quantile(species_name, 0.05)
+        low_warning = assembly_database.get_n50_quantile(species_name, 0.20)
+        high_warning = assembly_database.get_n50_quantile(species_name, 0.80)
+        high_fail = assembly_database.get_n50_quantile(species_name, 0.95)
 
-        if n50_05 <= n50 <= n50_95:
-            success = True
-            report += "The N50 is comparable to similar assemblies: {}\n".format(n50)
-            report += "The acceptable N50 range is: [{}, {}]\n".format(n50_05, n50_95)
-
-        elif n50 < n50_05:
-            success = False
-            report += "The N50 is smaller than expected: {}\n".format(n50)
-            report += "The N50 lower bound is: {}\n".format(n50_05)
-
-        else:
-            success = False
-            report += "The N50 is larger than expected: {}\n".format(n50)
-            report += "The N50 upper bound is: {}\n".format(n50_95)
-
-        evaluation = self.Evaluation(success, report)
+        evaluation = self.evaluate_value("N50", n50, low_fail, low_warning, high_warning, high_fail)
 
         return evaluation
 
@@ -179,28 +217,15 @@ class ExpertSystem:
         """
 
         species_name = self.species.name
-        report = ""
 
         num_contigs = assembly_quality.num_contigs
-        num_contigs_05 = assembly_database.get_contigs_quantile(species_name, 0.05)
-        num_contigs_95 = assembly_database.get_contigs_quantile(species_name, 0.95)
+        low_fail = assembly_database.get_contigs_quantile(species_name, 0.05)
+        low_warning = assembly_database.get_contigs_quantile(species_name, 0.20)
+        high_warning = assembly_database.get_contigs_quantile(species_name, 0.80)
+        high_fail = assembly_database.get_contigs_quantile(species_name, 0.95)
 
-        if num_contigs_05 <= num_contigs <= num_contigs_95:
-            success = True
-            report += "The number of contigs is comparable to similar assemblies: {}\n".format(num_contigs)
-            report += "The acceptable number of contigs range is: [{}, {}]\n".format(num_contigs_05, num_contigs_95)
-
-        elif num_contigs < num_contigs_05:
-            success = False
-            report += "The number of contigs is smaller than expected: {}\n".format(num_contigs)
-            report += "The number of contigs lower bound is: {}\n".format(num_contigs_05)
-
-        else:
-            success = False
-            report += "The number of contigs is larger than expected: {}\n".format(num_contigs)
-            report += "The number of contigs upper bound is: {}\n".format(num_contigs_95)
-
-        evaluation = self.Evaluation(success, report)
+        evaluation = self.evaluate_value("number of contigs", num_contigs, low_fail, low_warning, high_warning,
+                                         high_fail)
 
         return evaluation
 
@@ -218,28 +243,14 @@ class ExpertSystem:
         """
 
         species_name = self.species.name
-        report = ""
 
         l50 = assembly_quality.l50
-        l50_05 = assembly_database.get_l50_quantile(species_name, 0.05)
-        l50_95 = assembly_database.get_l50_quantile(species_name, 0.95)
+        low_fail = assembly_database.get_l50_quantile(species_name, 0.05)
+        low_warning = assembly_database.get_l50_quantile(species_name, 0.20)
+        high_warning = assembly_database.get_l50_quantile(species_name, 0.80)
+        high_fail = assembly_database.get_l50_quantile(species_name, 0.95)
 
-        if l50_05 <= l50 <= l50_95:
-            success = True
-            report += "The L50 is comparable to similar assemblies: {}\n".format(l50)
-            report += "The acceptable L50 range is: [{}, {}]\n".format(l50_05, l50_95)
-
-        elif l50 < l50_05:
-            success = False
-            report += "The L50 is smaller than expected: {}\n".format(l50)
-            report += "The L50 lower bound is: {}\n".format(l50_05)
-
-        else:
-            success = False
-            report += "The L50 is larger than expected: {}\n".format(l50)
-            report += "The L50 upper bound is: {}\n".format(l50_95)
-
-        evaluation = self.Evaluation(success, report)
+        evaluation = self.evaluate_value("L50", l50, low_fail, low_warning, high_warning, high_fail)
 
         return evaluation
 
@@ -257,28 +268,14 @@ class ExpertSystem:
         """
 
         species_name = self.species.name
-        report = ""
 
         length = assembly_quality.length
-        length_05 = assembly_database.get_length_quantile(species_name, 0.05)
-        length_95 = assembly_database.get_length_quantile(species_name, 0.95)
+        low_fail = assembly_database.get_length_quantile(species_name, 0.05)
+        low_warning = assembly_database.get_length_quantile(species_name, 0.20)
+        high_warning = assembly_database.get_length_quantile(species_name, 0.80)
+        high_fail = assembly_database.get_length_quantile(species_name, 0.95)
 
-        if length_05 <= length <= length_95:
-            success = True
-            report += "The assembly length is comparable to similar assemblies: {}\n".format(length)
-            report += "The acceptable assembly length range is: [{}, {}]\n".format(length_05, length_95)
-
-        elif length < length_05:
-            success = False
-            report += "The assembly length is smaller than expected: {}\n".format(length)
-            report += "The assembly length lower bound is: {}\n".format(length_05)
-
-        else:
-            success = False
-            report += "The assembly length is larger than expected: {}\n".format(length)
-            report += "The assembly length upper bound is: {}\n".format(length_95)
-
-        evaluation = self.Evaluation(success, report)
+        evaluation = self.evaluate_value("assembly length", length, low_fail, low_warning, high_warning, high_fail)
 
         return evaluation
 
