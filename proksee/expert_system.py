@@ -85,8 +85,8 @@ class ExpertSystem:
 
     def create_full_assembly_strategy(self, assembly_quality, assembly_database):
         """
-        Evaluates the assembly by comparing it to statistical information in an assembly database about similar
-            assemblies.
+        Creates a full assembly strategy by comparing the assembly quality and species to statistical information in an
+        assembly database about similar assemblies.
 
         PARAMETERS
             assembly_quality (AssemblyQuality): an object representing the quality of an assembly
@@ -98,27 +98,13 @@ class ExpertSystem:
         """
 
         species_name = self.species.name
-        proceed = True
         report = ""
 
         if assembly_database.contains(species_name):
 
-            n50 = assembly_quality.n50
-            n50_20 = assembly_database.get_n50_quantile(species_name, 0.20)
-            n50_80 = assembly_database.get_n50_quantile(species_name, 0.80)
-
-            if n50_20 <= n50 <= n50_80:
-                report += "The N50 is comparable to similar assemblies.\n"
-
-            elif n50 < n50_20:
-                proceed = False
-
-                report += "The N50 is smaller than expected: {}\n".format(n50)
-
-            else:
-                proceed = False
-
-                report += "The N50 is larger than expected: {}\n".format(n50)
+            n50_evaluation = self.evaluate_n50(assembly_quality, assembly_database)
+            proceed = n50_evaluation.success
+            report += n50_evaluation.report
 
         else:
             proceed = False
@@ -128,3 +114,58 @@ class ExpertSystem:
         assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
 
         return AssemblyStrategy(proceed, assembler, report)
+
+    def evaluate_n50(self, assembly_quality, assembly_database):
+        """
+        Evaluates the N50 of the passed AssemblyQuality against the assembly statistics for the given species in the
+        assembly database.
+
+        PARAMETERS
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+
+        RETURN
+            evaluation (Evaluation): an evaluation of the N50 against the assembly database
+        """
+
+        species_name = self.species.name
+
+        n50 = assembly_quality.n50
+        n50_20 = assembly_database.get_n50_quantile(species_name, 0.20)
+        n50_80 = assembly_database.get_n50_quantile(species_name, 0.80)
+
+        if n50_20 <= n50 <= n50_80:
+            success = True
+            report = "The N50 is comparable to similar assemblies.\n"
+
+        elif n50 < n50_20:
+            success = False
+            report = "The N50 is smaller than expected: {}\n".format(n50)
+
+        else:
+            success = False
+            report = "The N50 is larger than expected: {}\n".format(n50)
+
+        evaluation = self.Evaluation(success, report)
+
+        return evaluation
+
+    class Evaluation:
+        """
+        A class representing a simple evaluation of a test.
+
+        ATTRIBUTES
+            success (bool): whether or not the test was passed
+            report (str): a plain-language String describing the evaluation
+        """
+
+        def __init__(self, success, report):
+            """
+            Initializes the Evaluation.
+
+            PARAMETERS
+                success (bool): whether or not the test was passed
+                report (str): a plain-language String describing the evaluation
+            """
+            self.success = success
+            self.report = report
