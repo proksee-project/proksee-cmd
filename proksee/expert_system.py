@@ -129,6 +129,7 @@ class ExpertSystem:
         """
 
         species_name = self.species.name
+        report = ""
 
         n50 = assembly_quality.n50
         n50_20 = assembly_database.get_n50_quantile(species_name, 0.20)
@@ -136,15 +137,18 @@ class ExpertSystem:
 
         if n50_20 <= n50 <= n50_80:
             success = True
-            report = "The N50 is comparable to similar assemblies.\n"
+            report += "The N50 is comparable to similar assemblies: {}\n".format(n50)
+            report += "The acceptable N50 range is: [{}, {}]\n".format(n50_20, n50_80)
 
         elif n50 < n50_20:
             success = False
-            report = "The N50 is smaller than expected: {}\n".format(n50)
+            report += "The N50 is smaller than expected: {}\n".format(n50)
+            report += "The N50 lower bound is: {}\n".format(n50_20)
 
         else:
             success = False
-            report = "The N50 is larger than expected: {}\n".format(n50)
+            report += "The N50 is larger than expected: {}\n".format(n50)
+            report += "The N50 upper bound is: {}\n".format(n50_80)
 
         evaluation = self.Evaluation(success, report)
 
