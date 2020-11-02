@@ -149,7 +149,7 @@ class TestExpertSystem:
 
         strategy = system.create_full_assembly_strategy(assembly_quality, database)
 
-        assert not strategy.proceed
+        assert strategy.proceed
 
     def test_evaluate_value(self):
         """

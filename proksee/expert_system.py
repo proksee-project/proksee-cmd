@@ -98,9 +98,10 @@ class ExpertSystem:
         """
 
         species_name = self.species.name
-        report = "\n"
 
         if assembly_database.contains(species_name):
+
+            report = "\n"
 
             n50_evaluation = self.evaluate_n50(assembly_quality, assembly_database)
             report += n50_evaluation.report
@@ -117,14 +118,64 @@ class ExpertSystem:
             proceed = n50_evaluation.success and contigs_evaluation.success \
                 and l50_evaluation.success and length_evaluation.success
 
-        else:
-            proceed = False
+            assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
+            strategy = AssemblyStrategy(proceed, assembler, report)
 
-            report += self.species.name + " is not present in the database.\n"
+        else:
+
+            strategy = self.create_fallback_assembly_strategy(assembly_quality)
+
+        return strategy
+
+    def create_fallback_assembly_strategy(self, assembly_quality):
+        """
+        Creates a fallback assembly strategy, to be used when the species is unidentifiable or not present in the
+        assembly database.
+
+        PARAMETERS
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+
+        RETURN
+            strategy (AssemblyStrategy): a strategy for assembly, based on the information provided from a
+                previous assembly
+        """
+
+        # Values taken from RefSeq assembly exclusion criteria.
+        MIN_N50 = 5000
+        MAX_L50 = 500
+        MAX_CONTIGS = 2000
+
+        proceed = True
+        report = "\nWARNING: No assembly statistics available for the species!\n"
+
+        if assembly_quality.n50 < 5000:
+            proceed = False
+            report += "FAIL: The N50 is smaller than expected: {}\n".format(assembly_quality.n50)
+            report += "\tThe N50 lower bound is: {}\n".format(MIN_N50)
+        else:
+            report += "PASS: The N50 is acceptable: {}\n".format(assembly_quality.n50)
+            report += "\tThe N50 lower bound is: {}\n".format(MIN_N50)
+
+        if assembly_quality.l50 > MAX_L50:
+            proceed = False
+            report += "FAIL: The L50 is larger than expected: {}\n".format(assembly_quality.l50)
+            report += "\tThe L50 upper bound is: {}\n".format(MAX_L50)
+        else:
+            report += "PASS: The L50 is acceptable: {}\n".format(assembly_quality.l50)
+            report += "\tThe L50 upper bound is: {}\n".format(MAX_L50)
+
+        if assembly_quality.num_contigs > MAX_CONTIGS:
+            proceed = False
+            report += "FAIL: The number of contigs is larger than expected: {}\n".format(assembly_quality.num_contigs)
+            report += "\tThe number of contigs upper bound is: {}\n".format(MAX_CONTIGS)
+        else:
+            report += "PASS: The number of contigs is acceptable: {}\n".format(assembly_quality.num_contigs)
+            report += "\tThe number of contigs lower bound is: {}\n".format(MIN_N50)
 
         assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
+        strategy = AssemblyStrategy(proceed, assembler, report)
 
-        return AssemblyStrategy(proceed, assembler, report)
+        return strategy
 
     def evaluate_value(self, measurement, value, low_fail, low_warning, high_warning, high_fail):
         """
@@ -143,6 +194,7 @@ class ExpertSystem:
         """
 
         report = ""
+        success = False
 
         # (-infinity, low_fail] -> low failure
         if value <= low_fail:
