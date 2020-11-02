@@ -172,75 +172,75 @@ class TestExpertSystem:
         evaluation = system.evaluate_value("measurement", 2, low_fail, low_warning, high_warning, high_fail)
         assert not evaluation.success
         expected_report = "FAIL: The measurement is smaller than expected: 2\n"
-        expected_report += "\tThe measurement lower bound is: 5\n"
+        expected_report += "      The measurement lower bound is: 5\n"
         assert evaluation.report == expected_report
 
         # fail -- too low, on threshold
         evaluation = system.evaluate_value("measurement", 5, low_fail, low_warning, high_warning, high_fail)
         assert not evaluation.success
         expected_report = "FAIL: The measurement is smaller than expected: 5\n"
-        expected_report += "\tThe measurement lower bound is: 5\n"
+        expected_report += "      The measurement lower bound is: 5\n"
         assert evaluation.report == expected_report
 
         # low warning -- above low fail threshold
         evaluation = system.evaluate_value("measurement", 6, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
         expected_report = "WARNING: The measurement is somewhat smaller than expected: 6\n"
-        expected_report += "\tThe measurement lower bound is: 5\n"
+        expected_report += "         The measurement lower bound is: 5\n"
         assert evaluation.report == expected_report
 
         # low warning -- on low warning threshold
         evaluation = system.evaluate_value("measurement", 10, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
         expected_report = "WARNING: The measurement is somewhat smaller than expected: 10\n"
-        expected_report += "\tThe measurement lower bound is: 5\n"
+        expected_report += "         The measurement lower bound is: 5\n"
         assert evaluation.report == expected_report
 
         # acceptable -- above low warning threshold
         evaluation = system.evaluate_value("measurement", 11, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
         expected_report = "PASS: The measurement is comparable to similar assemblies: 11\n"
-        expected_report += "\tThe acceptable measurement range is: (5, 25)\n"
+        expected_report += "      The acceptable measurement range is: (5, 25)\n"
         assert evaluation.report == expected_report
 
         # acceptable -- typical
         evaluation = system.evaluate_value("measurement", 15, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
         expected_report = "PASS: The measurement is comparable to similar assemblies: 15\n"
-        expected_report += "\tThe acceptable measurement range is: (5, 25)\n"
+        expected_report += "      The acceptable measurement range is: (5, 25)\n"
         assert evaluation.report == expected_report
 
         # acceptable -- below high warning threshold
         evaluation = system.evaluate_value("measurement", 19, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
         expected_report = "PASS: The measurement is comparable to similar assemblies: 19\n"
-        expected_report += "\tThe acceptable measurement range is: (5, 25)\n"
+        expected_report += "      The acceptable measurement range is: (5, 25)\n"
         assert evaluation.report == expected_report
 
         # high warning -- on threshold
         evaluation = system.evaluate_value("measurement", 20, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
         expected_report = "WARNING: The measurement is somewhat larger than expected: 20\n"
-        expected_report += "\tThe measurement upper bound is: 25\n"
+        expected_report += "         The measurement upper bound is: 25\n"
         assert evaluation.report == expected_report
 
         # high warning -- near high fail threshold
         evaluation = system.evaluate_value("measurement", 24, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
         expected_report = "WARNING: The measurement is somewhat larger than expected: 24\n"
-        expected_report += "\tThe measurement upper bound is: 25\n"
+        expected_report += "         The measurement upper bound is: 25\n"
         assert evaluation.report == expected_report
 
         # high fail -- on threshold
         evaluation = system.evaluate_value("measurement", 25, low_fail, low_warning, high_warning, high_fail)
         assert not evaluation.success
         expected_report = "FAIL: The measurement is larger than expected: 25\n"
-        expected_report += "\tThe measurement upper bound is: 25\n"
+        expected_report += "      The measurement upper bound is: 25\n"
         assert evaluation.report == expected_report
 
         # high fail -- typical
         evaluation = system.evaluate_value("measurement", 30, low_fail, low_warning, high_warning, high_fail)
         assert not evaluation.success
         expected_report = "FAIL: The measurement is larger than expected: 30\n"
-        expected_report += "\tThe measurement upper bound is: 25\n"
+        expected_report += "      The measurement upper bound is: 25\n"
         assert evaluation.report == expected_report

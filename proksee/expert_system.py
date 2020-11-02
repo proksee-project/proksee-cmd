@@ -141,36 +141,37 @@ class ExpertSystem:
         """
 
         # Values taken from RefSeq assembly exclusion criteria.
+        # https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/
         MIN_N50 = 5000
         MAX_L50 = 500
         MAX_CONTIGS = 2000
 
         proceed = True
-        report = "\nWARNING: No assembly statistics available for the species!\n"
+        report = "\nWARNING: No assembly statistics available for the species!\n\n"
 
         if assembly_quality.n50 < 5000:
             proceed = False
             report += "FAIL: The N50 is smaller than expected: {}\n".format(assembly_quality.n50)
-            report += "\tThe N50 lower bound is: {}\n".format(MIN_N50)
+            report += "      The N50 lower bound is: {}\n".format(MIN_N50)
         else:
             report += "PASS: The N50 is acceptable: {}\n".format(assembly_quality.n50)
-            report += "\tThe N50 lower bound is: {}\n".format(MIN_N50)
+            report += "      The N50 lower bound is: {}\n".format(MIN_N50)
 
         if assembly_quality.l50 > MAX_L50:
             proceed = False
             report += "FAIL: The L50 is larger than expected: {}\n".format(assembly_quality.l50)
-            report += "\tThe L50 upper bound is: {}\n".format(MAX_L50)
+            report += "      The L50 upper bound is: {}\n".format(MAX_L50)
         else:
             report += "PASS: The L50 is acceptable: {}\n".format(assembly_quality.l50)
-            report += "\tThe L50 upper bound is: {}\n".format(MAX_L50)
+            report += "      The L50 upper bound is: {}\n".format(MAX_L50)
 
         if assembly_quality.num_contigs > MAX_CONTIGS:
             proceed = False
             report += "FAIL: The number of contigs is larger than expected: {}\n".format(assembly_quality.num_contigs)
-            report += "\tThe number of contigs upper bound is: {}\n".format(MAX_CONTIGS)
+            report += "      The number of contigs upper bound is: {}\n".format(MAX_CONTIGS)
         else:
             report += "PASS: The number of contigs is acceptable: {}\n".format(assembly_quality.num_contigs)
-            report += "\tThe number of contigs lower bound is: {}\n".format(MIN_N50)
+            report += "      The number of contigs lower bound is: {}\n".format(MIN_N50)
 
         assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
         strategy = AssemblyStrategy(proceed, assembler, report)
@@ -200,31 +201,31 @@ class ExpertSystem:
         if value <= low_fail:
             success = False
             report += "FAIL: The {} is smaller than expected: {}\n".format(measurement, value)
-            report += "\tThe {} lower bound is: {}\n".format(measurement, low_fail)
+            report += "      The {} lower bound is: {}\n".format(measurement, low_fail)
 
         # (low_fail, low_warning] -> low warning
         elif value <= low_warning:
             success = True
             report += "WARNING: The {} is somewhat smaller than expected: {}\n".format(measurement, value)
-            report += "\tThe {} lower bound is: {}\n".format(measurement, low_fail)
+            report += "         The {} lower bound is: {}\n".format(measurement, low_fail)
 
         # (low_warning, high_warning) -> acceptable, no warning
         elif value < high_warning:
             success = True
             report += "PASS: The {} is comparable to similar assemblies: {}\n".format(measurement, value)
-            report += "\tThe acceptable {} range is: ({}, {})\n".format(measurement, low_fail, high_fail)
+            report += "      The acceptable {} range is: ({}, {})\n".format(measurement, low_fail, high_fail)
 
         # [high_warning, high_fail) -> high warning
         elif value < high_fail:
             success = True
             report += "WARNING: The {} is somewhat larger than expected: {}\n".format(measurement, value)
-            report += "\tThe {} upper bound is: {}\n".format(measurement, high_fail)
+            report += "         The {} upper bound is: {}\n".format(measurement, high_fail)
 
         # [high_fail, +infinity) -> high failure
         elif value >= high_fail:
             success = False
             report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
-            report += "\tThe {} upper bound is: {}\n".format(measurement, high_fail)
+            report += "      The {} upper bound is: {}\n".format(measurement, high_fail)
 
         evaluation = self.Evaluation(success, report)
 

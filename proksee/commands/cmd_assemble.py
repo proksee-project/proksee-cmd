@@ -92,7 +92,7 @@ def cli(ctx, forward, reverse, output_dir):
         organism_identify = OrganismDetection(forward_filtered, reverse_filtered, output_dir)
         try:
             species_list = organism_identify.major_organism()
-            click.echo("Major reference organism is/are {}".format(species_list))
+            click.echo("Major reference organism is/are {}\n".format(species_list))
 
             '''Catch exception if input reads are too short for reference genome estimation'''
         except Exception:
