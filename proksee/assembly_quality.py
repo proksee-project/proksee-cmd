@@ -28,9 +28,10 @@ class AssemblyQuality:
         l50 (int): the length of the shortest contig needed to cover 50% of the assembly
         l75 (int): the length of the shortest contig needed to cover 75% of the assembly
         gc_content (float): the GC-ratio of the bases in the assembly
+        length (int): the total assembly length
     """
 
-    def __init__(self, num_contigs, n50, n75, l50, l75, gc_content):
+    def __init__(self, num_contigs, n50, n75, l50, l75, gc_content, length):
         """
         Initializes the AssemblyQuality object.
 
@@ -41,6 +42,7 @@ class AssemblyQuality:
             l50 (int): the length of the shortest contig needed to cover 50% of the assembly
             l75 (int): the length of the shortest contig needed to cover 75% of the assembly
             gc_content (float): the GC-ratio of the bases in the assembly
+            length (int): the total assembly length
         """
 
         self.num_contigs = num_contigs
@@ -52,3 +54,5 @@ class AssemblyQuality:
         self.l75 = l75
 
         self.gc_content = gc_content
+
+        self.length = length
