@@ -16,6 +16,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import os
+
 from proksee.species import Species
 
 
@@ -45,32 +47,35 @@ def parse_species_from_refseq_masher(refseq_masher_file):
 
     classifications = []
 
-    with open(refseq_masher_file) as file:
+    # Make sure that the file exists and contains data:
+    if os.path.isfile(refseq_masher_file) and os.path.getsize(refseq_masher_file) > 0:
 
-        next(file)  # Skip the header line in the file.
+        with open(refseq_masher_file) as file:
 
-        for line in file:
+            next(file)  # Skip the header line in the file.
 
-            tokens = line.strip().split("\t")
+            for line in file:
 
-            # ignore empty lines
-            if len(tokens) <= 1:
-                continue
+                tokens = line.strip().split("\t")
 
-            name = str(tokens[TAXONOMIC_SPECIES])
-            confidence = 1 - float(tokens[PVALUE])  # inverse because pvalue relates to prob of accidental match
+                # ignore empty lines
+                if len(tokens) <= 1:
+                    continue
 
-            identity = float(tokens[IDENTITY])
-            shared_hashes_tokens = tokens[SHARED_HASHES].split("/")
-            shared_hashes = float(shared_hashes_tokens[0]) / float(shared_hashes_tokens[1])
-            median_multiplicity = int(tokens[MEDIAN_MULTIPLICITY])
-            full_taxonomy = str(tokens[FULL_TAXONOMY])
+                name = str(tokens[TAXONOMIC_SPECIES])
+                confidence = 1 - float(tokens[PVALUE])  # inverse because pvalue relates to prob of accidental match
 
-            species = Species(name, confidence)
-            classification = Classification(species, identity, shared_hashes, median_multiplicity, full_taxonomy)
+                identity = float(tokens[IDENTITY])
+                shared_hashes_tokens = tokens[SHARED_HASHES].split("/")
+                shared_hashes = float(shared_hashes_tokens[0]) / float(shared_hashes_tokens[1])
+                median_multiplicity = int(tokens[MEDIAN_MULTIPLICITY])
+                full_taxonomy = str(tokens[FULL_TAXONOMY])
 
-            if classification not in classifications:
-                classifications.append(classification)
+                species = Species(name, confidence)
+                classification = Classification(species, identity, shared_hashes, median_multiplicity, full_taxonomy)
+
+                if classification not in classifications:
+                    classifications.append(classification)
 
     return classifications
 

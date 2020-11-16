@@ -94,16 +94,16 @@ def cli(ctx, forward, reverse, output_dir):
         species_list = species_estimator.estimate_species()
 
         species = species_list[0]
-        click.echo("SPECIES: " + str(species) + "\n")
+        click.echo("SPECIES: " + str(species))
 
         if len(species_list) > 1:
-            click.echo("WARNING: Additional high-confidence species were found in the input data:\n")
+            click.echo("\nWARNING: Additional high-confidence species were found in the input data:\n")
 
             for species in species_list[1:]:
                 click.echo(species)
 
         if species.name == "Unknown":  # A species could not be determined.
-            click.echo("WARNING: A species could not be determined with high confidence from the input data.")
+            click.echo("\nWARNING: A species could not be determined with high confidence from the input data.")
 
         click.echo("")  # Blank line
 
@@ -118,15 +118,8 @@ def cli(ctx, forward, reverse, output_dir):
 
         # Step 5: Perform a fast assembly.
         assembler = strategy.assembler
-
-        try:
-            output = assembler.assemble()
-            click.echo(output)
-
-            '''Catch exception if input reads are short for skesa kmer estimation'''
-        except Exception:
-            raise click.UsageError('encountered errors running skesa, \
-                this may have been caused by too small of file reads')
+        output = assembler.assemble()
+        click.echo(output)
 
         # Step 6: Evaluate Assembly
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)

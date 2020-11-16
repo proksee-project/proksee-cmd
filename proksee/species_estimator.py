@@ -113,6 +113,9 @@ class SpeciesEstimator:
         POST
             If successful, RefSeq Masher will have executed on the reads and the output will be written to the output
             directory. If unsuccessful, an error message will be raised.
+
+            If unsuccessful, the output file we be empty. It is necessary to check to see if the output file contains
+            any output.
         """
 
         output_filename = os.path.join(self.output_directory, "refseq_masher.o")
@@ -132,7 +135,7 @@ class SpeciesEstimator:
             subprocess.check_call(command, shell=True, stdout=output_file, stderr=error_file)
 
         except subprocess.CalledProcessError as e:
-            raise e
+            pass  # it will be the responsibility of the calling function to insure there was output
 
         finally:
             output_file.close()
