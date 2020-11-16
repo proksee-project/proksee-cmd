@@ -76,14 +76,36 @@ def parse_species_from_refseq_masher(refseq_masher_file):
 
 
 class Classification:
+    """
+    This class represents a RefSeq Masher "classification" of a species found in the input data.
+
+    ATTRIBUTES
+        species (Species): the species object representing the species
+        identity (float): an estimation of what fraction of bases are shared between the genome of the species and the
+            input data (estimated from the fraction of shared k-mers)
+        shared_hashes (float): what fraction of the k-mer hashes were shared
+        median_multiplicity (int): an estimation of coverage in the input data
+        full_taxonomy (string): a full string name of the taxonomy
+    """
 
     def __init__(self, species, identity, shared_hashes, median_multiplicity, full_taxonomy):
+        """
+        Initializes the classification.
+
+        PARAMETERS
+            species (Species): the species object representing the species
+            identity (float): an estimation of what fraction of bases are shared between the genome of the species and
+                the input data (estimated from the fraction of shared k-mers)
+            shared_hashes (float): what fraction of the k-mer hashes were shared
+            median_multiplicity (int): an estimation of coverage in the input data
+            full_taxonomy (string): a full string name of the taxonomy
+        """
 
         self.species = species
-        self.identity = identity
-        self.shared_hashes = shared_hashes
-        self.median_multiplicity = median_multiplicity
-        self.full_taxonomy = full_taxonomy
+        self.identity = float(identity)
+        self.shared_hashes = float(shared_hashes)
+        self.median_multiplicity = int(median_multiplicity)
+        self.full_taxonomy = str(full_taxonomy)
 
     def __eq__(self, other):
         """

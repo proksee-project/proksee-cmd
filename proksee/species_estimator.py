@@ -20,12 +20,14 @@ import os
 import subprocess
 
 from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
+from proksee.species import Species
 
 
 def estimate_major_species(classifications, ignore_viruses=True):
     """
-    Estimates which major species are present. The species will be sorted in descending order of confidence. If there
-    are multiple major species reported, then it is possible there is significant contamination.
+    Estimates which major species are present in a list of classifications. Not all classifications will have enough
+    evidence to report them as major classifications. The species will be sorted in descending order of confidence. If
+    there are multiple major species reported, then it is possible there is significant contamination.
 
     PARAMETERS
         classifications (List(Classification)): a list of species classifications from which to determine major species
@@ -90,7 +92,8 @@ class SpeciesEstimator:
         Estimates the species present in the reads.
 
         RETURNS
-            species (List(Species)): a list of the estimated major species
+            species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
+                and highest covered; will contain an unknown species if no major species was found
         """
 
         refseq_masher_filename = self.run_refseq_masher()
@@ -98,8 +101,8 @@ class SpeciesEstimator:
 
         species = estimate_major_species(classifications)
 
-        for s in species:
-            print(s)
+        if len(species) == 0:
+            species.append(Species("Unknown", 0.0))
 
         return species
 
