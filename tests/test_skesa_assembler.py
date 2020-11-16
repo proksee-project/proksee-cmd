@@ -23,7 +23,6 @@ from pathlib import Path
 # Importing Assembler class from assembler.py
 from proksee.skesa_assembler import SkesaAssembler
 import pytest
-import subprocess
 
 START_DIR = Path(__file__).parent.absolute()
 TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
@@ -61,19 +60,19 @@ class TestAssembler:
     # Test for skesa function with incorrect parameters
     def test_skesa_func_badparams(self):
         skesa_str_test = 'skesa --incorrect params'
-        with pytest.raises(subprocess.CalledProcessError):
+        with pytest.raises(RuntimeError):
             assert assembler_good._SkesaAssembler__skesa_func(skesa_str_test)
 
     # Test for skesa function with very small fastq file (which should fail)
     def test_skesa_func_badfile(self):
         skesa_str_bad = 'skesa --fastq ' + forward_bad + ' --use_paired_ends'
-        with pytest.raises(subprocess.CalledProcessError):
+        with pytest.raises(RuntimeError):
             assert assembler_bad._SkesaAssembler__skesa_func(skesa_str_bad)
 
     # Test for skesa function when skesa isn't installed
     def test_skesa_func_badcommand(self):
         skesa_str_test = 'conda deactivate && skesa -h'
-        with pytest.raises(subprocess.CalledProcessError):
+        with pytest.raises(RuntimeError):
             assert assembler_good._SkesaAssembler__skesa_func(skesa_str_test)
 
     # Test for skesa function with real fastq files
@@ -89,5 +88,5 @@ class TestAssembler:
 
     # Test for failed integrating method
     def test_perform_assembly_bad(self):
-        with pytest.raises(subprocess.CalledProcessError):
+        with pytest.raises(RuntimeError):
             assert assembler_bad.assemble()

@@ -134,7 +134,7 @@ class SpeciesEstimator:
         try:
             subprocess.check_call(command, shell=True, stdout=output_file, stderr=error_file)
 
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to insure there was output
 
         finally:

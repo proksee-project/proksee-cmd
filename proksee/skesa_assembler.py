@@ -73,11 +73,12 @@ class SkesaAssembler(Assembler):
 
         except subprocess.CalledProcessError as e:
 
-            message = "ERROR: Encountered an error when performing a fast assembly.\n" \
-                + "       Please see the log file for more information: " + str(self.log_filename)
+            sys.tracebacklimit = 0  # Remove traceback
 
-            print(message)
-            sys.exit(1)
+            message = "Encountered an error when performing a fast assembly.\n" \
+                + "    Please see the log file for more information: " + str(self.log_filename)
+
+            raise RuntimeError(message) from e
 
         return success
 
