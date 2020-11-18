@@ -43,7 +43,7 @@ def parse_species_from_refseq_masher(refseq_masher_file):
     MEDIAN_MULTIPLICITY = 4
     PVALUE = 5
     FULL_TAXONOMY = 6
-    TAXONOMIC_SPECIES = 8
+    TAXONOMIC_SPECIES = 7
 
     classifications = []
 
