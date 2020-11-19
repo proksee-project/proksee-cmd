@@ -24,6 +24,7 @@ specific language governing permissions and limitations under the License.
 
 import os
 import subprocess
+import sys
 
 from proksee.assembler import Assembler
 
@@ -66,12 +67,17 @@ class SkesaAssembler(Assembler):
         skesa_out = open(self.contigs_filename, 'w+')
         skesa_log = open(self.log_filename, 'w+')
 
-        '''Running skesa as a subprocess module. Raising error otherwise'''
         try:
             subprocess.check_call(skesa_str, shell=True, stdout=skesa_out, stderr=skesa_log)
             success = 'SKESA assembled reads and log files'
-        except subprocess.CalledProcessError as e:
-            raise e
+
+        except subprocess.CalledProcessError:
+
+            message = "ERROR: Encountered an error when performing a SKESA assembly.\n" \
+                + "       Please see the log file for more information: " + str(self.log_filename) + "\n"
+
+            print(message)
+            sys.exit(1)
 
         return success
 

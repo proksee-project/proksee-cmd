@@ -29,10 +29,10 @@ from pathlib import Path
 
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.assembly_database import AssemblyDatabase
+from proksee.species_estimator import SpeciesEstimator
 from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentify
 from proksee.read_filterer import ReadFilterer
-from proksee.organism_detection import OrganismDetection
 from proksee.expert_system import ExpertSystem
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "database",
@@ -77,7 +77,7 @@ def cli(ctx, forward, reverse, output_dir):
         output = read_filterer.filter_read()
         read_quality = read_filterer.summarize_quality()
 
-        click.echo(output)
+        click.echo(output + "\n")
 
         '''The next steps are executed on filtered read/s'''
         forward_filtered = os.path.join(output_dir, 'fwd_filtered.fastq')
@@ -89,15 +89,23 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 4: Organism Detection
         # Pass forward and reverse filtered reads to organism detection class
         # and return most frequently occuring reference genome
-        organism_identify = OrganismDetection(forward_filtered, reverse_filtered, output_dir)
-        try:
-            species_list = organism_identify.major_organism()
-            click.echo("Major reference organism is/are {}\n".format(species_list))
 
-            '''Catch exception if input reads are too short for reference genome estimation'''
-        except Exception:
-            raise click.UsageError('encountered errors running refseq_masher, \
-                this may have been caused by too small of file reads')
+        species_estimator = SpeciesEstimator(forward_filtered, reverse_filtered, output_dir)
+        species_list = species_estimator.estimate_species()
+
+        species = species_list[0]
+        click.echo("SPECIES: " + str(species))
+
+        if len(species_list) > 1:
+            click.echo("\nWARNING: Additional high-confidence species were found in the input data:\n")
+
+            for species in species_list[1:]:
+                click.echo(species)
+
+        if species.name == "Unknown":  # A species could not be determined.
+            click.echo("\nWARNING: A species could not be determined with high confidence from the input data.")
+
+        click.echo("")  # Blank line
 
         # Evaluate reads to determine a fast assembly strategy.
         expert = ExpertSystem(platform, species_list[0], forward_filtered, reverse_filtered, output_dir)
@@ -110,15 +118,8 @@ def cli(ctx, forward, reverse, output_dir):
 
         # Step 5: Perform a fast assembly.
         assembler = strategy.assembler
-
-        try:
-            output = assembler.assemble()
-            click.echo(output)
-
-            '''Catch exception if input reads are short for skesa kmer estimation'''
-        except Exception:
-            raise click.UsageError('encountered errors running skesa, \
-                this may have been caused by too small of file reads')
+        output = assembler.assemble()
+        click.echo(output)
 
         # Step 6: Evaluate Assembly
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)

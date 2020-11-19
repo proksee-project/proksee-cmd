@@ -43,7 +43,7 @@ class Species:
         Replaces the default string function with one that is more informative.
         """
 
-        return str(self.name) + " (p =" + str(self.confidence) + ")"
+        return str(self.name) + " (p=" + str(self.confidence) + ")"
 
     def __repr__(self):
         """
@@ -51,3 +51,10 @@ class Species:
         """
 
         return str(self.name) + " (" + str(self.confidence) + ")"
+
+    def __eq__(self, other):
+        """
+        Replaces the default equals function.
+        """
+
+        return self.name == other.name

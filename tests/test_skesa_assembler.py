@@ -1,9 +1,8 @@
-'''
-Copyright:
+"""
+Copyright Government of Canada 2020
 
-University of Manitoba & National Microbiology Laboratory, Canada, 2020
-
-Written by: Arnab Saha Mandal
+Written by: Eric Marinier, National Microbiology Laboratory,
+            Public Health Agency of Canada
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this work except in compliance with the License. You may obtain a copy of the
@@ -15,79 +14,68 @@ Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-'''
+"""
 
 import os
+import pytest
+
 from pathlib import Path
 
-# Importing Assembler class from assembler.py
 from proksee.skesa_assembler import SkesaAssembler
-import pytest
-import subprocess
 
-START_DIR = Path(__file__).parent.absolute()
-TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
-TEST_OUTPUT_DIR = '{}/data/testout'.format(str(START_DIR))
-
-# Using real fastq files from illumina public data
-forward_good = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
-reverse_good = os.path.join(TEST_INPUT_DIR, 'NA12878_rev.fastq')
-
-# Using a small truncated read data for catching exceptions
-forward_bad = os.path.join(TEST_INPUT_DIR, 'SRR7947278_5pair_reads.fastq')
-
-# Declaring instances of Assembler class
-assembler_good = SkesaAssembler(forward_good, reverse_good, TEST_OUTPUT_DIR)
-assembler_bad = SkesaAssembler(forward_bad, None, TEST_OUTPUT_DIR)
-
-# Defining variables for successful executions of Assembler class methods
-skesa_str_good = 'skesa --fastq ' + forward_good + ',' + reverse_good
-skesa_func_good = 'SKESA assembled reads and log files'
+INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
+OUTPUT_DIR = TEST_INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
 
 
-class TestAssembler:
+class TestSkesaAssembler:
 
-    # Test for checking good skesa string
-    def test_skesa_string_good(self):
-        method_string_good = assembler_good._SkesaAssembler__skesa_string()
-        assert skesa_str_good == method_string_good
+    def test_assemble_good_reads(self):
+        """
+        Tests the SKESA assembler class when reads are good.
+        """
 
-    # Test for negating bad skesa string
-    def test_skesa_string_bad(self):
-        skesa_str_bad = 'skesa --fastq ' + forward_bad + '--use_paired_ends(deleted whitespace)'
-        method_string = assembler_bad._SkesaAssembler__skesa_string()
-        assert skesa_str_bad != method_string
+        forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
+        reverse_filename = None
 
-    # Test for skesa function with incorrect parameters
-    def test_skesa_func_badparams(self):
-        skesa_str_test = 'skesa --incorrect params'
-        with pytest.raises(subprocess.CalledProcessError):
-            assert assembler_good._SkesaAssembler__skesa_func(skesa_str_test)
+        assembler = SkesaAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+        contigs_filename = assembler.get_contigs_filename()
 
-    # Test for skesa function with very small fastq file (which should fail)
-    def test_skesa_func_badfile(self):
-        skesa_str_bad = 'skesa --fastq ' + forward_bad + ' --use_paired_ends'
-        with pytest.raises(subprocess.CalledProcessError):
-            assert assembler_bad._SkesaAssembler__skesa_func(skesa_str_bad)
+        # Remove previous assembly if it exists:
+        if os.path.isfile(contigs_filename):
+            os.remove(contigs_filename)
 
-    # Test for skesa function when skesa isn't installed
-    def test_skesa_func_badcommand(self):
-        skesa_str_test = 'conda deactivate && skesa -h'
-        with pytest.raises(subprocess.CalledProcessError):
-            assert assembler_good._SkesaAssembler__skesa_func(skesa_str_test)
+        assembler.assemble()
 
-    # Test for skesa function with real fastq files
-    def test_skesa_func_good(self):
-        method_func_good = assembler_good._SkesaAssembler__skesa_func(skesa_str_good)
-        assert skesa_func_good == method_func_good
+        # Check that the assembly produced a contigs file.
+        assert os.path.isfile(contigs_filename)
 
-    # Test for Assembler class method integrating all methods
-    def test_perform_assembly_good(self):
-        skesa_output_string = 'SKESA assembled reads and log files ' + 'written to output directory'
-        method_string = assembler_good.assemble()
-        assert skesa_output_string == method_string
+    def test_assemble_good_paired_reads(self):
+        """
+        Tests the SKESA assembler class when paired reads are good.
+        """
 
-    # Test for failed integrating method
-    def test_perform_assembly_bad(self):
-        with pytest.raises(subprocess.CalledProcessError):
-            assert assembler_bad.assemble()
+        forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
+        reverse_filename = os.path.join(INPUT_DIR, "NA12878_rev.fastq")
+
+        assembler = SkesaAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+        contigs_filename = assembler.get_contigs_filename()
+
+        # Remove previous assembly if it exists:
+        if os.path.isfile(contigs_filename):
+            os.remove(contigs_filename)
+
+        assembler.assemble()
+
+        # Check that the assembly produced a contigs file.
+        assert os.path.isfile(contigs_filename)
+
+    def test_assemble_missing_reads(self):
+        """
+        Tests the SKESA assembler class when reads are missing.
+        """
+
+        forward_filename = os.path.join(INPUT_DIR, "missing.file")
+        reverse_filename = None
+
+        with pytest.raises(FileNotFoundError):
+            SkesaAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
