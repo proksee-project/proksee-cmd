@@ -23,19 +23,19 @@ from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 from proksee.species import Species
 
 
-def estimate_major_species(classifications, ignore_viruses=True):
+def estimate_major_species(estimations, ignore_viruses=True):
     """
-    Estimates which major species are present in a list of classifications. Not all classifications will have enough
-    evidence to report them as major classifications. The species will be sorted in descending order of confidence. If
+    Estimates which major species are present in a list of Estimations. Not all estimations will have enough
+    evidence to report them as major species. The species will be sorted in descending order of confidence. If
     there are multiple major species reported, then it is possible there is significant contamination.
 
     PARAMETERS
-        classifications (List(Classification)): a list of species classifications from which to determine major species
+        estimations (List(Estimation)): a list of species estimations from which to determine major species
             present in the data
-        ignore_viruses (bool=True): whether or not to ignore virus classifications
+        ignore_viruses (bool=True): whether or not to ignore virus estimations
 
     RETURNS
-        species (List(Species)): a list of major species determined from the classifications
+        species (List(Species)): a list of major species determined from the estimations
     """
 
     MIN_SHARED_FRACTION = 0.90  # the minimum fraction of shared hashes
@@ -44,21 +44,21 @@ def estimate_major_species(classifications, ignore_viruses=True):
 
     species = []
 
-    for classification in classifications:
+    for estimation in estimations:
 
-        full_taxonomy = str(classification.full_taxonomy)
+        full_taxonomy = str(estimation.full_taxonomy)
 
         if ignore_viruses and full_taxonomy.startswith("Viruses"):
             continue
 
-        shared_hashes = classification.shared_hashes
-        identity = classification.identity
-        median_multiplicity = classification.median_multiplicity
+        shared_hashes = estimation.shared_hashes
+        identity = estimation.identity
+        median_multiplicity = estimation.median_multiplicity
 
         if shared_hashes >= MIN_SHARED_FRACTION and identity >= MIN_IDENTITY and median_multiplicity \
                 >= MIN_MULTIPLICITY:
 
-            species.append(classification.species)
+            species.append(estimation.species)
 
     return species
 
@@ -75,7 +75,7 @@ class SpeciesEstimator:
 
     def __init__(self, forward, reverse, output_directory):
         """
-        Initializes the read classifier.
+        Initializes the species estimator.
 
         PARAMETERS
             forward (str): the filename of the forward reads
@@ -97,9 +97,9 @@ class SpeciesEstimator:
         """
 
         refseq_masher_filename = self.run_refseq_masher()
-        classifications = parse_species_from_refseq_masher(refseq_masher_filename)
+        estimations = parse_species_from_refseq_masher(refseq_masher_filename)
 
-        species = estimate_major_species(classifications)
+        species = estimate_major_species(estimations)
 
         if len(species) == 0:
             species.append(Species("Unknown", 0.0))

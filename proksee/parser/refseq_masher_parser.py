@@ -24,9 +24,9 @@ from proksee.species import Species
 def parse_species_from_refseq_masher(refseq_masher_file):
     """
     This functions parses the output file of RefSeq Masher's "contains" command. The input file should contain the full
-    output from this command. This parser returns classifications, with only minimal reduction of the data.
+    output from this command. This parser returns Estimations, with only minimal reduction of the data.
 
-    This function expects the RefSeq Masher file to be sorted by identity in descending order. Only one classification
+    This function expects the RefSeq Masher file to be sorted by identity in descending order. Only one Estimation
     from each species (the first observed, with the highest identity) is maintained.
 
     PARAMETERS:
@@ -35,7 +35,7 @@ def parse_species_from_refseq_masher(refseq_masher_file):
 
     RETURNS:
 
-        classifications (List(Classification)): a list of classification objects sorted from highest identity to lowest
+        estimations (List(Estimation)): a list of Estimation objects sorted from highest identity to lowest
     """
 
     IDENTITY = 2
@@ -45,7 +45,7 @@ def parse_species_from_refseq_masher(refseq_masher_file):
     FULL_TAXONOMY = 6
     TAXONOMIC_SPECIES = 7
 
-    classifications = []
+    estimations = []
 
     if not os.path.exists(refseq_masher_file):
         raise FileNotFoundError("File not found: " + refseq_masher_file)
@@ -75,20 +75,20 @@ def parse_species_from_refseq_masher(refseq_masher_file):
                 full_taxonomy = str(tokens[FULL_TAXONOMY])
 
                 species = Species(name, confidence)
-                classification = Classification(species, identity, shared_hashes, median_multiplicity, full_taxonomy)
+                estimation = Estimation(species, identity, shared_hashes, median_multiplicity, full_taxonomy)
 
-                if classification not in classifications:
-                    classifications.append(classification)
+                if estimation not in estimations:
+                    estimations.append(estimation)
 
-    return classifications
+    return estimations
 
 
-class Classification:
+class Estimation:
     """
-    This class represents a RefSeq Masher "classification" of a species found in the input data.
+    This class represents a RefSeq Masher "estimation" of a species found in the input data.
 
     ATTRIBUTES
-        species (Species): the species object representing the species
+        species (Species): the Species object representing the species
         identity (float): an estimation of what fraction of bases are shared between the genome of the species and the
             input data (estimated from the fraction of shared k-mers)
         shared_hashes (float): what fraction of the k-mer hashes were shared
@@ -98,10 +98,10 @@ class Classification:
 
     def __init__(self, species, identity, shared_hashes, median_multiplicity, full_taxonomy):
         """
-        Initializes the classification.
+        Initializes the Estimation.
 
         PARAMETERS
-            species (Species): the species object representing the species
+            species (Species): the Species object representing the species
             identity (float): an estimation of what fraction of bases are shared between the genome of the species and
                 the input data (estimated from the fraction of shared k-mers)
             shared_hashes (float): what fraction of the k-mer hashes were shared

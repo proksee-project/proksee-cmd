@@ -32,8 +32,8 @@ class TestSkesaAssembler:
         valid_masher_filename = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "rs_masher_good.tab")
 
-        classifications = parse_species_from_refseq_masher(valid_masher_filename)
-        species_list = estimate_major_species(classifications, ignore_viruses=True)
+        estimations = parse_species_from_refseq_masher(valid_masher_filename)
+        species_list = estimate_major_species(estimations, ignore_viruses=True)
 
         assert len(species_list) == 1
 
