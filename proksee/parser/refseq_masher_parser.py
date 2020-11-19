@@ -47,8 +47,11 @@ def parse_species_from_refseq_masher(refseq_masher_file):
 
     classifications = []
 
-    # Make sure that the file exists and contains data:
-    if os.path.isfile(refseq_masher_file) and os.path.getsize(refseq_masher_file) > 0:
+    if not os.path.exists(refseq_masher_file):
+        raise FileNotFoundError("File not found: " + refseq_masher_file)
+
+    # Make sure that the contains data:
+    if os.path.getsize(refseq_masher_file) > 0:
 
         with open(refseq_masher_file) as file:
 
