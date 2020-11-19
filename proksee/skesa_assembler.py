@@ -71,7 +71,7 @@ class SkesaAssembler(Assembler):
             subprocess.check_call(skesa_str, shell=True, stdout=skesa_out, stderr=skesa_log)
             success = 'SKESA assembled reads and log files'
 
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
 
             message = "ERROR: Encountered an error when performing a SKESA assembly.\n" \
                 + "       Please see the log file for more information: " + str(self.log_filename) + "\n"
