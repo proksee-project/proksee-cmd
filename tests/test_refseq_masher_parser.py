@@ -32,56 +32,56 @@ class TestRefSeqMasherParser:
         valid_masher_filename = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "rs_masher_good.tab")
 
-        classifications = parse_species_from_refseq_masher(valid_masher_filename)
+        estimations = parse_species_from_refseq_masher(valid_masher_filename)
 
-        classification = classifications[0]
+        estimation = estimations[0]
 
-        assert classification.species.name == "Listeria monocytogenes"
-        assert classification.species.confidence == 1
-        assert classification.identity == 1
-        assert classification.shared_hashes == 1
-        assert classification.median_multiplicity == 90
-        assert classification.full_taxonomy == "Bacteria; Terrabacteria group; Firmicutes; Bacilli; Bacillales; " \
+        assert estimation.species.name == "Listeria monocytogenes"
+        assert estimation.species.confidence == 1
+        assert estimation.identity == 1
+        assert estimation.shared_hashes == 1
+        assert estimation.median_multiplicity == 90
+        assert estimation.full_taxonomy == "Bacteria; Terrabacteria group; Firmicutes; Bacilli; Bacillales; " \
             + "Listeriaceae; Listeria; monocytogenes"
 
-        classification = classifications[1]
+        estimation = estimations[1]
 
-        assert classification.species.name == "Listeria phage LP-101"
-        assert classification.species.confidence == 1
-        assert classification.identity == 0.959082
-        assert classification.shared_hashes == float(205/400)
-        assert classification.median_multiplicity == 83
-        assert classification.full_taxonomy == "Viruses; dsDNA viruses, no RNA stage; Caudovirales; Siphoviridae; " \
+        assert estimation.species.name == "Listeria phage LP-101"
+        assert estimation.species.confidence == 1
+        assert estimation.identity == 0.959082
+        assert estimation.shared_hashes == float(205/400)
+        assert estimation.median_multiplicity == 83
+        assert estimation.full_taxonomy == "Viruses; dsDNA viruses, no RNA stage; Caudovirales; Siphoviridae; " \
             + "unclassified; Listeria phage LP-101"
 
-        classification = classifications[2]
+        estimation = estimations[2]
 
-        assert classification.species.name == "Listeria phage A006"
-        assert classification.species.confidence == 1
-        assert classification.identity == 0.956699
-        assert classification.shared_hashes == float(197/400)
-        assert classification.median_multiplicity == 104
-        assert classification.full_taxonomy == "Viruses; dsDNA viruses, no RNA stage; Caudovirales; Siphoviridae; " \
+        assert estimation.species.name == "Listeria phage A006"
+        assert estimation.species.confidence == 1
+        assert estimation.identity == 0.956699
+        assert estimation.shared_hashes == float(197/400)
+        assert estimation.median_multiplicity == 104
+        assert estimation.full_taxonomy == "Viruses; dsDNA viruses, no RNA stage; Caudovirales; Siphoviridae; " \
             + "unclassified; Listeria phage A006"
 
-        classification = classifications[3]
+        estimation = estimations[3]
 
-        assert classification.species.name == "Listeria innocua"
-        assert classification.species.confidence == 1-1.0596399999999997e-173
-        assert classification.identity == 0.926047
-        assert classification.shared_hashes == float(117/400)
-        assert classification.median_multiplicity == 88
-        assert classification.full_taxonomy == "Bacteria; Terrabacteria group; Firmicutes; Bacilli; Bacillales; " \
+        assert estimation.species.name == "Listeria innocua"
+        assert estimation.species.confidence == 1-1.0596399999999997e-173
+        assert estimation.identity == 0.926047
+        assert estimation.shared_hashes == float(117/400)
+        assert estimation.median_multiplicity == 88
+        assert estimation.full_taxonomy == "Bacteria; Terrabacteria group; Firmicutes; Bacilli; Bacillales; " \
             + "Listeriaceae; Listeria; innocua; FSL J1-023"
 
-        classification = classifications[4]
+        estimation = estimations[4]
 
-        assert classification.species.name == "[Clostridium] cellulolyticum"
-        assert classification.species.confidence == 1-9.228979999999998e-170
-        assert classification.identity == 0.925049
-        assert classification.shared_hashes == float(115/400)
-        assert classification.median_multiplicity == 823
-        assert classification.full_taxonomy == "Bacteria; Terrabacteria group; Firmicutes; " \
+        assert estimation.species.name == "[Clostridium] cellulolyticum"
+        assert estimation.species.confidence == 1-9.228979999999998e-170
+        assert estimation.identity == 0.925049
+        assert estimation.shared_hashes == float(115/400)
+        assert estimation.median_multiplicity == 823
+        assert estimation.full_taxonomy == "Bacteria; Terrabacteria group; Firmicutes; " \
             + "Clostridia; les; Ruminococcaceae; Ruminiclostridium; [Clostridium] cellulolyticum"
 
     def test_missing_masher_file(self):
