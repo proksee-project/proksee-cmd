@@ -90,7 +90,7 @@ def cli(ctx, forward, reverse, output_dir):
         # Pass forward and reverse filtered reads to organism detection class
         # and return most frequently occuring reference genome
 
-        species_estimator = SpeciesEstimator(forward_filtered, reverse_filtered, output_dir)
+        species_estimator = SpeciesEstimator([forward_filtered, reverse_filtered], output_dir)
         species_list = species_estimator.estimate_species()
 
         species = species_list[0]

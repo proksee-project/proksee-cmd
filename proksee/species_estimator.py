@@ -23,7 +23,7 @@ from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 from proksee.species import Species
 
 
-def estimate_major_species(estimations, ignore_viruses=True):
+def estimate_species_from_estimations(estimations, ignore_viruses=True):
     """
     Estimates which major species are present in a list of Estimations. Not all estimations will have enough
     evidence to report them as major species. The species will be sorted in descending order of confidence. If
@@ -68,28 +68,25 @@ class SpeciesEstimator:
     This class represents a species estimation tool.
 
     ATTRIBUTES
-        forward (str): the filename of the forward reads
-        reverse (str): the filename of the reverse reads
+        input_list (List(str)): a list of input files
         output_directory (str): the directory to use for program output
     """
 
-    def __init__(self, forward, reverse, output_directory):
+    def __init__(self, input_list, output_directory):
         """
         Initializes the species estimator.
 
         PARAMETERS
-            forward (str): the filename of the forward reads
-            reverse (str): the filename of the reverse reads
+            input_list (List(str)): a list of input files
             output_directory (str): the directory to use for program output
         """
 
-        self.forward = forward
-        self.reverse = reverse
+        self.input_list = input_list
         self.output_directory = output_directory
 
-    def estimate_species(self):
+    def estimate_major_species(self):
         """
-        Estimates the species present in the reads.
+        Estimates the major species present in the reads.
 
         RETURNS
             species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
@@ -99,7 +96,26 @@ class SpeciesEstimator:
         refseq_masher_filename = self.run_refseq_masher()
         estimations = parse_species_from_refseq_masher(refseq_masher_filename)
 
-        species = estimate_major_species(estimations)
+        species = estimate_species_from_estimations(estimations)
+
+        if len(species) == 0:
+            species.append(Species("Unknown", 0.0))
+
+        return species
+
+    def estimate_all_species(self):
+        """
+        Estimates all the species present in the reads.
+
+        RETURNS
+            species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
+                and highest covered; will contain an unknown species if no major species was found
+        """
+
+        refseq_masher_filename = self.run_refseq_masher()
+        estimations = parse_species_from_refseq_masher(refseq_masher_filename)
+
+        species = estimate_species_from_estimations(estimations)
 
         if len(species) == 0:
             species.append(Species("Unknown", 0.0))
@@ -125,10 +141,7 @@ class SpeciesEstimator:
         error_file = open(error_filename, "w")
 
         # create the refseq_masher command
-        if self.reverse:
-            command = "refseq_masher contains " + str(self.forward) + " " + str(self.reverse)
-        else:
-            command = "refseq_masher contains " + str(self.forward)
+        command = "refseq_masher contains -i 0 -v 1 " + " ".join(self.input_list)
 
         # run refseq_masher
         try:

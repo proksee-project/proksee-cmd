@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 import os
 
 from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
-from proksee.species_estimator import estimate_major_species
+from proksee.species_estimator import estimate_species_from_estimations
 
 
 class TestSkesaAssembler:
@@ -33,7 +33,7 @@ class TestSkesaAssembler:
             os.path.abspath(__file__)), "data", "rs_masher_good.tab")
 
         estimations = parse_species_from_refseq_masher(valid_masher_filename)
-        species_list = estimate_major_species(estimations, ignore_viruses=True)
+        species_list = estimate_species_from_estimations(estimations, ignore_viruses=True)
 
         assert len(species_list) == 1
 
