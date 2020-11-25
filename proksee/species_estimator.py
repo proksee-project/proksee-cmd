@@ -23,7 +23,8 @@ from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 from proksee.species import Species
 
 
-def estimate_species_from_estimations(estimations, ignore_viruses=True):
+def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,
+                                      ignore_viruses=True):
     """
     Estimates which major species are present in a list of Estimations. Not all estimations will have enough
     evidence to report them as major species. The species will be sorted in descending order of confidence. If
@@ -33,14 +34,13 @@ def estimate_species_from_estimations(estimations, ignore_viruses=True):
         estimations (List(Estimation)): a list of species estimations from which to determine major species
             present in the data
         ignore_viruses (bool=True): whether or not to ignore virus estimations
+        min_shared_fraction (float): the minimum fraction of shared hashes
+        min_identity (float): the minimum identity; estimation of fraction of bases shared between reads and genome
+        min_multiplicity (int): the median multiplicity; relates to coverage and redundancy of observations
 
     RETURNS
         species (List(Species)): a list of major species determined from the estimations
     """
-
-    MIN_SHARED_FRACTION = 0.90  # the minimum fraction of shared hashes
-    MIN_IDENTITY = 0.90  # the minimum identity; estimation of fraction of bases shared between reads and genome
-    MIN_MULTIPLICITY = 5  # the median multiplicity; relates to coverage and redundancy of observations
 
     species = []
 
@@ -55,8 +55,8 @@ def estimate_species_from_estimations(estimations, ignore_viruses=True):
         identity = estimation.identity
         median_multiplicity = estimation.median_multiplicity
 
-        if shared_hashes >= MIN_SHARED_FRACTION and identity >= MIN_IDENTITY and median_multiplicity \
-                >= MIN_MULTIPLICITY:
+        if shared_hashes >= min_shared_fraction and identity >= min_identity and median_multiplicity \
+                >= min_multiplicity:
 
             species.append(estimation.species)
 
@@ -81,7 +81,7 @@ class SpeciesEstimator:
             output_directory (str): the directory to use for program output
         """
 
-        self.input_list = input_list
+        self.input_list = [i for i in input_list if i]  # remove all "None" inputs
         self.output_directory = output_directory
 
     def estimate_major_species(self):
@@ -90,13 +90,17 @@ class SpeciesEstimator:
 
         RETURNS
             species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
-                and highest covered; will contain an unknown species if no major species was found
+                and highest covered; will contain an "Unknown" species if no major species was found
         """
+
+        MIN_SHARED_FRACTION = 0.90
+        MIN_IDENTITY = 0.90
+        MIN_MULTIPLICITY = 5
 
         refseq_masher_filename = self.run_refseq_masher()
         estimations = parse_species_from_refseq_masher(refseq_masher_filename)
 
-        species = estimate_species_from_estimations(estimations)
+        species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
         if len(species) == 0:
             species.append(Species("Unknown", 0.0))
@@ -108,14 +112,18 @@ class SpeciesEstimator:
         Estimates all the species present in the reads.
 
         RETURNS
-            species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
-                and highest covered; will contain an unknown species if no major species was found
+            species (List(Species)): a list of all estimated species, sorted in descending order of most complete
+                and highest covered; will contain an "Unknown" species if no major species was found
         """
+
+        MIN_SHARED_FRACTION = 0
+        MIN_IDENTITY = 0
+        MIN_MULTIPLICITY = 0
 
         refseq_masher_filename = self.run_refseq_masher()
         estimations = parse_species_from_refseq_masher(refseq_masher_filename)
 
-        species = estimate_species_from_estimations(estimations)
+        species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
         if len(species) == 0:
             species.append(Species("Unknown", 0.0))
@@ -141,7 +149,12 @@ class SpeciesEstimator:
         error_file = open(error_filename, "w")
 
         # create the refseq_masher command
-        command = "refseq_masher contains -i 0 -v 1 " + " ".join(self.input_list)
+        command = "refseq_masher contains -i 0 -v 1"
+
+        for item in self.input_list:
+            command += " " + str(item)
+
+        print(command)
 
         # run refseq_masher
         try:

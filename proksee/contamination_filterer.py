@@ -40,7 +40,7 @@ class ContaminationFilterer:
             print(fasta_file)
 
             species_estimator = SpeciesEstimator([fasta_file], self.output_directory)
-            species_list = species_estimator.estimate_species()
+            species_list = species_estimator.estimate_all_species()
 
             print(species_list[0])
 

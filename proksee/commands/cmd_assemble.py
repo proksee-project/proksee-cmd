@@ -91,7 +91,7 @@ def cli(ctx, forward, reverse, output_dir):
         # and return most frequently occuring reference genome
 
         species_estimator = SpeciesEstimator([forward_filtered, reverse_filtered], output_dir)
-        species_list = species_estimator.estimate_species()
+        species_list = species_estimator.estimate_major_species()
 
         species = species_list[0]
         click.echo("SPECIES: " + str(species))

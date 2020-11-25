@@ -33,7 +33,7 @@ class TestSkesaAssembler:
             os.path.abspath(__file__)), "data", "rs_masher_good.tab")
 
         estimations = parse_species_from_refseq_masher(valid_masher_filename)
-        species_list = estimate_species_from_estimations(estimations, ignore_viruses=True)
+        species_list = estimate_species_from_estimations(estimations, 0.9, 0.9, 5, ignore_viruses=True)
 
         assert len(species_list) == 1
 

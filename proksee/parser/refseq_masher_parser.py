@@ -38,12 +38,12 @@ def parse_species_from_refseq_masher(refseq_masher_file):
         estimations (List(Estimation)): a list of Estimation objects sorted from highest identity to lowest
     """
 
-    IDENTITY = 2
-    SHARED_HASHES = 3
-    MEDIAN_MULTIPLICITY = 4
-    PVALUE = 5
-    FULL_TAXONOMY = 6
-    TAXONOMIC_SPECIES = 7
+    IDENTITY = "identity"
+    SHARED_HASHES = "shared_hashes"
+    MEDIAN_MULTIPLICITY = "median_multiplicity"
+    PVALUE = "pvalue"
+    FULL_TAXONOMY = "full_taxonomy"
+    TAXONOMIC_SPECIES = "taxonomic_species"
 
     estimations = []
 
@@ -55,7 +55,17 @@ def parse_species_from_refseq_masher(refseq_masher_file):
 
         with open(refseq_masher_file) as file:
 
-            next(file)  # Skip the header line in the file.
+            # Determine the positions of columns from the header line.
+            # These columns do not always have the same positions!
+            # (Some outputs may be missing the taxonomic_subspecies column!)
+            headers = file.readline().split()
+
+            identity_pos = headers.index(IDENTITY)
+            shared_hashes_pos = headers.index(SHARED_HASHES)
+            median_multiplicity_pos = headers.index(MEDIAN_MULTIPLICITY)
+            pvalue_pos = headers.index(PVALUE)
+            full_taxonomy_pos = headers.index(FULL_TAXONOMY)
+            taxonomic_species_pos = headers.index(TAXONOMIC_SPECIES)
 
             for line in file:
 
@@ -65,14 +75,14 @@ def parse_species_from_refseq_masher(refseq_masher_file):
                 if len(tokens) <= 1:
                     continue
 
-                name = str(tokens[TAXONOMIC_SPECIES])
-                confidence = 1 - float(tokens[PVALUE])  # inverse because pvalue relates to prob of accidental match
+                name = str(tokens[taxonomic_species_pos])
+                confidence = 1 - float(tokens[pvalue_pos])  # inverse because pvalue relates to prob of accidental match
 
-                identity = float(tokens[IDENTITY])
-                shared_hashes_tokens = tokens[SHARED_HASHES].split("/")
+                identity = float(tokens[identity_pos])
+                shared_hashes_tokens = tokens[shared_hashes_pos].split("/")
                 shared_hashes = float(shared_hashes_tokens[0]) / float(shared_hashes_tokens[1])
-                median_multiplicity = int(tokens[MEDIAN_MULTIPLICITY])
-                full_taxonomy = str(tokens[FULL_TAXONOMY])
+                median_multiplicity = int(tokens[median_multiplicity_pos])
+                full_taxonomy = str(tokens[full_taxonomy_pos])
 
                 species = Species(name, confidence)
                 estimation = Estimation(species, identity, shared_hashes, median_multiplicity, full_taxonomy)
