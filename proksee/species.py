@@ -58,3 +58,10 @@ class Species:
         """
 
         return self.name == other.name
+
+    def __hash__(self):
+        """
+        Replaces the default hash function.
+        """
+
+        return self.name.__hash__()

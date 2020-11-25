@@ -154,8 +154,6 @@ class SpeciesEstimator:
         for item in self.input_list:
             command += " " + str(item)
 
-        print(command)
-
         # run refseq_masher
         try:
             subprocess.check_call(command, shell=True, stdout=output_file, stderr=error_file)

@@ -46,16 +46,26 @@ def split_multi_fasta_into_fasta(fasta_file, output_directory):
     with open(fasta_file) as file:
 
         for line in file:
+            # FASTA record header
             if line.startswith(">"):
                 output_file = os.path.join(output_directory, str(count) + ".fasta")
                 output = open(output_file, "w")
                 count += 1
 
-                file_list.append(output_file)
+                information = [output_file, 0]  # [filename, number of sequence characters]
+                file_list.append(information)
 
                 output.write(line)
 
+            # FASTA record sequence
             else:
                 output.write(line)
+                file_list[len(file_list) - 1][1] += len(line)  # last item in list, increment sequence characters
+
+    file_list.sort(key=lambda filename: filename[1], reverse=True)
+
+    # Keep only filenames (not number of characters)
+    for i in range(len(file_list)):
+        file_list[i] = file_list[i][0]
 
     return file_list
