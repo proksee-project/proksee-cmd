@@ -24,7 +24,6 @@ def split_multi_fasta_into_fasta(fasta_file, output_directory):
     Splits a single multi-FASTA-format file into individual FASTA-format files, each containing only one FASTA record.
 
     PARAMETERS
-
         fasta_file (str): the file location of the FASTA file
         output_directory (str): the output directory to place all of the individual FASTA files
 
@@ -32,13 +31,15 @@ def split_multi_fasta_into_fasta(fasta_file, output_directory):
         file_list (list(str)): a list of the locations of the written fasta files
 
     POST
-
         The output directory will contain a number of FASTA files equal to the number of FASTA records in the
         multi-FASTA-format file provided to this function.
     """
 
     count = 0
     file_list = []
+
+    if not os.path.exists(fasta_file):
+        raise FileNotFoundError("File not found: " + fasta_file)
 
     if not os.path.isdir(output_directory):
         os.mkdir(output_directory)

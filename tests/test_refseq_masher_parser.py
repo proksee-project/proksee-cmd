@@ -24,13 +24,13 @@ from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 
 class TestRefSeqMasherParser:
 
-    def test_valid_masher_file(self):
+    def test_no_subspecies_masher_file(self):
         """
-        Tests the parser with a valid RefSeq Masher output file.
+        Tests the parser with a RefSeq Masher output file that DOES NOT contain a "subspecies" column.
         """
 
         valid_masher_filename = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "data", "rs_masher_good.tab")
+            os.path.abspath(__file__)), "data", "rs_masher_no_subspecies_column.tab")
 
         estimations = parse_species_from_refseq_masher(valid_masher_filename)
 
@@ -83,6 +83,26 @@ class TestRefSeqMasherParser:
         assert estimation.median_multiplicity == 823
         assert estimation.full_taxonomy == "Bacteria; Terrabacteria group; Firmicutes; " \
             + "Clostridia; les; Ruminococcaceae; Ruminiclostridium; [Clostridium] cellulolyticum"
+
+    def test_subspecies_masher_file(self):
+        """
+        Tests the parser with a RefSeq Masher output file that DOES contain a "subspecies" column.
+        """
+
+        valid_masher_filename = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "rs_masher_subspecies_column.tab")
+
+        estimations = parse_species_from_refseq_masher(valid_masher_filename)
+
+        estimation = estimations[0]
+
+        assert estimation.species.name == "Staphylococcus aureus"
+        assert estimation.species.confidence == 1
+        assert estimation.identity == 1
+        assert estimation.shared_hashes == float(400/400)
+        assert estimation.median_multiplicity == 672
+        assert estimation.full_taxonomy == "Bacteria; Terrabacteria group; Firmicutes; Bacilli; Bacillales; " \
+            + "Staphylococcaceae; Staphylococcus; aureus"
 
     def test_missing_masher_file(self):
         """

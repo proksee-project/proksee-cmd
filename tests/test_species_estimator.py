@@ -19,18 +19,18 @@ specific language governing permissions and limitations under the License.
 import os
 
 from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
-from proksee.species_estimator import estimate_species_from_estimations
+from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
 
 
 class TestSkesaAssembler:
 
-    def test_major_species_estimation(self):
+    def test_species_estimation(self):
         """
-        Tests the estimation of major species.
+        Tests the estimation of species from estimations (objects).
         """
 
         valid_masher_filename = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "data", "rs_masher_good.tab")
+            os.path.abspath(__file__)), "data", "rs_masher_no_subspecies_column.tab")
 
         estimations = parse_species_from_refseq_masher(valid_masher_filename)
         species_list = estimate_species_from_estimations(estimations, 0.9, 0.9, 5, ignore_viruses=True)
@@ -41,3 +41,26 @@ class TestSkesaAssembler:
 
         assert species.name == "Listeria monocytogenes"
         assert species.confidence == 1
+
+    def test_all_species_estimation(self):
+        """
+        Tests the estimation of all species. In particular, low abundance species estimations.
+        """
+
+        input_filename = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "staph_mini.fastq")
+        output_directory = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "temp")
+
+        estimator = SpeciesEstimator([input_filename], output_directory)
+        species_list = estimator.estimate_all_species()
+
+        top_species = species_list[0]
+
+        assert top_species.name == "Staphylococcus aureus"
+        assert top_species.confidence == 1-6.548889999999999e-74
+
+        bottom_species = species_list[len(species_list) - 1]
+
+        assert bottom_species.name == "Paenibacillus sp. HGF7"
+        assert bottom_species.confidence == 1-0.00036287
