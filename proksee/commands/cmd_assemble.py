@@ -122,7 +122,7 @@ def cli(ctx, forward, reverse, output_dir):
         output = assembler.assemble()
         click.echo(output)
 
-        # Check for contamination at the contig-level
+        # Check for contamination at the contig level
         contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_dir)
         evaluation = contamination_handler.estimate_contamination()
 

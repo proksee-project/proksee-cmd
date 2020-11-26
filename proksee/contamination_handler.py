@@ -24,14 +24,40 @@ from proksee.species_estimator import SpeciesEstimator
 
 
 class ContaminationHandler:
+    """
+    This class represents a contamination handler, a tool responsible for identifying, filtering, and otherwise
+    handling contamination in the data.
+
+    ATTRIBUTES
+        species (str): the species that is believed to be the major (i.e. correct, non-contaminate) species
+        contigs_file (str): the file location of assembled contigs to check for contamination
+        output_directory (str): the directory location to write single-record FASTA files; this will probably be a
+            subdirectory of the program output directory
+    """
 
     def __init__(self, species, contigs_file, output_directory):
+        """
+        Initializes the contamination handler.
+
+        PARAMETERS
+            species (str): the species that is believed to be the major (i.e. correct, non-contaminate) species
+            contigs_file (str): the file location of assembled contigs to check for contamination
+            output_directory (str): the directory location to write single-record FASTA files; this will probably be a
+                subdirectory of the program output directory
+        """
 
         self.species = species
         self.contigs_file = contigs_file
         self.output_directory = output_directory
 
     def estimate_contamination(self):
+        """
+        Estimates species contamination in the input data.
+
+        RETURNS
+            evaluation (Evaluation): an Evaluation of whether or not the data passes / succeeds a contamination "test";
+                contains an associated, plain-language report
+        """
 
         FASTA_DIRECTORY = "fasta"
         CONTIGS_EVALUATED = 5
@@ -53,6 +79,14 @@ class ContaminationHandler:
         return evaluation
 
     def evaluate_species_estimations(self, estimations):
+        """
+        Evaluates the species estimations for contamination. That is, checks for disagreement with the major species
+        and any observed species.
+
+        RETURNS
+            evaluation (Evaluation): an Evaluation of whether or not the data passes / succeeds a contamination "test";
+                contains an associated, plain-language report
+        """
 
         estimations_set = set(estimations)  # Convert to set to find only unique estimations
         report = ""

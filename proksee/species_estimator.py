@@ -26,17 +26,17 @@ from proksee.species import Species
 def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,
                                       ignore_viruses=True):
     """
-    Estimates which major species are present in a list of Estimations. Not all estimations will have enough
-    evidence to report them as major species. The species will be sorted in descending order of confidence. If
-    there are multiple major species reported, then it is possible there is significant contamination.
+    Estimates which species are present in a list of Estimations. Species will be reported if their associated
+    estimation's measurements pass the thresholds passed to this function. The species will be sorted in descending
+    order of confidence.
 
     PARAMETERS
-        estimations (List(Estimation)): a list of species estimations from which to determine major species
-            present in the data
-        ignore_viruses (bool=True): whether or not to ignore virus estimations
+        estimations (List(Estimation)): a list of species estimations from which to determine which species
+            present in the data (according to the provided threshold values)
         min_shared_fraction (float): the minimum fraction of shared hashes
         min_identity (float): the minimum identity; estimation of fraction of bases shared between reads and genome
         min_multiplicity (int): the median multiplicity; relates to coverage and redundancy of observations
+        ignore_viruses (bool=True): whether or not to ignore virus estimations
 
     RETURNS
         species (List(Species)): a list of major species determined from the estimations
@@ -68,8 +68,8 @@ class SpeciesEstimator:
     This class represents a species estimation tool.
 
     ATTRIBUTES
-        input_list (List(str)): a list of input files
-        output_directory (str): the directory to use for program output
+        input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
+        output_directory (str): the directory to use for output
     """
 
     def __init__(self, input_list, output_directory):
@@ -77,7 +77,7 @@ class SpeciesEstimator:
         Initializes the species estimator.
 
         PARAMETERS
-            input_list (List(str)): a list of input files
+            input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
             output_directory (str): the directory to use for program output
         """
 
@@ -86,7 +86,8 @@ class SpeciesEstimator:
 
     def estimate_major_species(self):
         """
-        Estimates the major species present in the reads.
+        Estimates the major species present in the reads. If this function returns more than one "major" species, then
+        it is possible there is major contamination in the input data.
 
         RETURNS
             species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
@@ -113,7 +114,7 @@ class SpeciesEstimator:
 
         RETURNS
             species (List(Species)): a list of all estimated species, sorted in descending order of most complete
-                and highest covered; will contain an "Unknown" species if no major species was found
+                and highest covered; will contain an "Unknown" species if no species were found
         """
 
         MIN_SHARED_FRACTION = 0
@@ -132,14 +133,12 @@ class SpeciesEstimator:
 
     def run_refseq_masher(self):
         """
-        Runs RefSeq Masher on the reads.
+        Runs RefSeq Masher on the input data.
 
         POST
-            If successful, RefSeq Masher will have executed on the reads and the output will be written to the output
-            directory. If unsuccessful, an error message will be raised.
-
-            If unsuccessful, the output file we be empty. It is necessary to check to see if the output file contains
-            any output.
+            If successful, RefSeq Masher will have executed on the input and the output will be written to the output
+            directory. If unsuccessful, the output file we be empty. It is necessary to check to see if the output file
+            contains any output.
         """
 
         output_filename = os.path.join(self.output_directory, "refseq_masher.o")
