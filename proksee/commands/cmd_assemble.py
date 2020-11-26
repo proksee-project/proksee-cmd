@@ -29,6 +29,7 @@ from pathlib import Path
 
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.assembly_database import AssemblyDatabase
+from proksee.contamination_handler import ContaminationHandler
 from proksee.species_estimator import SpeciesEstimator
 from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentify
@@ -120,6 +121,16 @@ def cli(ctx, forward, reverse, output_dir):
         assembler = strategy.assembler
         output = assembler.assemble()
         click.echo(output)
+
+        # Check for contamination at the contig-level
+        contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_dir)
+        evaluation = contamination_handler.estimate_contamination()
+
+        click.echo(evaluation.report)
+
+        if not evaluation.success:
+            click.echo("The assembly was unable to proceed.")
+            return
 
         # Step 6: Evaluate Assembly
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)

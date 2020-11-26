@@ -49,7 +49,7 @@ class ContaminationHandler:
             contig_species_estimations.append(species_list[0])  # Select the estimation with the most evidence
 
         evaluation = self.evaluate_species_estimations(contig_species_estimations)
-        print(evaluation.report)
+
         return evaluation
 
     def evaluate_species_estimations(self, estimations):
@@ -57,7 +57,7 @@ class ContaminationHandler:
         estimations_set = set(estimations)  # Convert to set to find only unique estimations
         report = ""
 
-        if len(estimations_set) == 1 and estimations_set[0] == self.species:
+        if len(estimations_set) == 1 and estimations[0] == self.species:
             success = True
             report += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
             report += "      The estimated species is: " + str(self.species) + "\n"
