@@ -28,7 +28,7 @@ class TestContaminationHandler:
 
         species = Species("Boletus subalpinus", 0.99999999290182)
         contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "contamination.fasta")
-        output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "temp")
+        output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
         handler = ContaminationHandler(species, contigs_file, output_directory)
 
         evaluation = handler.estimate_contamination()
@@ -49,7 +49,7 @@ class TestContaminationHandler:
 
         species = Species("Boletus subalpinus", 0.99999999290182)
         contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "simple_contig.fasta")
-        output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "temp")
+        output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
         handler = ContaminationHandler(species, contigs_file, output_directory)
 
         evaluation = handler.estimate_contamination()
