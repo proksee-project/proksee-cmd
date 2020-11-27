@@ -88,10 +88,12 @@ class ContaminationHandler:
                 contains an associated, plain-language report
         """
 
-        estimations_set = set(estimations)  # Convert to set to find only unique estimations
+        sorted_estimations = list(set(estimations))  # Convert to set to find only unique estimations
+        sorted_estimations.sort(key=lambda item: item.confidence, reverse=True)  # "item" is an Estimation
+
         report = ""
 
-        if len(estimations_set) == 1 and estimations[0] == self.species:
+        if len(sorted_estimations) == 1 and estimations[0] == self.species:
             success = True
             report += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
             report += "      The estimated species is: " + str(self.species) + "\n"
@@ -102,7 +104,7 @@ class ContaminationHandler:
             report += "      The estimated species is: " + str(self.species) + "\n"
             report += "      The following species were estimated from the contigs:\n\n"
 
-            for estimation in estimations_set:
+            for estimation in sorted_estimations:
                 report += "      " + str(estimation) + "\n"
 
         return Evaluation(success, report)
