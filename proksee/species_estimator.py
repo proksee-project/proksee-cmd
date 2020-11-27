@@ -34,7 +34,8 @@ def estimate_species_from_estimations(estimations, min_shared_fraction, min_iden
         estimations (List(Estimation)): a list of species estimations from which to determine which species
             present in the data (according to the provided threshold values)
         min_shared_fraction (float): the minimum fraction of shared hashes
-        min_identity (float): the minimum identity; estimation of fraction of bases shared between reads and genome
+        min_identity (float): the minimum identity; estimation of fraction of bases shared between the input data and
+            genome
         min_multiplicity (int): the median multiplicity; relates to coverage and redundancy of observations
         ignore_viruses (bool=True): whether or not to ignore virus estimations
 
@@ -86,8 +87,8 @@ class SpeciesEstimator:
 
     def estimate_major_species(self):
         """
-        Estimates the major species present in the reads. If this function returns more than one "major" species, then
-        it is possible there is major contamination in the input data.
+        Estimates the major species present in the input data. If this function returns more than one "major" species,
+        then it is possible there is major contamination in the input data.
 
         RETURNS
             species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
@@ -110,7 +111,7 @@ class SpeciesEstimator:
 
     def estimate_all_species(self):
         """
-        Estimates all the species present in the reads.
+        Estimates all the species present in the input data.
 
         RETURNS
             species (List(Species)): a list of all estimated species, sorted in descending order of most complete

@@ -40,10 +40,9 @@ class ContaminationHandler:
         Initializes the contamination handler.
 
         PARAMETERS
-            species (str): the species that is believed to be the major (i.e. correct, non-contaminate) species
+            species (Species): the species that is believed to be the major (i.e. correct, non-contaminate) species
             contigs_file (str): the file location of assembled contigs to check for contamination
-            output_directory (str): the directory location to write single-record FASTA files; this will probably be a
-                subdirectory of the program output directory
+            output_directory (str): the output directory for the program
         """
 
         self.species = species
@@ -60,14 +59,14 @@ class ContaminationHandler:
         """
 
         FASTA_DIRECTORY = "fasta"
-        CONTIGS_EVALUATED = 5
+        MAX_CONTIGS_EVALUATED = 5
 
         fasta_directory = os.path.join(self.output_directory, FASTA_DIRECTORY)
         fasta_files = split_multi_fasta_into_fasta(self.contigs_file, fasta_directory)
 
         contig_species_estimations = []
 
-        for i in range(min(len(fasta_files), CONTIGS_EVALUATED)):
+        for i in range(min(len(fasta_files), MAX_CONTIGS_EVALUATED)):
 
             species_estimator = SpeciesEstimator([fasta_files[i]], self.output_directory)
             species_list = species_estimator.estimate_all_species()
@@ -88,7 +87,7 @@ class ContaminationHandler:
                 contains an associated, plain-language report
         """
 
-        sorted_estimations = list(set(estimations))  # Convert to set to find only unique estimations
+        sorted_estimations = list(set(estimations))  # Convert to set and back to list to find only unique estimations
         sorted_estimations.sort(key=lambda item: item.confidence, reverse=True)  # "item" is an Estimation
 
         report = ""

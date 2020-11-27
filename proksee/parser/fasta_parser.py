@@ -28,7 +28,7 @@ def split_multi_fasta_into_fasta(fasta_file, output_directory):
         output_directory (str): the output directory to place all of the individual FASTA files
 
     RETURNS
-        file_list (list(str)): a list of the locations of the written fasta files
+        file_list (list(str)): a list of the locations of the written FASTA files in descending order of sequence length
 
     POST
         The output directory will contain a number of FASTA files equal to the number of FASTA records in the
