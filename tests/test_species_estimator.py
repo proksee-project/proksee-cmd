@@ -17,6 +17,7 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
+import pytest
 
 from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
@@ -58,9 +59,9 @@ class TestSkesaAssembler:
         top_species = species_list[0]
 
         assert top_species.name == "Staphylococcus aureus"
-        assert top_species.confidence == 1-6.548889999999999e-74
+        assert top_species.confidence == pytest.approx(1-6.548889999999999e-74, 0.0001)
 
         bottom_species = species_list[len(species_list) - 1]
 
         assert bottom_species.name == "Paenibacillus sp. HGF7"
-        assert bottom_species.confidence == 1-0.00036287
+        assert bottom_species.confidence == pytest.approx(1-0.00036287, 0.0001)
