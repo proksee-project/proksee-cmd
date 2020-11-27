@@ -39,9 +39,9 @@ class TestContaminationHandler:
         message += "FAIL: The evaluated contigs don't appear to agree with the species estimation.\n"
         message += "      The estimated species is: " + str(species) + "\n"
         message += "      The following species were estimated from the contigs:\n\n"
-        message += "      " + "Boletus subalpinus (p=0.99999999290182)" + "\n"
-        message += "      " + "Symphylella sp. YG-2006 (p=0.9999999291313)" + "\n"
-        message += "      " + "Leuconostoc mesenteroides (p=0.999807514)" + "\n"
+        message += "      " + "Boletus subalpinus (p=1.00)" + "\n"
+        message += "      " + "Symphylella sp. YG-2006 (p=1.00)" + "\n"
+        message += "      " + "Leuconostoc mesenteroides (p=1.00)" + "\n"
 
         assert(evaluation.report == message)
 
