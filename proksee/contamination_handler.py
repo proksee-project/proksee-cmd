@@ -51,7 +51,8 @@ class ContaminationHandler:
 
     def estimate_contamination(self):
         """
-        Estimates species contamination in the input data.
+        Estimates species contamination in the contigs by examining the five largest contigs and looking for
+        disagreement between the species provided and the species estimated for each contig.
 
         RETURNS
             evaluation (Evaluation): an Evaluation of whether or not the data passes / succeeds a contamination "test";
@@ -62,10 +63,14 @@ class ContaminationHandler:
         MAX_CONTIGS_EVALUATED = 5
 
         fasta_directory = os.path.join(self.output_directory, FASTA_DIRECTORY)
+
+        # Split the multi-FASTA file into single-record FASTA files (contigs) and gather a list of file locations in
+        # descending order by contig size:
         fasta_files = split_multi_fasta_into_fasta(self.contigs_file, fasta_directory)
 
         contig_species_estimations = []
 
+        # Iterate through the list of contig file locations in descending order:
         for i in range(min(len(fasta_files), MAX_CONTIGS_EVALUATED)):
 
             species_estimator = SpeciesEstimator([fasta_files[i]], self.output_directory)
