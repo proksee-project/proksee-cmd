@@ -21,7 +21,7 @@ specific language governing permissions and limitations under the License.
 from proksee.assembly_strategy import AssemblyStrategy
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
-from proksee.evaluation import Evaluation
+from proksee.evaluation import Evaluation, AssemblyEvaluation
 
 
 class ExpertSystem:
@@ -102,25 +102,10 @@ class ExpertSystem:
 
         if assembly_database.contains(species_name):
 
-            report = "\n"
-
-            n50_evaluation = self.evaluate_n50(assembly_quality, assembly_database)
-            report += n50_evaluation.report
-
-            contigs_evaluation = self.evaluate_num_contigs(assembly_quality, assembly_database)
-            report += contigs_evaluation.report
-
-            l50_evaluation = self.evaluate_l50(assembly_quality, assembly_database)
-            report += l50_evaluation.report
-
-            length_evaluation = self.evaluate_length(assembly_quality, assembly_database)
-            report += length_evaluation.report
-
-            proceed = n50_evaluation.success and contigs_evaluation.success \
-                and l50_evaluation.success and length_evaluation.success
+            evaluation = self.evaluate_assembly(assembly_quality, assembly_database)
 
             assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
-            strategy = AssemblyStrategy(proceed, assembler, report)
+            strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
 
         else:
 
@@ -332,3 +317,29 @@ class ExpertSystem:
         evaluation = self.evaluate_value("assembly length", length, low_fail, low_warning, high_warning, high_fail)
 
         return evaluation
+
+    def evaluate_assembly(self, assembly_quality, assembly_database):
+        """
+        Evaluates the quality of the assembly from the passed AssemblyQuality object. The AssemblyQuality measurements
+        will be compared against the assembly statistics for the given species in the assembly database.
+
+        PARAMETERS
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+
+        RETURN
+            evaluation (AssemblyEvaluation): an evaluation of the assembly's quality against the assembly database
+        """
+
+        n50_evaluation = self.evaluate_n50(assembly_quality, assembly_database)
+        contigs_evaluation = self.evaluate_num_contigs(assembly_quality, assembly_database)
+        l50_evaluation = self.evaluate_l50(assembly_quality, assembly_database)
+        length_evaluation = self.evaluate_length(assembly_quality, assembly_database)
+
+        proceed = n50_evaluation.success and contigs_evaluation.success \
+            and l50_evaluation.success and length_evaluation.success
+
+        assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
+                                                 proceed)
+
+        return assembly_evaluation

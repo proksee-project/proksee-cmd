@@ -36,3 +36,43 @@ class Evaluation:
         """
         self.success = success
         self.report = report
+
+
+class AssemblyEvaluation:
+    """
+    A class representing an evaluation of an assembly.
+
+    ATTRIBUTES
+        n50_evaluation (Evaluation): an evaluation of the assembly's n50
+        contigs_evaluation (Evaluation): an evaluation of the assembly's number of contigs
+        l50_evaluation (Evaluation): an evaluation of the assembly's l50
+        length_evaluation (Evaluation): an evaluation of the assembly's length
+        proceed (bool): whether or not to proceed with assembly
+        report (str): a plain-language String describing the assembly evaluation
+    """
+
+    def __init__(self, n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation, proceed):
+        """
+        Initializes the AssemblyEvaluation.
+
+        PARAMETERS
+            n50_evaluation (Evaluation): an evaluation of the assembly's n50
+            contigs_evaluation (Evaluation): an evaluation of the assembly's number of contigs
+            l50_evaluation (Evaluation): an evaluation of the assembly's l50
+            length_evaluation (Evaluation): an evaluation of the assembly's length
+            proceed (bool): whether or not to proceed with assembly
+        """
+
+        self.n50_evaluation = n50_evaluation
+        self.contigs_evaluation = contigs_evaluation
+        self.l50_evaluation = l50_evaluation
+        self.length_evaluation = length_evaluation
+        self.proceed = proceed
+
+        report = "\n"
+        report += n50_evaluation.report
+        report += contigs_evaluation.report
+        report += l50_evaluation.report
+        report += length_evaluation.report
+
+        self.report = report

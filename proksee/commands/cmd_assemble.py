@@ -161,6 +161,18 @@ def cli(ctx, forward, reverse, output_dir):
         except Exception:
             raise click.UsageError("Encountered an error when assembling the reads.")
 
+        # Step 6: Evaluate Assembly
+        assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
+
+        try:
+            assembly_quality = assembly_evaluator.evaluate()
+
+        except Exception:
+            raise click.UsageError("Encountered an error when evaluating the assembly.")
+
+        evaluation = expert.evaluate_assembly(assembly_quality, assembly_database)
+        click.echo(evaluation.report)
+
         # Move final assembled contigs to the main level of the output directory and rename it.
         contigs_filename = assembler.get_contigs_filename()
         contigs_new_filename = os.path.join(output_dir, "contigs.fasta")
