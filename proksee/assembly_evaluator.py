@@ -268,3 +268,16 @@ def evaluate_value(measurement, value, low_fail, low_warning, high_warning, high
     evaluation = Evaluation(success, report)
 
     return evaluation
+
+
+def compare_assemblies(assembly_quality1, assembly_quality2):
+
+    report = "\n"
+
+    report += "N50: {}\n".format(assembly_quality2.n50 - assembly_quality1.n50)
+    report += "Number of Contigs: {}\n".format(assembly_quality2.num_contigs - assembly_quality1.num_contigs)
+    report += "L50: {}\n".format(assembly_quality2.l50 - assembly_quality1.l50)
+    report += "Length: {}\n".format(assembly_quality2.length - assembly_quality1.length)
+    report += "\n"
+
+    return report

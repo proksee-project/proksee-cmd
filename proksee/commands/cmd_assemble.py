@@ -27,7 +27,7 @@ import os
 
 from pathlib import Path
 
-from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_assembly
+from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_assembly, compare_assemblies
 from proksee.assembly_database import AssemblyDatabase
 from proksee.contamination_handler import ContaminationHandler
 from proksee.species_estimator import SpeciesEstimator
@@ -136,7 +136,7 @@ def cli(ctx, forward, reverse, output_dir):
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
 
         try:
-            assembly_quality = assembly_evaluator.evaluate()
+            fast_assembly_quality = assembly_evaluator.evaluate()
 
         except Exception:
             raise click.UsageError("Encountered an error when evaluating the assembly.")
@@ -144,7 +144,7 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 7: Slow Assembly
         assembly_database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = expert.create_full_assembly_strategy(assembly_quality, assembly_database)
+        strategy = expert.create_full_assembly_strategy(fast_assembly_quality, assembly_database)
         click.echo(strategy.report)
 
         if not strategy.proceed:
@@ -165,13 +165,17 @@ def cli(ctx, forward, reverse, output_dir):
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
 
         try:
-            assembly_quality = assembly_evaluator.evaluate()
+            final_assembly_quality = assembly_evaluator.evaluate()
 
         except Exception:
             raise click.UsageError("Encountered an error when evaluating the assembly.")
 
-        evaluation = evaluate_assembly(species, assembly_quality, assembly_database)
+        evaluation = evaluate_assembly(species, final_assembly_quality, assembly_database)
         click.echo(evaluation.report)
+
+        # Compare assemblies:
+        report = compare_assemblies(fast_assembly_quality, final_assembly_quality)
+        click.echo(report)
 
         # Move final assembled contigs to the main level of the output directory and rename it.
         contigs_filename = assembler.get_contigs_filename()
