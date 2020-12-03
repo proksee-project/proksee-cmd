@@ -21,6 +21,7 @@ specific language governing permissions and limitations under the License.
 from proksee.assembly_strategy import AssemblyStrategy
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
+from proksee.evaluation import Evaluation
 
 
 class ExpertSystem:
@@ -227,7 +228,7 @@ class ExpertSystem:
             report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
             report += "      The {} upper bound is: {}\n".format(measurement, high_fail)
 
-        evaluation = self.Evaluation(success, report)
+        evaluation = Evaluation(success, report)
 
         return evaluation
 
@@ -331,23 +332,3 @@ class ExpertSystem:
         evaluation = self.evaluate_value("assembly length", length, low_fail, low_warning, high_warning, high_fail)
 
         return evaluation
-
-    class Evaluation:
-        """
-        A class representing a simple evaluation of a test.
-
-        ATTRIBUTES
-            success (bool): whether or not the test was passed
-            report (str): a plain-language String describing the evaluation
-        """
-
-        def __init__(self, success, report):
-            """
-            Initializes the Evaluation.
-
-            PARAMETERS
-                success (bool): whether or not the test was passed
-                report (str): a plain-language String describing the evaluation
-            """
-            self.success = success
-            self.report = report

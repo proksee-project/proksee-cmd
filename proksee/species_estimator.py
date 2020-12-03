@@ -23,24 +23,25 @@ from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 from proksee.species import Species
 
 
-def estimate_major_species(estimations, ignore_viruses=True):
+def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,
+                                      ignore_viruses=True):
     """
-    Estimates which major species are present in a list of Estimations. Not all estimations will have enough
-    evidence to report them as major species. The species will be sorted in descending order of confidence. If
-    there are multiple major species reported, then it is possible there is significant contamination.
+    Estimates which species are present in a list of Estimations. Species will be reported if their associated
+    estimation's measurements pass the thresholds passed to this function. The species will be sorted in descending
+    order of confidence.
 
     PARAMETERS
-        estimations (List(Estimation)): a list of species estimations from which to determine major species
-            present in the data
+        estimations (List(Estimation)): a list of species estimations from which to determine which species
+            present in the data (according to the provided threshold values)
+        min_shared_fraction (float): the minimum fraction of shared hashes
+        min_identity (float): the minimum identity; estimation of fraction of bases shared between the input data and
+            genome
+        min_multiplicity (int): the median multiplicity; relates to coverage and redundancy of observations
         ignore_viruses (bool=True): whether or not to ignore virus estimations
 
     RETURNS
         species (List(Species)): a list of major species determined from the estimations
     """
-
-    MIN_SHARED_FRACTION = 0.90  # the minimum fraction of shared hashes
-    MIN_IDENTITY = 0.90  # the minimum identity; estimation of fraction of bases shared between reads and genome
-    MIN_MULTIPLICITY = 5  # the median multiplicity; relates to coverage and redundancy of observations
 
     species = []
 
@@ -55,8 +56,8 @@ def estimate_major_species(estimations, ignore_viruses=True):
         identity = estimation.identity
         median_multiplicity = estimation.median_multiplicity
 
-        if shared_hashes >= MIN_SHARED_FRACTION and identity >= MIN_IDENTITY and median_multiplicity \
-                >= MIN_MULTIPLICITY:
+        if shared_hashes >= min_shared_fraction and identity >= min_identity and median_multiplicity \
+                >= min_multiplicity:
 
             species.append(estimation.species)
 
@@ -68,38 +69,63 @@ class SpeciesEstimator:
     This class represents a species estimation tool.
 
     ATTRIBUTES
-        forward (str): the filename of the forward reads
-        reverse (str): the filename of the reverse reads
-        output_directory (str): the directory to use for program output
+        input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
+        output_directory (str): the directory to use for output
     """
 
-    def __init__(self, forward, reverse, output_directory):
+    def __init__(self, input_list, output_directory):
         """
         Initializes the species estimator.
 
         PARAMETERS
-            forward (str): the filename of the forward reads
-            reverse (str): the filename of the reverse reads
+            input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
             output_directory (str): the directory to use for program output
         """
 
-        self.forward = forward
-        self.reverse = reverse
+        self.input_list = [i for i in input_list if i]  # remove all "None" inputs
         self.output_directory = output_directory
 
-    def estimate_species(self):
+    def estimate_major_species(self):
         """
-        Estimates the species present in the reads.
+        Estimates the major species present in the input data. If this function returns more than one "major" species,
+        then it is possible there is major contamination in the input data.
 
         RETURNS
             species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
-                and highest covered; will contain an unknown species if no major species was found
+                and highest covered; will contain an "Unknown" species if no major species was found
         """
+
+        MIN_SHARED_FRACTION = 0.90
+        MIN_IDENTITY = 0.90
+        MIN_MULTIPLICITY = 5
 
         refseq_masher_filename = self.run_refseq_masher()
         estimations = parse_species_from_refseq_masher(refseq_masher_filename)
 
-        species = estimate_major_species(estimations)
+        species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+
+        if len(species) == 0:
+            species.append(Species("Unknown", 0.0))
+
+        return species
+
+    def estimate_all_species(self):
+        """
+        Estimates all the species present in the input data.
+
+        RETURNS
+            species (List(Species)): a list of all estimated species, sorted in descending order of most complete
+                and highest covered; will contain an "Unknown" species if no species were found
+        """
+
+        MIN_SHARED_FRACTION = 0
+        MIN_IDENTITY = 0
+        MIN_MULTIPLICITY = 0
+
+        refseq_masher_filename = self.run_refseq_masher()
+        estimations = parse_species_from_refseq_masher(refseq_masher_filename)
+
+        species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
         if len(species) == 0:
             species.append(Species("Unknown", 0.0))
@@ -108,14 +134,12 @@ class SpeciesEstimator:
 
     def run_refseq_masher(self):
         """
-        Runs RefSeq Masher on the reads.
+        Runs RefSeq Masher on the input data.
 
         POST
-            If successful, RefSeq Masher will have executed on the reads and the output will be written to the output
-            directory. If unsuccessful, an error message will be raised.
-
-            If unsuccessful, the output file we be empty. It is necessary to check to see if the output file contains
-            any output.
+            If successful, RefSeq Masher will have executed on the input and the output will be written to the output
+            directory. If unsuccessful, the output file we be empty. It is necessary to check to see if the output file
+            contains any output.
         """
 
         output_filename = os.path.join(self.output_directory, "refseq_masher.o")
@@ -125,10 +149,10 @@ class SpeciesEstimator:
         error_file = open(error_filename, "w")
 
         # create the refseq_masher command
-        if self.reverse:
-            command = "refseq_masher contains " + str(self.forward) + " " + str(self.reverse)
-        else:
-            command = "refseq_masher contains " + str(self.forward)
+        command = "refseq_masher contains -i 0 -v 1"
+
+        for item in self.input_list:
+            command += " " + str(item)
 
         # run refseq_masher
         try:
