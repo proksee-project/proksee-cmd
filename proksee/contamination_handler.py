@@ -95,7 +95,7 @@ class ContaminationHandler:
         sorted_estimations = list(set(estimations))  # Convert to set and back to list to find only unique estimations
         sorted_estimations.sort(key=lambda item: item.confidence, reverse=True)  # "item" is an Estimation
 
-        report = ""
+        report = "\n"
 
         if len(sorted_estimations) == 1 and estimations[0] == self.species:
             success = True

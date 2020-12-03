@@ -27,7 +27,7 @@ import os
 
 from pathlib import Path
 
-from proksee.assembly_evaluator import AssemblyEvaluator
+from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_assembly
 from proksee.assembly_database import AssemblyDatabase
 from proksee.contamination_handler import ContaminationHandler
 from proksee.species_estimator import SpeciesEstimator
@@ -89,7 +89,7 @@ def cli(ctx, forward, reverse, output_dir):
 
         # Step 4: Organism Detection
         # Pass forward and reverse filtered reads to organism detection class
-        # and return most frequently occuring reference genome
+        # and return most frequently occurring reference genome
 
         species_estimator = SpeciesEstimator([forward_filtered, reverse_filtered], output_dir)
         species_list = species_estimator.estimate_major_species()
@@ -114,8 +114,8 @@ def cli(ctx, forward, reverse, output_dir):
         click.echo(strategy.report)
 
         if not strategy.proceed:
-            click.echo("The assembly was unable to proceed.")
-            return
+            click.echo("The assembly was unable to proceed.\n")
+            # return  # TODO: TEMPORARY
 
         # Step 5: Perform a fast assembly.
         assembler = strategy.assembler
@@ -129,8 +129,8 @@ def cli(ctx, forward, reverse, output_dir):
         click.echo(evaluation.report)
 
         if not evaluation.success:
-            click.echo("The assembly was unable to proceed.")
-            return
+            click.echo("The assembly was unable to proceed.\n")
+            # return  # TODO: TEMPORARY
 
         # Step 6: Evaluate Assembly
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
@@ -148,8 +148,8 @@ def cli(ctx, forward, reverse, output_dir):
         click.echo(strategy.report)
 
         if not strategy.proceed:
-            click.echo("The assembly was unable to proceed.")
-            return
+            click.echo("The assembly was unable to proceed.\n")
+            # return  # TODO: TEMPORARY
 
         click.echo("Performing full assembly.")
         assembler = strategy.assembler
@@ -170,7 +170,7 @@ def cli(ctx, forward, reverse, output_dir):
         except Exception:
             raise click.UsageError("Encountered an error when evaluating the assembly.")
 
-        evaluation = expert.evaluate_assembly(assembly_quality, assembly_database)
+        evaluation = evaluate_assembly(species, assembly_quality, assembly_database)
         click.echo(evaluation.report)
 
         # Move final assembled contigs to the main level of the output directory and rename it.
