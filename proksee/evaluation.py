@@ -51,7 +51,7 @@ class AssemblyEvaluation:
         report (str): a plain-language String describing the assembly evaluation
     """
 
-    def __init__(self, n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation, proceed):
+    def __init__(self, n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation, proceed, report):
         """
         Initializes the AssemblyEvaluation.
 
@@ -61,6 +61,7 @@ class AssemblyEvaluation:
             l50_evaluation (Evaluation): an evaluation of the assembly's l50
             length_evaluation (Evaluation): an evaluation of the assembly's length
             proceed (bool): whether or not to proceed with assembly
+            report (str): a plain-language String describing the assembly evaluation
         """
 
         self.n50_evaluation = n50_evaluation
@@ -68,11 +69,4 @@ class AssemblyEvaluation:
         self.l50_evaluation = l50_evaluation
         self.length_evaluation = length_evaluation
         self.proceed = proceed
-
-        report = "\n"
-        report += n50_evaluation.report
-        report += contigs_evaluation.report
-        report += l50_evaluation.report
-        report += length_evaluation.report
-
         self.report = report

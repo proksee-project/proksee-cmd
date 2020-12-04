@@ -192,6 +192,29 @@ def evaluate_length(species, assembly_quality, assembly_database):
 def evaluate_assembly(species, assembly_quality, assembly_database):
     """
     Evaluates the quality of the assembly from the passed AssemblyQuality object. The AssemblyQuality measurements
+    will be compared against the assembly statistics for the given species in the assembly database. If the species
+    is not present in the database, then it will be compared to fallback values.
+
+    PARAMETERS
+        assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+        assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+
+    RETURN
+        evaluation (AssemblyEvaluation): an evaluation of the assembly's quality
+    """
+
+    if assembly_database.contains(species.name):
+        assembly_evaluation = evaluate_assembly_from_database(species, assembly_quality, assembly_database)
+
+    else:
+        assembly_evaluation = evaluate_assembly_from_fallback(assembly_quality)
+
+    return assembly_evaluation
+
+
+def evaluate_assembly_from_database(species, assembly_quality, assembly_database):
+    """
+    Evaluates the quality of the assembly from the passed AssemblyQuality object. The AssemblyQuality measurements
     will be compared against the assembly statistics for the given species in the assembly database.
 
     PARAMETERS
@@ -210,8 +233,78 @@ def evaluate_assembly(species, assembly_quality, assembly_database):
     proceed = n50_evaluation.success and contigs_evaluation.success \
         and l50_evaluation.success and length_evaluation.success
 
+    report = "\n"
+    report += n50_evaluation.report
+    report += contigs_evaluation.report
+    report += l50_evaluation.report
+    report += length_evaluation.report
+
     assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                             proceed)
+                                             proceed, report)
+
+    return assembly_evaluation
+
+
+def evaluate_assembly_from_fallback(assembly_quality):
+    """
+    Evaluates the quality of the assembly from the passed AssemblyQuality object. The AssemblyQuality measurements
+    will be compared against fallback values.
+
+    PARAMETERS
+        assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+
+    RETURN
+        evaluation (AssemblyEvaluation): an evaluation of the assembly's quality
+    """
+
+    # Values taken from RefSeq assembly exclusion criteria.
+    # https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/
+    MIN_N50 = 5000
+    MAX_L50 = 500
+    MAX_CONTIGS = 2000
+
+    if assembly_quality.n50 < 5000:
+        proceed = False
+        report = "FAIL: The N50 is smaller than expected: {}\n".format(assembly_quality.n50)
+        report += "      The N50 lower bound is: {}\n".format(MIN_N50)
+
+    else:
+        proceed = True
+        report = "PASS: The N50 is acceptable: {}\n".format(assembly_quality.n50)
+        report += "      The N50 lower bound is: {}\n".format(MIN_N50)
+
+    n50_evaluation = Evaluation(proceed, report)
+
+    if assembly_quality.num_contigs > MAX_CONTIGS:
+        proceed = False
+        report = "FAIL: The number of contigs is larger than expected: {}\n".format(assembly_quality.num_contigs)
+        report += "      The number of contigs upper bound is: {}\n".format(MAX_CONTIGS)
+    else:
+        proceed = True
+        report = "PASS: The number of contigs is acceptable: {}\n".format(assembly_quality.num_contigs)
+        report += "      The number of contigs lower bound is: {}\n".format(MIN_N50)
+
+    contigs_evaluation = Evaluation(proceed, report)
+
+    if assembly_quality.l50 > MAX_L50:
+        proceed = False
+        report = "FAIL: The L50 is larger than expected: {}\n".format(assembly_quality.l50)
+        report += "      The L50 upper bound is: {}\n".format(MAX_L50)
+
+    else:
+        proceed = True
+        report = "PASS: The L50 is acceptable: {}\n".format(assembly_quality.l50)
+        report += "      The L50 upper bound is: {}\n".format(MAX_L50)
+
+    l50_evaluation = Evaluation(proceed, report)
+
+    report = "\nWARNING: No assembly statistics available for the species!\n\n"
+    report += n50_evaluation.report
+    report += contigs_evaluation.report
+    report += l50_evaluation.report
+
+    assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, None,
+                                             proceed, report)
 
     return assembly_evaluation
 
@@ -234,6 +327,12 @@ def evaluate_value(measurement, value, low_fail, low_warning, high_warning, high
 
     report = ""
     success = False
+
+    print(value)
+    print(low_fail)
+    print(low_warning)
+    print(high_warning)
+    print(high_fail)
 
     # (-infinity, low_fail] -> low failure
     if value <= low_fail:
@@ -271,9 +370,20 @@ def evaluate_value(measurement, value, low_fail, low_warning, high_warning, high
 
 
 def compare_assemblies(assembly_quality1, assembly_quality2):
+    """
+    Compares the quality of one assembly with the quality of another assembly.
 
-    report = "\n"
+    PARAMETERS
+        assembly_quality1 (AssemblyQuality): the quality of the first assembly
+        assembly_quality2 (AssemblyQuality): the quality of the first assembly
 
+    RETURNS
+        report (str): a plain-language text report comparing the quality of one assembly with the other
+    """
+
+    report = ""
+
+    report = "Changes in assembly statistics:"
     report += "N50: {}\n".format(assembly_quality2.n50 - assembly_quality1.n50)
     report += "Number of Contigs: {}\n".format(assembly_quality2.num_contigs - assembly_quality1.num_contigs)
     report += "L50: {}\n".format(assembly_quality2.l50 - assembly_quality1.l50)

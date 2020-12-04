@@ -17,7 +17,7 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
-from proksee.assembly_evaluator import evaluate_assembly
+from proksee.assembly_evaluator import evaluate_assembly, evaluate_assembly_from_fallback
 from proksee.assembly_strategy import AssemblyStrategy
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
@@ -125,40 +125,9 @@ class ExpertSystem:
                 previous assembly
         """
 
-        # Values taken from RefSeq assembly exclusion criteria.
-        # https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/
-        MIN_N50 = 5000
-        MAX_L50 = 500
-        MAX_CONTIGS = 2000
-
-        proceed = True
-        report = "\nWARNING: No assembly statistics available for the species!\n\n"
-
-        if assembly_quality.n50 < 5000:
-            proceed = False
-            report += "FAIL: The N50 is smaller than expected: {}\n".format(assembly_quality.n50)
-            report += "      The N50 lower bound is: {}\n".format(MIN_N50)
-        else:
-            report += "PASS: The N50 is acceptable: {}\n".format(assembly_quality.n50)
-            report += "      The N50 lower bound is: {}\n".format(MIN_N50)
-
-        if assembly_quality.l50 > MAX_L50:
-            proceed = False
-            report += "FAIL: The L50 is larger than expected: {}\n".format(assembly_quality.l50)
-            report += "      The L50 upper bound is: {}\n".format(MAX_L50)
-        else:
-            report += "PASS: The L50 is acceptable: {}\n".format(assembly_quality.l50)
-            report += "      The L50 upper bound is: {}\n".format(MAX_L50)
-
-        if assembly_quality.num_contigs > MAX_CONTIGS:
-            proceed = False
-            report += "FAIL: The number of contigs is larger than expected: {}\n".format(assembly_quality.num_contigs)
-            report += "      The number of contigs upper bound is: {}\n".format(MAX_CONTIGS)
-        else:
-            report += "PASS: The number of contigs is acceptable: {}\n".format(assembly_quality.num_contigs)
-            report += "      The number of contigs lower bound is: {}\n".format(MIN_N50)
+        evaluation = evaluate_assembly_from_fallback(assembly_quality)
 
         assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
-        strategy = AssemblyStrategy(proceed, assembler, report)
+        strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
 
         return strategy

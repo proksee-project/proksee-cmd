@@ -182,4 +182,4 @@ def cli(ctx, forward, reverse, output_dir):
         contigs_new_filename = os.path.join(output_dir, "contigs.fasta")
         os.rename(contigs_filename, contigs_new_filename)  # moves and renames
 
-        click.echo("Complete.")
+        click.echo("Complete.\n")
