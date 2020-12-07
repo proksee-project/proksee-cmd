@@ -328,12 +328,6 @@ def evaluate_value(measurement, value, low_fail, low_warning, high_warning, high
     report = ""
     success = False
 
-    print(value)
-    print(low_fail)
-    print(low_warning)
-    print(high_warning)
-    print(high_fail)
-
     # (-infinity, low_fail] -> low failure
     if value <= low_fail:
         success = False
@@ -383,7 +377,7 @@ def compare_assemblies(assembly_quality1, assembly_quality2):
 
     report = ""
 
-    report = "Changes in assembly statistics:"
+    report = "Changes in assembly statistics:\n"
     report += "N50: {}\n".format(assembly_quality2.n50 - assembly_quality1.n50)
     report += "Number of Contigs: {}\n".format(assembly_quality2.num_contigs - assembly_quality1.num_contigs)
     report += "L50: {}\n".format(assembly_quality2.l50 - assembly_quality1.l50)
