@@ -17,6 +17,7 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
+
 from proksee.assembly_evaluator import evaluate_assembly, evaluate_assembly_from_fallback
 from proksee.assembly_strategy import AssemblyStrategy
 from proksee.skesa_assembler import SkesaAssembler
