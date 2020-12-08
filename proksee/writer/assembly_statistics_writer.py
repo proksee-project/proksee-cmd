@@ -62,7 +62,7 @@ class AssemblyStatisticsWriter:
 
             csv_writer = csv.writer(csvfile, delimiter=',')
 
-            headers = ["", "Number of Contigs", "N50", "L50", "GC Content", "Length"]
+            headers = ["Assembly Name", "Number of Contigs", "N50", "L50", "GC Content", "Length"]
             csv_writer.writerow(headers)
 
             for i in range(len(names)):

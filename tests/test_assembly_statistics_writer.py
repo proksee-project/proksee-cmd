@@ -53,7 +53,7 @@ class TestAssemblyStatisticsWriter:
             csv_reader = csv.reader(csvfile, delimiter=',')
 
             row = next(csv_reader)
-            assert row == ["", "Number of Contigs", "N50", "L50", "GC Content", "Length"]
+            assert row == ["Assembly Name", "Number of Contigs", "N50", "L50", "GC Content", "Length"]
 
             row = next(csv_reader)
             assert row == ["test1", "10", "9000", "5", "0.51", "25000"]

@@ -35,6 +35,7 @@ from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentify
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
+from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "database",
                              "database.csv")
@@ -176,6 +177,10 @@ def cli(ctx, forward, reverse, output_dir):
         # Compare assemblies:
         report = compare_assemblies(fast_assembly_quality, final_assembly_quality)
         click.echo(report)
+
+        # Write CSV assembly statistics summary:
+        assembly_statistics_writer = AssemblyStatisticsWriter(output_dir)
+        assembly_statistics_writer.write(["SKESA", "SPADES"], [fast_assembly_quality, final_assembly_quality])
 
         # Move final assembled contigs to the main level of the output directory and rename it.
         contigs_filename = assembler.get_contigs_filename()
