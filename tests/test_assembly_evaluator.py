@@ -19,7 +19,8 @@ specific language governing permissions and limitations under the License.
 import os
 import pytest
 
-from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_value
+from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_value, compare_assemblies
+from proksee.assembly_quality import AssemblyQuality
 
 
 class TestAssemblyEvaluator:
@@ -144,3 +145,20 @@ class TestAssemblyEvaluator:
         expected_report = "FAIL: The measurement is larger than expected: 30\n"
         expected_report += "      The measurement upper bound is: 25\n"
         assert evaluation.report == expected_report
+
+    def test_compare_assemblies(self):
+
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        qualities = [AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000),
+                     AssemblyQuality(20, 18000, 10000, 10, 6, 0.52, 50000)]
+
+        report = compare_assemblies(qualities[0], qualities[1])
+
+        expected = "Changes in assembly statistics:\n"
+        expected += "N50: 9000\n"
+        expected += "Number of Contigs: 10\n"
+        expected += "L50: 5\n"
+        expected += "Length: 25000\n"
+        expected += "\n"
+
+        assert report == expected

@@ -375,8 +375,6 @@ def compare_assemblies(assembly_quality1, assembly_quality2):
         report (str): a plain-language text report comparing the quality of one assembly with the other
     """
 
-    report = ""
-
     report = "Changes in assembly statistics:\n"
     report += "N50: {}\n".format(assembly_quality2.n50 - assembly_quality1.n50)
     report += "Number of Contigs: {}\n".format(assembly_quality2.num_contigs - assembly_quality1.num_contigs)

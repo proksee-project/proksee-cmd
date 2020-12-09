@@ -111,15 +111,15 @@ def cli(ctx, forward, reverse, output_dir):
 
         # Evaluate reads to determine a fast assembly strategy.
         expert = ExpertSystem(platform, species_list[0], forward_filtered, reverse_filtered, output_dir)
-        strategy = expert.create_fast_assembly_strategy(read_quality)
-        click.echo(strategy.report)
+        fast_strategy = expert.create_fast_assembly_strategy(read_quality)
+        click.echo(fast_strategy.report)
 
-        if not strategy.proceed:
+        if not fast_strategy.proceed:
             click.echo("The assembly was unable to proceed.\n")
             return
 
         # Step 5: Perform a fast assembly.
-        assembler = strategy.assembler
+        assembler = fast_strategy.assembler
         output = assembler.assemble()
         click.echo(output)
 
@@ -145,15 +145,15 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 7: Slow Assembly
         assembly_database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = expert.create_full_assembly_strategy(fast_assembly_quality, assembly_database)
-        click.echo(strategy.report)
+        slow_strategy = expert.create_full_assembly_strategy(fast_assembly_quality, assembly_database)
+        click.echo(slow_strategy.report)
 
-        if not strategy.proceed:
+        if not slow_strategy.proceed:
             click.echo("The assembly was unable to proceed.\n")
             return
 
         click.echo("Performing full assembly.")
-        assembler = strategy.assembler
+        assembler = slow_strategy.assembler
 
         try:
             output = assembler.assemble()
@@ -180,7 +180,8 @@ def cli(ctx, forward, reverse, output_dir):
 
         # Write CSV assembly statistics summary:
         assembly_statistics_writer = AssemblyStatisticsWriter(output_dir)
-        assembly_statistics_writer.write(["SKESA", "SPADES"], [fast_assembly_quality, final_assembly_quality])
+        assembly_statistics_writer.write([fast_strategy.assembler.name, slow_strategy.assembler.name],
+                                         [fast_assembly_quality, final_assembly_quality])
 
         # Move final assembled contigs to the main level of the output directory and rename it.
         contigs_filename = assembler.get_contigs_filename()
