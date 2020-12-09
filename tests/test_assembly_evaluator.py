@@ -147,6 +147,9 @@ class TestAssemblyEvaluator:
         assert evaluation.report == expected_report
 
     def test_compare_assemblies(self):
+        """
+        Tests comparison of two assemblies.
+        """
 
         # num_contigs, n50, n75, l50, l75, gc_content, length
         qualities = [AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000),
