@@ -116,7 +116,7 @@ def cli(ctx, forward, reverse, output_dir):
 
         if not strategy.proceed:
             click.echo("The assembly was unable to proceed.\n")
-            # return  # TODO: TEMPORARY
+            return
 
         # Step 5: Perform a fast assembly.
         assembler = strategy.assembler
@@ -131,7 +131,7 @@ def cli(ctx, forward, reverse, output_dir):
 
         if not evaluation.success:
             click.echo("The assembly was unable to proceed.\n")
-            # return  # TODO: TEMPORARY
+            return
 
         # Step 6: Evaluate Assembly
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
@@ -150,7 +150,7 @@ def cli(ctx, forward, reverse, output_dir):
 
         if not strategy.proceed:
             click.echo("The assembly was unable to proceed.\n")
-            # return  # TODO: TEMPORARY
+            return
 
         click.echo("Performing full assembly.")
         assembler = strategy.assembler
