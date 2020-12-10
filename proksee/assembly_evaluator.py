@@ -369,7 +369,7 @@ def compare_assemblies(assembly_quality1, assembly_quality2):
 
     PARAMETERS
         assembly_quality1 (AssemblyQuality): the quality of the first assembly
-        assembly_quality2 (AssemblyQuality): the quality of the first assembly
+        assembly_quality2 (AssemblyQuality): the quality of the second assembly
 
     RETURNS
         report (str): a plain-language text report comparing the quality of one assembly with the other
