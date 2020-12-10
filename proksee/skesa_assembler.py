@@ -38,8 +38,11 @@ class SkesaAssembler(Assembler):
 
     # Defining __init__ method with reads and output directory parameters
     def __init__(self, forward, reverse, output_dir):
+
+        NAME = "Skesa"
+
         skesa_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
-        super().__init__(forward, reverse, skesa_directory)
+        super().__init__(NAME, forward, reverse, skesa_directory)
 
         self.contigs_filename = os.path.join(skesa_directory, 'contigs.fasta')
         self.log_filename = os.path.join(skesa_directory, 'skesa.log')

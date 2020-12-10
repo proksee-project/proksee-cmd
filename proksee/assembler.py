@@ -31,16 +31,18 @@ class Assembler(ABC):
     An abstract class representing a sequence assembler.
 
     ATTRIBUTES:
+        name (str): the plain-language name of the assembler
         forward (str): the filename of the forward reads
         reverse (str): the filename of the reverse reads
         output_dir (str): the filename of the output directory
     """
 
-    def __init__(self, forward, reverse, output_dir):
+    def __init__(self, name, forward, reverse, output_dir):
         """
         Initializes the abstract assembler.
 
         ATTRIBUTES:
+            name (str): the plain-language name of the assembler
             forward (str): the filename of the forward reads
             reverse (str): the filename of the reverse reads
             output_dir (str): the filename of the output directory
@@ -49,6 +51,7 @@ class Assembler(ABC):
         if not os.path.isfile(forward):
             raise FileNotFoundError(str(forward) + " not found.")
 
+        self.name = name
         self.forward = forward
         self.reverse = reverse
         self.output_dir = output_dir

@@ -18,10 +18,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+from proksee.assembly_evaluator import evaluate_assembly, evaluate_assembly_from_fallback
 from proksee.assembly_strategy import AssemblyStrategy
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
-from proksee.evaluation import Evaluation
 
 
 class ExpertSystem:
@@ -102,25 +102,10 @@ class ExpertSystem:
 
         if assembly_database.contains(species_name):
 
-            report = "\n"
-
-            n50_evaluation = self.evaluate_n50(assembly_quality, assembly_database)
-            report += n50_evaluation.report
-
-            contigs_evaluation = self.evaluate_num_contigs(assembly_quality, assembly_database)
-            report += contigs_evaluation.report
-
-            l50_evaluation = self.evaluate_l50(assembly_quality, assembly_database)
-            report += l50_evaluation.report
-
-            length_evaluation = self.evaluate_length(assembly_quality, assembly_database)
-            report += length_evaluation.report
-
-            proceed = n50_evaluation.success and contigs_evaluation.success \
-                and l50_evaluation.success and length_evaluation.success
+            evaluation = evaluate_assembly(self.species, assembly_quality, assembly_database)
 
             assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
-            strategy = AssemblyStrategy(proceed, assembler, report)
+            strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
 
         else:
 
@@ -141,194 +126,9 @@ class ExpertSystem:
                 previous assembly
         """
 
-        # Values taken from RefSeq assembly exclusion criteria.
-        # https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/
-        MIN_N50 = 5000
-        MAX_L50 = 500
-        MAX_CONTIGS = 2000
-
-        proceed = True
-        report = "\nWARNING: No assembly statistics available for the species!\n\n"
-
-        if assembly_quality.n50 < 5000:
-            proceed = False
-            report += "FAIL: The N50 is smaller than expected: {}\n".format(assembly_quality.n50)
-            report += "      The N50 lower bound is: {}\n".format(MIN_N50)
-        else:
-            report += "PASS: The N50 is acceptable: {}\n".format(assembly_quality.n50)
-            report += "      The N50 lower bound is: {}\n".format(MIN_N50)
-
-        if assembly_quality.l50 > MAX_L50:
-            proceed = False
-            report += "FAIL: The L50 is larger than expected: {}\n".format(assembly_quality.l50)
-            report += "      The L50 upper bound is: {}\n".format(MAX_L50)
-        else:
-            report += "PASS: The L50 is acceptable: {}\n".format(assembly_quality.l50)
-            report += "      The L50 upper bound is: {}\n".format(MAX_L50)
-
-        if assembly_quality.num_contigs > MAX_CONTIGS:
-            proceed = False
-            report += "FAIL: The number of contigs is larger than expected: {}\n".format(assembly_quality.num_contigs)
-            report += "      The number of contigs upper bound is: {}\n".format(MAX_CONTIGS)
-        else:
-            report += "PASS: The number of contigs is acceptable: {}\n".format(assembly_quality.num_contigs)
-            report += "      The number of contigs lower bound is: {}\n".format(MIN_N50)
+        evaluation = evaluate_assembly_from_fallback(assembly_quality)
 
         assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
-        strategy = AssemblyStrategy(proceed, assembler, report)
+        strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
 
         return strategy
-
-    def evaluate_value(self, measurement, value, low_fail, low_warning, high_warning, high_fail):
-        """
-        Evaluates a generic value for a measurement and reports whether or not it is within acceptable bounds.
-
-        PARAMETERS
-            measurement (str): plain-language name of the measurement (ex: "N50")
-            value (comparable): the value to evaluate
-            low_fail (comparable): the lower bound of failure
-            low_warning (comparable): the lower bound for warning
-            high_warning (comparable): the higher bound for warning
-            high_fail (comparable): the higher bound of failure
-
-        RETURNS
-            evaluation (Evaluation): an evaluation of the measurement against the passed thresholds
-        """
-
-        report = ""
-        success = False
-
-        # (-infinity, low_fail] -> low failure
-        if value <= low_fail:
-            success = False
-            report += "FAIL: The {} is smaller than expected: {}\n".format(measurement, value)
-            report += "      The {} lower bound is: {}\n".format(measurement, low_fail)
-
-        # (low_fail, low_warning] -> low warning
-        elif value <= low_warning:
-            success = True
-            report += "WARNING: The {} is somewhat smaller than expected: {}\n".format(measurement, value)
-            report += "         The {} lower bound is: {}\n".format(measurement, low_fail)
-
-        # (low_warning, high_warning) -> acceptable, no warning
-        elif value < high_warning:
-            success = True
-            report += "PASS: The {} is comparable to similar assemblies: {}\n".format(measurement, value)
-            report += "      The acceptable {} range is: ({}, {})\n".format(measurement, low_fail, high_fail)
-
-        # [high_warning, high_fail) -> high warning
-        elif value < high_fail:
-            success = True
-            report += "WARNING: The {} is somewhat larger than expected: {}\n".format(measurement, value)
-            report += "         The {} upper bound is: {}\n".format(measurement, high_fail)
-
-        # [high_fail, +infinity) -> high failure
-        elif value >= high_fail:
-            success = False
-            report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
-            report += "      The {} upper bound is: {}\n".format(measurement, high_fail)
-
-        evaluation = Evaluation(success, report)
-
-        return evaluation
-
-    def evaluate_n50(self, assembly_quality, assembly_database):
-        """
-        Evaluates the N50 of the passed AssemblyQuality against the assembly statistics for the given species in the
-        assembly database.
-
-        PARAMETERS
-            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
-            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
-
-        RETURN
-            evaluation (Evaluation): an evaluation of the N50 against the assembly database
-        """
-
-        species_name = self.species.name
-
-        n50 = assembly_quality.n50
-        low_fail = assembly_database.get_n50_quantile(species_name, 0.05)
-        low_warning = assembly_database.get_n50_quantile(species_name, 0.20)
-        high_warning = assembly_database.get_n50_quantile(species_name, 0.80)
-        high_fail = assembly_database.get_n50_quantile(species_name, 0.95)
-
-        evaluation = self.evaluate_value("N50", n50, low_fail, low_warning, high_warning, high_fail)
-
-        return evaluation
-
-    def evaluate_num_contigs(self, assembly_quality, assembly_database):
-        """
-        Evaluates the number of contigs of the passed AssemblyQuality against the assembly statistics for the given
-        species in the assembly database.
-
-        PARAMETERS
-            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
-            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
-
-        RETURN
-            evaluation (Evaluation): an evaluation of the number of contigs against the assembly database
-        """
-
-        species_name = self.species.name
-
-        num_contigs = assembly_quality.num_contigs
-        low_fail = assembly_database.get_contigs_quantile(species_name, 0.05)
-        low_warning = assembly_database.get_contigs_quantile(species_name, 0.20)
-        high_warning = assembly_database.get_contigs_quantile(species_name, 0.80)
-        high_fail = assembly_database.get_contigs_quantile(species_name, 0.95)
-
-        evaluation = self.evaluate_value("number of contigs", num_contigs, low_fail, low_warning, high_warning,
-                                         high_fail)
-
-        return evaluation
-
-    def evaluate_l50(self, assembly_quality, assembly_database):
-        """
-        Evaluates the L50 of the passed AssemblyQuality against the assembly statistics for the given species in the
-        assembly database.
-
-        PARAMETERS
-            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
-            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
-
-        RETURN
-            evaluation (Evaluation): an evaluation of the L50 against the assembly database
-        """
-
-        species_name = self.species.name
-
-        l50 = assembly_quality.l50
-        low_fail = assembly_database.get_l50_quantile(species_name, 0.05)
-        low_warning = assembly_database.get_l50_quantile(species_name, 0.20)
-        high_warning = assembly_database.get_l50_quantile(species_name, 0.80)
-        high_fail = assembly_database.get_l50_quantile(species_name, 0.95)
-
-        evaluation = self.evaluate_value("L50", l50, low_fail, low_warning, high_warning, high_fail)
-
-        return evaluation
-
-    def evaluate_length(self, assembly_quality, assembly_database):
-        """
-        Evaluates the assembly length of the passed AssemblyQuality against the assembly statistics for the given
-        species in the assembly database.
-
-        PARAMETERS
-            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
-            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
-
-        RETURN
-            evaluation (Evaluation): an evaluation of the assembly length against the assembly database
-        """
-
-        species_name = self.species.name
-
-        length = assembly_quality.length
-        low_fail = assembly_database.get_length_quantile(species_name, 0.05)
-        low_warning = assembly_database.get_length_quantile(species_name, 0.20)
-        high_warning = assembly_database.get_length_quantile(species_name, 0.80)
-        high_fail = assembly_database.get_length_quantile(species_name, 0.95)
-
-        evaluation = self.evaluate_value("assembly length", length, low_fail, low_warning, high_warning, high_fail)
-
-        return evaluation

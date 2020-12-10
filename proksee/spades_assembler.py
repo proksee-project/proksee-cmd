@@ -40,8 +40,11 @@ class SpadesAssembler(Assembler):
             reverse (str): the filename of the reverse reads
             output_dir (str): the filename of the output directory
         """
+
+        NAME = "SPAdes"
+
         spades_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
-        super().__init__(forward, reverse, spades_directory)
+        super().__init__(NAME, forward, reverse, spades_directory)
 
         self.contigs_filename = os.path.join(spades_directory, "contigs.fasta")
 

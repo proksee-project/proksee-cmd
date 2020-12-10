@@ -35,7 +35,7 @@ class TestContaminationHandler:
 
         assert not evaluation.success
 
-        message = ""
+        message = "\n"
         message += "FAIL: The evaluated contigs don't appear to agree with the species estimation.\n"
         message += "      The estimated species is: " + str(species) + "\n"
         message += "      The following species were estimated from the contigs:\n\n"
@@ -56,7 +56,7 @@ class TestContaminationHandler:
 
         assert evaluation.success
 
-        message = ""
+        message = "\n"
         message += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
         message += "      The estimated species is: " + str(species) + "\n"
 

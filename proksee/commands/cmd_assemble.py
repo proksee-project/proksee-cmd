@@ -27,7 +27,7 @@ import os
 
 from pathlib import Path
 
-from proksee.assembly_evaluator import AssemblyEvaluator
+from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_assembly, compare_assemblies
 from proksee.assembly_database import AssemblyDatabase
 from proksee.contamination_handler import ContaminationHandler
 from proksee.species_estimator import SpeciesEstimator
@@ -35,6 +35,7 @@ from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentify
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
+from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "database",
                              "database.csv")
@@ -89,7 +90,7 @@ def cli(ctx, forward, reverse, output_dir):
 
         # Step 4: Organism Detection
         # Pass forward and reverse filtered reads to organism detection class
-        # and return most frequently occuring reference genome
+        # and return most frequently occurring reference genome
 
         species_estimator = SpeciesEstimator([forward_filtered, reverse_filtered], output_dir)
         species_list = species_estimator.estimate_major_species()
@@ -110,15 +111,15 @@ def cli(ctx, forward, reverse, output_dir):
 
         # Evaluate reads to determine a fast assembly strategy.
         expert = ExpertSystem(platform, species_list[0], forward_filtered, reverse_filtered, output_dir)
-        strategy = expert.create_fast_assembly_strategy(read_quality)
-        click.echo(strategy.report)
+        fast_strategy = expert.create_fast_assembly_strategy(read_quality)
+        click.echo(fast_strategy.report)
 
-        if not strategy.proceed:
-            click.echo("The assembly was unable to proceed.")
+        if not fast_strategy.proceed:
+            click.echo("The assembly was unable to proceed.\n")
             return
 
         # Step 5: Perform a fast assembly.
-        assembler = strategy.assembler
+        assembler = fast_strategy.assembler
         output = assembler.assemble()
         click.echo(output)
 
@@ -129,14 +130,14 @@ def cli(ctx, forward, reverse, output_dir):
         click.echo(evaluation.report)
 
         if not evaluation.success:
-            click.echo("The assembly was unable to proceed.")
+            click.echo("The assembly was unable to proceed.\n")
             return
 
         # Step 6: Evaluate Assembly
         assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
 
         try:
-            assembly_quality = assembly_evaluator.evaluate()
+            fast_assembly_quality = assembly_evaluator.evaluate()
 
         except Exception:
             raise click.UsageError("Encountered an error when evaluating the assembly.")
@@ -144,15 +145,15 @@ def cli(ctx, forward, reverse, output_dir):
         # Step 7: Slow Assembly
         assembly_database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = expert.create_full_assembly_strategy(assembly_quality, assembly_database)
-        click.echo(strategy.report)
+        slow_strategy = expert.create_full_assembly_strategy(fast_assembly_quality, assembly_database)
+        click.echo(slow_strategy.report)
 
-        if not strategy.proceed:
-            click.echo("The assembly was unable to proceed.")
+        if not slow_strategy.proceed:
+            click.echo("The assembly was unable to proceed.\n")
             return
 
         click.echo("Performing full assembly.")
-        assembler = strategy.assembler
+        assembler = slow_strategy.assembler
 
         try:
             output = assembler.assemble()
@@ -161,9 +162,30 @@ def cli(ctx, forward, reverse, output_dir):
         except Exception:
             raise click.UsageError("Encountered an error when assembling the reads.")
 
+        # Step 6: Evaluate Assembly
+        assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
+
+        try:
+            final_assembly_quality = assembly_evaluator.evaluate()
+
+        except Exception:
+            raise click.UsageError("Encountered an error when evaluating the assembly.")
+
+        evaluation = evaluate_assembly(species, final_assembly_quality, assembly_database)
+        click.echo(evaluation.report)
+
+        # Compare assemblies:
+        report = compare_assemblies(fast_assembly_quality, final_assembly_quality)
+        click.echo(report)
+
+        # Write CSV assembly statistics summary:
+        assembly_statistics_writer = AssemblyStatisticsWriter(output_dir)
+        assembly_statistics_writer.write([fast_strategy.assembler.name, slow_strategy.assembler.name],
+                                         [fast_assembly_quality, final_assembly_quality])
+
         # Move final assembled contigs to the main level of the output directory and rename it.
         contigs_filename = assembler.get_contigs_filename()
         contigs_new_filename = os.path.join(output_dir, "contigs.fasta")
         os.rename(contigs_filename, contigs_new_filename)  # moves and renames
 
-        click.echo("Complete.")
+        click.echo("Complete.\n")
