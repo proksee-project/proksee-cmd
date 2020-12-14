@@ -28,7 +28,7 @@ GZ_FALSE = 1
 
 
 # Defining class for identifying sequencing platform
-class PlatformIdentify():
+class PlatformIdentifier():
 
     # Defining __init__ method with reads parameters
     def __init__(self, forward, reverse):
@@ -142,7 +142,7 @@ class PlatformIdentify():
         return platform_dicn
 
     # Method for integrating private functions
-    def identify_platform(self):
+    def identify(self):
         '''Creating instance of FastqCheck class'''
         fastq_object = FastqCheck(self.forward, self.reverse)
 

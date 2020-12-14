@@ -24,6 +24,9 @@ import subprocess
 
 
 # Defining read filtering class for filtering reads using fastp
+from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
+
+
 class ReadFilterer():
     """
     A class for filtering reads.
@@ -76,3 +79,9 @@ class ReadFilterer():
     def filter_read(self):
         fastp_string = self.__fastp_string()
         self.__fastp_func(fastp_string)
+
+    def summarize_quality(self):
+        json_file = os.path.join(self.output_dir, "fastp.json")
+        read_quality = parse_read_quality_from_fastp(json_file)
+
+        return read_quality
