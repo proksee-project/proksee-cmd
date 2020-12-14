@@ -22,11 +22,19 @@ specific language governing permissions and limitations under the License.
 import os
 import subprocess
 
-from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
-
 
 # Defining read filtering class for filtering reads using fastp
 class ReadFilterer():
+    """
+    A class for filtering reads.
+
+    ATTRIBUTES
+        forward (str): the file location of the forward reads
+        reverse (str): the file location of the reverse reads; may be NULL
+        output_dir (str): the file location of the output directory for writing files
+        forward_filtered (str): the file location of the filtered forward reads
+        reverse_filtered (str): the file location of the filtered reverse reads
+    """
 
     # Defining __init__ method with reads and output directory parameters
     def __init__(self, forward, reverse, output_dir):
@@ -37,18 +45,18 @@ class ReadFilterer():
     # Creating fastp command to be executed
     def __fastp_string(self):
         '''specifying fixed output files for fastp'''
-        out1 = os.path.join(self.output_dir, 'fwd_filtered.fastq')
-        out2 = os.path.join(self.output_dir, 'rev_filtered.fastq')
+        self.forward_filtered = os.path.join(self.output_dir, 'fwd_filtered.fastq')
+        self.reverse_filtered = os.path.join(self.output_dir, 'rev_filtered.fastq') if self.reverse else None
         json = os.path.join(self.output_dir, 'fastp.json')
         html = os.path.join(self.output_dir, 'fastp.html')
 
         '''Creating fastp command based on absence/presence of reverse read'''
         if self.reverse is None:
             fastp_str = 'fastp -i ' + self.forward + ' -o ' + \
-                out1 + ' -j ' + json + ' -h ' + html
+                self.forward_filtered + ' -j ' + json + ' -h ' + html
         else:
             fastp_str = 'fastp -i ' + self.forward + ' -I ' + self.reverse + \
-                ' -o ' + out1 + ' -O ' + out2 + ' -j ' + json + ' -h ' + html
+                ' -o ' + self.forward_filtered + ' -O ' + self.reverse_filtered + ' -j ' + json + ' -h ' + html
 
         return fastp_str
 
@@ -60,22 +68,11 @@ class ReadFilterer():
         '''Running fastp as a subprocess module. Raising error otherwise'''
         try:
             subprocess.check_call(fastp_str, shell=True, stderr=fastp_log)
-            success = 'FASTP filtered reads'
+
         except subprocess.CalledProcessError as e:
             raise e
-
-        return success
 
     # Method for integrating private functions
     def filter_read(self):
         fastp_string = self.__fastp_string()
-        fastp_func = self.__fastp_func(fastp_string)
-        output_string = fastp_func + ' written to output directory'
-
-        return output_string
-
-    def summarize_quality(self):
-        json_file = os.path.join(self.output_dir, "fastp.json")
-        read_quality = parse_read_quality_from_fastp(json_file)
-
-        return read_quality
+        self.__fastp_func(fastp_string)

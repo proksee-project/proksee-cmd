@@ -149,14 +149,12 @@ class FastqCheck():
         status_dicn = self.__fastq_status(extn_dicn)
 
         '''Defining output string and setting boolean to True'''
-        output_string = 'Read/s is/are valid fastq files..proceeding..'
         status = True
 
         '''boolean is false if either conditions are not met
         1. forward status is False
         2. reverse is specified and reverse status is False'''
         if (not status_dicn[self.forward] or self.reverse is not None and not status_dicn[self.reverse]):
-            output_string = 'Either one or both of forward/reverse reads are invalid fastq files..exiting..'
             status = False
 
-        return (output_string, status)
+        return status

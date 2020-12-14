@@ -78,9 +78,8 @@ class TestFastqCheck():
     def case1_out(self):
         dicn_good = {forward_good: 1, reverse_good: 1}
         status_dicn_good = {forward_good: True, reverse_good: True}
-        output_tuple_good = ('Read/s is/are valid fastq files..proceeding..', True)
 
-        return (dicn_good, status_dicn_good, output_tuple_good)
+        return (dicn_good, status_dicn_good)
 
     # Tests for Case 1: All tests with fastq_object_good
     def test_fastq_extn_check_good(self):
@@ -99,20 +98,12 @@ class TestFastqCheck():
         method_status_chk_good = fastq_object_good._FastqCheck__fastq_status(self.case1_out()[0])
         assert self.case1_out()[1] == method_status_chk_good
 
-    def test_fastq_input_check_good(self):
-        method_output_tuple_good = fastq_object_good.fastq_input_check()
-        assert self.case1_out()[2] == method_output_tuple_good
-
     # Defining output variables for Case 2
     def case2_out(self):
         dicn_good_fwd = {forward_good: 1, reverse_bad[0]: 1}
         status_dicn_good_fwd = {forward_good: True, reverse_bad[0]: False}
-        output_tuple_good_fwd = (
-            'Either one or both of forward/reverse reads are invalid fastq files..exiting..',
-            False
-        )
 
-        return (dicn_good_fwd, status_dicn_good_fwd, output_tuple_good_fwd)
+        return (dicn_good_fwd, status_dicn_good_fwd)
 
     # Tests for Case 2: All tests with fastq_object_good_fwd
     def test_fastq_extn_check_good_fwd(self):
@@ -131,20 +122,12 @@ class TestFastqCheck():
         method_status_chk_good_fwd = fastq_object_good_fwd._FastqCheck__fastq_status(self.case2_out()[0])
         assert self.case2_out()[1] == method_status_chk_good_fwd
 
-    def test_fastq_input_check_good_fwd(self):
-        method_output_tuple = fastq_object_good_fwd.fastq_input_check()
-        assert self.case2_out()[2] == method_output_tuple
-
     # Defining output variables for Case 3
     def case3_out(self):
         dicn_good_rev = {forward_bad[0]: 1, reverse_good: 1}
         status_dicn_good_rev = {forward_bad[0]: False, reverse_good: True}
-        output_tuple_good_rev = (
-            'Either one or both of forward/reverse reads are invalid fastq files..exiting..',
-            False
-        )
 
-        return (dicn_good_rev, status_dicn_good_rev, output_tuple_good_rev)
+        return (dicn_good_rev, status_dicn_good_rev)
 
     # Tests for Case 3: All tests with fastq_object_good_rev
     def test_fastq_extn_check_good_rev(self):
@@ -163,17 +146,12 @@ class TestFastqCheck():
         method_status_chk_good_rev = fastq_object_good_rev._FastqCheck__fastq_status(self.case3_out()[0])
         assert self.case3_out()[1] == method_status_chk_good_rev
 
-    def test_fastq_input_check_good_rev(self):
-        method_output_tuple = fastq_object_good_rev.fastq_input_check()
-        assert self.case3_out()[2] == method_output_tuple
-
     # Defining output variables for Case 4
     def case4_out(self):
         dicn_bad0 = {forward_bad[0]: 1, reverse_bad[0]: 1}
         status_dicn_bad0 = {forward_bad[0]: False, reverse_bad[0]: False}
-        output_tuple_bad0 = ('Either one or both of forward/reverse reads are invalid fastq files..exiting..', False)
 
-        return (dicn_bad0, status_dicn_bad0, output_tuple_bad0)
+        return (dicn_bad0, status_dicn_bad0)
 
     # Tests for Case 4: All tests with fastq_object_bad[0]
     def test_fastq_extn_check_bad0(self):
@@ -192,17 +170,12 @@ class TestFastqCheck():
         method_status_chk_bad0 = fastq_object_bad[0]._FastqCheck__fastq_status(self.case4_out()[0])
         assert self.case4_out()[1] == method_status_chk_bad0
 
-    def test_fastq_input_check_bad0(self):
-        method_output_tuple = fastq_object_bad[0].fastq_input_check()
-        assert self.case4_out()[2] == method_output_tuple
-
     # Defining output variables for Case 5
     def case5_out(self):
         dicn_bad1 = {forward_bad[1]: 2, reverse_bad[1]: 2}
         status_dicn_bad1 = {forward_bad[1]: False, reverse_bad[1]: False}
-        output_tuple_bad1 = ('Either one or both of forward/reverse reads are invalid fastq files..exiting..', False)
 
-        return (dicn_bad1, status_dicn_bad1, output_tuple_bad1)
+        return (dicn_bad1, status_dicn_bad1)
 
     # Tests for Case 5: All tests with fastq_object_bad[1]
     def test_fastq_extn_check_bad1(self):
@@ -221,17 +194,12 @@ class TestFastqCheck():
         method_status_chk_bad1 = fastq_object_bad[1]._FastqCheck__fastq_status(self.case5_out()[0])
         assert self.case5_out()[1] == method_status_chk_bad1
 
-    def test_fastq_input_check_bad1(self):
-        method_output_tuple = fastq_object_bad[1].fastq_input_check()
-        assert self.case5_out()[2] == method_output_tuple
-
     # Defining output variables for Case 6
     def case6_out(self):
         dicn_bad2 = {forward_bad[2]: 2, reverse_bad[2]: 2}
         status_dicn_bad2 = {forward_bad[2]: False, reverse_bad[2]: False}
-        output_tuple_bad2 = ('Either one or both of forward/reverse reads are invalid fastq files..exiting..', False)
 
-        return (dicn_bad2, status_dicn_bad2, output_tuple_bad2)
+        return (dicn_bad2, status_dicn_bad2)
 
     # Tests for Case 6: All tests with fastq_object_bad[2]
     def test_fastq_extn_check_bad2(self):
@@ -250,17 +218,12 @@ class TestFastqCheck():
         method_status_chk_bad2 = fastq_object_bad[2]._FastqCheck__fastq_status(self.case6_out()[0])
         assert self.case6_out()[1] == method_status_chk_bad2
 
-    def test_fastq_input_check_bad2(self):
-        method_output_tuple = fastq_object_bad[2].fastq_input_check()
-        assert self.case6_out()[2] == method_output_tuple
-
     # Defining output variables for Case 7
     def case7_out(self):
         dicn_bad3 = {forward_bad[3]: 0, reverse_bad[3]: 1}
         status_dicn_bad3 = {forward_bad[3]: False, reverse_bad[3]: False}
-        output_tuple_bad3 = ('Either one or both of forward/reverse reads are invalid fastq files..exiting..', False)
 
-        return (dicn_bad3, status_dicn_bad3, output_tuple_bad3)
+        return (dicn_bad3, status_dicn_bad3)
 
     # Tests for Case 7: All tests with fastq_object_bad[3]
     def test_fastq_extn_check_bad3(self):
@@ -274,17 +237,12 @@ class TestFastqCheck():
     '''The output of __fastq_status is from FileNotFoundError exception.
     Hence test for __fast_line_check method is not applicable'''
 
-    def test_fastq_input_check_bad3(self):
-        method_output_tuple = fastq_object_bad[3].fastq_input_check()
-        assert self.case7_out()[2] == method_output_tuple
-
     # Defining output variables for Case 8
     def case8_out(self):
         dicn_revnone = {forward_good: 1}
         status_dicn_revnone = {forward_good: True}
-        output_tuple_revnone = ('Read/s is/are valid fastq files..proceeding..', True)
 
-        return (dicn_revnone, status_dicn_revnone, output_tuple_revnone)
+        return (dicn_revnone, status_dicn_revnone)
 
     # Tests for Case 8: All tests with fastq_object_rev_none
     def test_fastq_extn_check_revnone(self):
@@ -299,7 +257,3 @@ class TestFastqCheck():
     def test_fastq_status_check_revnone(self):
         method_status_chk = fastq_object_rev_none._FastqCheck__fastq_status(self.case8_out()[0])
         assert self.case8_out()[1] == method_status_chk
-
-    def test_fastq_input_check_revnone(self):
-        method_output_tuple = fastq_object_rev_none.fastq_input_check()
-        assert self.case8_out()[2] == method_output_tuple

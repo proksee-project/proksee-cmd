@@ -67,11 +67,6 @@ class TestReadFilter():
         method_string_good = read_filtering1._ReadFilterer__fastp_string()
         assert fastp_str_bad != method_string_good
 
-    # Test for fastp function with paired illumina reads
-    def test_fastp_func1_good(self):
-        method_func_good = read_filtering1._ReadFilterer__fastp_func(fastp_str1)
-        assert fastp_func_good == method_func_good
-
     # Test for fastp function with incorrect parameters
     def test_fastp_func1_badparams(self):
         fastp_str_bad = 'fastp --incorrect params'
@@ -84,12 +79,6 @@ class TestReadFilter():
         with pytest.raises(subprocess.CalledProcessError):
             assert read_filtering1._ReadFilterer__fastp_func(fastp_str_bad)
 
-    # Test for ReadFilterer class method integrating all methods
-    def test_filter_read1_good(self):
-        fastp_output_string_good = 'FASTP filtered reads ' + 'written to output directory'
-        method_string = read_filtering1.filter_read()
-        assert fastp_output_string_good == method_string
-
     # Test for failed integrating method
     def test_filter_read1_bad(self):
         forward_bad = 'does_not_exist.fastq'
@@ -101,14 +90,3 @@ class TestReadFilter():
     def test_fastp_string2_good(self):
         method_string_good = read_filtering2._ReadFilterer__fastp_string()
         assert fastp_str2 == method_string_good
-
-    # Test for fastp function with single read
-    def test_fastp_func2_good(self):
-        method_func_good = read_filtering2._ReadFilterer__fastp_func(fastp_str2)
-        assert fastp_func_good == method_func_good
-
-    # Test for ReadFilterer integrating method with single read
-    def test_filter_read2_good(self):
-        fastp_output_string_good = 'FASTP filtered reads' + ' written to output directory'
-        method_string = read_filtering2.filter_read()
-        assert fastp_output_string_good == method_string
