@@ -72,8 +72,7 @@ class TestPlatIden():
 
     # Test for PlatformIdentifier class method integrating all methods
     def test_identify_platform1(self):
-        output_string_good = 'Sequencing plaform for NA12878_fwd.fastq and ' + \
-            'NA12878_rev.fastq are same: Illumina'
+        output_string_good = 'Illumina'
         method_string = platform_object1.identify()
         assert output_string_good == method_string
 
@@ -95,26 +94,23 @@ class TestPlatIden():
         assert platform_dicn == method_platform
 
     def test_identify_platform2(self):
-        output_string_good = 'Sequencing plaform for ATCC_MSA-1003_16S_5reads.fastq.gz ' + \
-            'is Pacbio\nSequencing platform for genuine.fastq is Unidentifiable'
+        output_string_good = 'Pacbio/Unidentifiable'
         method_string = platform_object2.identify()
         assert output_string_good == method_string
 
     # Test for integrating method for second forward read and no reverse
     def test_identify_platform3(self):
-        output_string_good = 'Sequencing plaform for ATCC_MSA-1003_16S_5reads.fastq.gz is Pacbio'
+        output_string_good = 'Pacbio'
         method_string = platform_object3.identify()
         assert output_string_good == method_string
 
     # Tests for integrating method for good and bad illumina snippets
     def test_identify_platform4(self):
-        output_string_good = 'Sequencing plaform for NA12878_illuminatruesnippet.fastq ' + \
-            'is Illumina\nSequencing platform for NA12878_illuminatamperedsnippet1.fastq is Unidentifiable'
+        output_string_good = 'Illumina/Unidentifiable'
         method_string = platform_object4.identify()
         assert output_string_good == method_string
 
     def test_identify_platform5(self):
-        output_string_good = 'Sequencing plaform for NA12878_illuminatamperedsnippet1.fastq and ' + \
-            'NA12878_illuminatamperedsnippet2.fastq are same: Unidentifiable'
+        output_string_good = 'Unidentifiable'
         method_string = platform_object5.identify()
         assert output_string_good == method_string
