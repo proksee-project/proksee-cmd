@@ -42,20 +42,27 @@ DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "da
 
 
 def report_valid_fastq(valid):
+    """
+
+    """
 
     if not valid:
-        output_string = 'Either one or both of forward/reverse reads are invalid fastq files..exiting..'
-        raise click.UsageError(output_string)
+        output = "One or both of the reads are not in FASTQ format."
 
-    output_string = 'Read/s is/are valid fastq files..proceeding..'
-    click.echo(output_string)
+    else:
+        output = "The reads appear to be formatted correctly."
 
-    return valid
+    click.echo(output)
 
 
 def report_platform(platform):
+    """
 
-    click.echo(platform)
+    """
+
+    output = "SEQUENCING PLATFORM: " + str(platform) + "\n"
+
+    click.echo(output)
 
 
 def report_species(species_list):
@@ -78,6 +85,28 @@ def report_species(species_list):
     click.echo("")  # Blank line
 
 
+def report_strategy(strategy):
+    """
+
+    """
+
+    click.echo(strategy.report)
+
+    if not strategy.proceed:
+        click.echo("The assembly was unable to proceed.\n")
+
+
+def report_contamination(evaluation):
+    """
+
+    """
+
+    click.echo(evaluation.report)
+
+    if not evaluation.success:
+        click.echo("The assembly was unable to proceed.\n")
+
+
 @click.command('assemble',
                short_help='Assemble reads.')
 @click.argument('forward', required=True,
@@ -87,8 +116,11 @@ def report_species(species_list):
 @click.option('-o', '--output_dir', required=True,
               type=click.Path(exists=False, file_okay=False,
                               dir_okay=True, writable=True))
+@click.option('--force', is_flag=True)
 @click.pass_context
-def cli(ctx, forward, reverse, output_dir):
+def cli(ctx, forward, reverse, output_dir, force):
+
+    # Make output directory:
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
@@ -96,6 +128,9 @@ def cli(ctx, forward, reverse, output_dir):
     fastq_check = FastqCheck(forward, reverse)
     valid_fastq = fastq_check.fastq_input_check()
     report_valid_fastq(valid_fastq)
+
+    if not valid_fastq and not force:
+        return
 
     # Identify sequencing platform:
     platform_identifier = PlatformIdentifier(forward, reverse)
@@ -119,69 +154,48 @@ def cli(ctx, forward, reverse, output_dir):
     # Determine a fast assembly strategy:
     expert = ExpertSystem(platform, species, forward_filtered, reverse_filtered, output_dir)
     fast_strategy = expert.create_fast_assembly_strategy(read_quality)
-    click.echo(fast_strategy.report)
+    report_strategy(fast_strategy)
 
-    if not fast_strategy.proceed:
-        click.echo("The assembly was unable to proceed.\n")
+    if not fast_strategy.proceed and not force:
         return
 
-    # Step 5: Perform a fast assembly.
+    # Perform a fast assembly:
     assembler = fast_strategy.assembler
     output = assembler.assemble()
     click.echo(output)
 
-    # Check for contamination at the contig level
+    # Check for contamination at the contig level:
     contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_dir)
     evaluation = contamination_handler.estimate_contamination()
+    report_contamination(evaluation)
 
-    click.echo(evaluation.report)
-
-    if not evaluation.success:
-        click.echo("The assembly was unable to proceed.\n")
+    if not evaluation.success and not force:
         return
 
-    # Step 6: Evaluate Assembly
+    # Evaluate fast assembly:
     assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
+    fast_assembly_quality = assembly_evaluator.evaluate()
 
-    try:
-        fast_assembly_quality = assembly_evaluator.evaluate()
-
-    except Exception:
-        raise click.UsageError("Encountered an error when evaluating the assembly.")
-
-    # Step 7: Slow Assembly
+    # Slow assembly:
     assembly_database = AssemblyDatabase(DATABASE_PATH)
-
     slow_strategy = expert.create_full_assembly_strategy(fast_assembly_quality, assembly_database)
-    click.echo(slow_strategy.report)
+    report_strategy(slow_strategy)
 
-    if not slow_strategy.proceed:
-        click.echo("The assembly was unable to proceed.\n")
+    if not slow_strategy.proceed and not force:
         return
 
     click.echo("Performing full assembly.")
     assembler = slow_strategy.assembler
+    output = assembler.assemble()
+    click.echo(output)
 
-    try:
-        output = assembler.assemble()
-        click.echo(output)
-
-    except Exception:
-        raise click.UsageError("Encountered an error when assembling the reads.")
-
-    # Step 6: Evaluate Assembly
+    # Evaluate slow assembly
     assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_dir)
-
-    try:
-        final_assembly_quality = assembly_evaluator.evaluate()
-
-    except Exception:
-        raise click.UsageError("Encountered an error when evaluating the assembly.")
-
+    final_assembly_quality = assembly_evaluator.evaluate()
     evaluation = evaluate_assembly(species, final_assembly_quality, assembly_database)
     click.echo(evaluation.report)
 
-    # Compare assemblies:
+    # Compare fast and slow assemblies:
     report = compare_assemblies(fast_assembly_quality, final_assembly_quality)
     click.echo(report)
 
