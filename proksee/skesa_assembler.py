@@ -66,7 +66,6 @@ class SkesaAssembler(Assembler):
         """
 
         if self.reverse is None:
-
             command = 'skesa --fastq ' + self.forward
 
         else:
