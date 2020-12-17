@@ -80,7 +80,7 @@ class SpadesAssembler(Assembler):
         except subprocess.CalledProcessError:
 
             message = "ERROR: Encountered an error when performing a SPAdes assembly.\n" \
-                + "       Please see the error file for more information: " + str(self.error_filename) + "\n"
+                + "       Please see the error file for more information: " + str(error_filename) + "\n"
 
             print(message)
             sys.exit(1)
