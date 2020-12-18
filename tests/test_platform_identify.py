@@ -24,23 +24,27 @@ from pathlib import Path
 from proksee.platform_identify import PlatformIdentifier
 import gzip
 
+from proksee.reads import Reads
+
 START_DIR = Path(__file__).parent.absolute()
 TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
 
 # Using real fastq files from illumina public data
 forward1 = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
 reverse1 = os.path.join(TEST_INPUT_DIR, 'NA12878_rev.fastq')
+reads1 = Reads(forward1, reverse1)
 
 # Using a real pacbio fastq file and another customized fastq file
 forward2 = os.path.join(TEST_INPUT_DIR, 'ATCC_MSA-1003_16S_5reads.fastq.gz')
 reverse2 = os.path.join(TEST_INPUT_DIR, 'genuine.fastq')
+reads2 = Reads(forward2, reverse2)
 
 # Declaring two instances of PlatformIdentifier class
-platform_object1 = PlatformIdentifier(forward1, reverse1)
-platform_object2 = PlatformIdentifier(forward2, reverse2)
+platform_object1 = PlatformIdentifier(reads1)
+platform_object2 = PlatformIdentifier(reads2)
 
 # Declaring another instance of PlatformIdenfity class with forward only
-platform_object3 = PlatformIdentifier(forward2, None)
+platform_object3 = PlatformIdentifier(Reads(forward2, None))
 
 # Declaring illumina specific true and false snippet files
 illum1 = os.path.join(TEST_INPUT_DIR, 'NA12878_illuminatruesnippet.fastq')
@@ -48,8 +52,8 @@ illum2 = os.path.join(TEST_INPUT_DIR, 'NA12878_illuminatamperedsnippet1.fastq')
 illum3 = os.path.join(TEST_INPUT_DIR, 'NA12878_illuminatamperedsnippet2.fastq')
 
 # Declaring two instances of PlatformIdentifier class with illumina snippet files
-platform_object4 = PlatformIdentifier(illum1, illum2)
-platform_object5 = PlatformIdentifier(illum2, illum3)
+platform_object4 = PlatformIdentifier(Reads(illum1, illum2))
+platform_object5 = PlatformIdentifier(Reads(illum2, illum3))
 
 
 class TestPlatIden():
@@ -65,9 +69,8 @@ class TestPlatIden():
 
     # Test for checking platform dictionary method
     def test_platform_output1(self):
-        file_dicn = {forward1: 1, reverse1: 1}
         platform_dicn = {forward1: 'Illumina', reverse1: 'Illumina'}
-        method_platform = platform_object1._PlatformIdentifier__platform_output(file_dicn)
+        method_platform = platform_object1._PlatformIdentifier__platform_output()
         assert platform_dicn == method_platform
 
     # Test for PlatformIdentifier class method integrating all methods
@@ -88,9 +91,8 @@ class TestPlatIden():
         assert platform_r == method_rev_plat
 
     def test_platform_output2(self):
-        file_dicn = {forward2: 0, reverse2: 1}
         platform_dicn = {forward2: 'Pacbio', reverse2: 'Unidentifiable'}
-        method_platform = platform_object2._PlatformIdentifier__platform_output(file_dicn)
+        method_platform = platform_object2._PlatformIdentifier__platform_output()
         assert platform_dicn == method_platform
 
     def test_identify_platform2(self):

@@ -30,8 +30,9 @@ from pathlib import Path
 from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_assembly, compare_assemblies
 from proksee.assembly_database import AssemblyDatabase
 from proksee.contamination_handler import ContaminationHandler
+from proksee.input_verification import are_valid_fastq
+from proksee.reads import Reads
 from proksee.species_estimator import SpeciesEstimator
-from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentifier
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
@@ -124,16 +125,17 @@ def cli(ctx, forward, reverse, output_dir, force):
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
+    reads = Reads(forward, reverse)
+
     # Validate FASTQ inputs:
-    fastq_check = FastqCheck(forward, reverse)
-    valid_fastq = fastq_check.fastq_input_check()
+    valid_fastq = are_valid_fastq(reads)
     report_valid_fastq(valid_fastq)
 
     if not valid_fastq and not force:
         return
 
     # Identify sequencing platform:
-    platform_identifier = PlatformIdentifier(forward, reverse)
+    platform_identifier = PlatformIdentifier(reads)
     platform = platform_identifier.identify()
     report_platform(platform)
 

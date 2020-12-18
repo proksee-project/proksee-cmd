@@ -18,10 +18,11 @@ specific language governing permissions and limitations under the License.
 '''
 
 import gzip
-from proksee.utilities import FastqCheck
 import re
 
 # Declaring global variables based on zipped or unzipped files
+from proksee.input_verification import is_gzipped
+
 GZ_TRUE = 0
 GZ_FALSE = 1
 
@@ -30,9 +31,8 @@ GZ_FALSE = 1
 class PlatformIdentifier():
 
     # Defining __init__ method with reads parameters
-    def __init__(self, forward, reverse):
-        self.forward = forward
-        self.reverse = reverse
+    def __init__(self, reads):
+        self.reads = reads
 
     # Method for identifying sequencing platform based on read
     '''Passing file handle as a parameter'''
@@ -122,50 +122,45 @@ class PlatformIdentifier():
         return platform
 
     # Opening files within input file dictionary and assigning plat_iden method
-    def __platform_output(self, f_name_dicn):
+    def __platform_output(self):
         platform_dicn = {}
 
         '''Iterating through input file dictionary'''
-        for file in f_name_dicn:
+        for file_location in self.reads.get_file_locations():
 
             '''Separate opening functions for zipped/unzipped files'''
-            if (f_name_dicn[file] == GZ_TRUE):
-                with gzip.open(file, mode='rt') as open_file:
-                    platform_dicn[file] = self.__plat_iden(open_file)
+            if is_gzipped(file_location):
+                with gzip.open(file_location, mode='rt') as open_file:
+                    platform_dicn[file_location] = self.__plat_iden(open_file)
 
-            elif (f_name_dicn[file] == GZ_FALSE):
-                with open(file, mode='r') as open_file:
-                    platform_dicn[file] = self.__plat_iden(open_file)
+            else:
+                with open(file_location, mode='r') as open_file:
+                    platform_dicn[file_location] = self.__plat_iden(open_file)
 
             '''Returning file:platform as key:value in dictionary'''
         return platform_dicn
 
     # Method for integrating private functions
     def identify(self):
-        '''Creating instance of FastqCheck class'''
-        fastq_object = FastqCheck(self.forward, self.reverse)
-
-        '''Creating input file dictionary from private method of FastqCheck'''
-        f_name_dicn = fastq_object._FastqCheck__fastq_extn_check()
 
         '''Creating platform dictionary for input file dictionary'''
-        platform_dicn = self.__platform_output(f_name_dicn)
+        platform_dicn = self.__platform_output()
 
         '''Creating output string for forward only if reverse is None'''
-        if self.reverse is None:
-            output_string = str(platform_dicn[self.forward])
+        if self.reads.reverse is None:
+            output_string = str(platform_dicn[self.reads.forward])
 
             '''Checking conditions if reverse is specified'''
         else:
 
             '''Creating output string if forward and reverse platforms are same'''
-            if platform_dicn[self.forward] == platform_dicn[self.reverse]:
-                output_string = str(platform_dicn[self.forward])
+            if platform_dicn[self.reads.forward] == platform_dicn[self.reads.reverse]:
+                output_string = str(platform_dicn[self.reads.forward])
 
                 '''Creating output string if forward and reverse platforms are different'''
             else:
-                output_string1 = str(platform_dicn[self.forward])
-                output_string2 = str(platform_dicn[self.reverse])
+                output_string1 = str(platform_dicn[self.reads.forward])
+                output_string2 = str(platform_dicn[self.reads.reverse])
                 output_string = output_string1 + "/" + output_string2
 
         return output_string
