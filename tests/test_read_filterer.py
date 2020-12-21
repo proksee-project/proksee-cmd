@@ -26,6 +26,8 @@ import subprocess
 import pytest
 
 #  Defining global variables for testing
+from proksee.reads import Reads
+
 START_DIR = Path(__file__).parent.absolute()
 TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
 TEST_OUTPUT_DIR = '{}/data/testout'.format(str(START_DIR))
@@ -40,8 +42,8 @@ reverse1 = os.path.join(TEST_INPUT_DIR, 'NA12878_rev.fastq')
 forward2 = os.path.join(TEST_INPUT_DIR, 'ATCC_MSA-1003_16S_5reads.fastq.gz')
 
 # Defining instances of ReadFilterer class
-read_filtering1 = ReadFilterer(forward1, reverse1, TEST_OUTPUT_DIR)
-read_filtering2 = ReadFilterer(forward2, None, TEST_OUTPUT_DIR)
+read_filtering1 = ReadFilterer(Reads(forward1, reverse1), TEST_OUTPUT_DIR)
+read_filtering2 = ReadFilterer(Reads(forward2, None), TEST_OUTPUT_DIR)
 
 # Defining output filtered reads
 forward_filt = os.path.join(TEST_OUTPUT_DIR, 'fwd_filtered.fastq')
@@ -58,35 +60,23 @@ class TestReadFilter():
 
     # Test for checking good fastp string
     def test_fastp_string1_good(self):
-        method_string_good = read_filtering1._ReadFilterer__fastp_string()
+        method_string_good = read_filtering1._ReadFilterer__build_fastp_command()
         assert fastp_str1 == method_string_good
 
     # Test for negating bad fastp string
     def test_fastp_string1_bad(self):
         fastp_str_bad = 'fastp -i ' + forward1
-        method_string_good = read_filtering1._ReadFilterer__fastp_string()
+        method_string_good = read_filtering1._ReadFilterer__build_fastp_command()
         assert fastp_str_bad != method_string_good
-
-    # Test for fastp function with incorrect parameters
-    def test_fastp_func1_badparams(self):
-        fastp_str_bad = 'fastp --incorrect params'
-        with pytest.raises(subprocess.CalledProcessError):
-            assert read_filtering1._ReadFilterer__fastp_func(fastp_str_bad)
-
-    # Test for fastp function when fastp isn't installed
-    def test_fastp_func1_badcommand(self):
-        fastp_str_bad = 'conda deactivate && fastp -h'
-        with pytest.raises(subprocess.CalledProcessError):
-            assert read_filtering1._ReadFilterer__fastp_func(fastp_str_bad)
 
     # Test for failed integrating method
     def test_filter_read1_bad(self):
         forward_bad = 'does_not_exist.fastq'
-        read_filtering_bad = ReadFilterer(forward_bad, None, TEST_OUTPUT_DIR)
+        read_filtering_bad = ReadFilterer(Reads(forward_bad, None), TEST_OUTPUT_DIR)
         with pytest.raises(subprocess.CalledProcessError):
-            assert read_filtering_bad.filter_read()
+            assert read_filtering_bad.filter_reads()
 
     # Test for fastp string with single read
     def test_fastp_string2_good(self):
-        method_string_good = read_filtering2._ReadFilterer__fastp_string()
+        method_string_good = read_filtering2._ReadFilterer__build_fastp_command()
         assert fastp_str2 == method_string_good

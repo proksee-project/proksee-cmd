@@ -140,11 +140,11 @@ def cli(ctx, forward, reverse, output_dir, force):
     report_platform(platform)
 
     # Filter reads:
-    read_filterer = ReadFilterer(forward, reverse, output_dir)
-    read_filterer.filter_read()
+    read_filterer = ReadFilterer(reads, output_dir)
+    filtered_reads = read_filterer.filter_reads()
 
-    forward_filtered = read_filterer.forward_filtered
-    reverse_filtered = read_filterer.reverse_filtered
+    forward_filtered = filtered_reads.forward
+    reverse_filtered = filtered_reads.reverse
     read_quality = read_filterer.summarize_quality()
 
     # Estimate species

@@ -25,6 +25,7 @@ import subprocess
 
 # Defining read filtering class for filtering reads using fastp
 from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
+from proksee.reads import Reads
 
 
 class ReadFilterer():
@@ -32,56 +33,90 @@ class ReadFilterer():
     A class for filtering reads.
 
     ATTRIBUTES
-        forward (str): the file location of the forward reads
-        reverse (str): the file location of the reverse reads; may be NULL
-        output_dir (str): the file location of the output directory for writing files
-        forward_filtered (str): the file location of the filtered forward reads
-        reverse_filtered (str): the file location of the filtered reverse reads
+        reads (Reads): the reads to filter
+        output_directory (str): the file location of the output directory for writing files
     """
 
-    # Defining __init__ method with reads and output directory parameters
-    def __init__(self, forward, reverse, output_dir):
-        self.forward = forward
-        self.reverse = reverse
-        self.output_dir = output_dir
+    def __init__(self, reads, output_directory):
+        """
+        Initializes the read filterer.
 
-    # Creating fastp command to be executed
-    def __fastp_string(self):
-        '''specifying fixed output files for fastp'''
-        self.forward_filtered = os.path.join(self.output_dir, 'fwd_filtered.fastq')
-        self.reverse_filtered = os.path.join(self.output_dir, 'rev_filtered.fastq') if self.reverse else None
-        json = os.path.join(self.output_dir, 'fastp.json')
-        html = os.path.join(self.output_dir, 'fastp.html')
+        PARAMETERS
+            reads (Reads): the reads to filter
+            output_directory (str): the file location of the output directory for writing files
+        """
+
+        self.reads = reads
+        self.output_directory = output_directory
+
+    def __build_fastp_command(self):
+        """
+        Builds the command for running the FASTP program.
+
+        RETURNS
+            command (str): a string for running the FASTP program
+        """
+
+        forward_reads = self.reads.forward
+        reverse_reads = self.reads.reverse
+
+        self.forward_filtered = os.path.join(self.output_directory, 'fwd_filtered.fastq')
+        self.reverse_filtered = os.path.join(self.output_directory, 'rev_filtered.fastq') if reverse_reads else None
+        json = os.path.join(self.output_directory, 'fastp.json')
+        html = os.path.join(self.output_directory, 'fastp.html')
 
         '''Creating fastp command based on absence/presence of reverse read'''
-        if self.reverse is None:
-            fastp_str = 'fastp -i ' + self.forward + ' -o ' + \
+        if reverse_reads is None:
+            command = 'fastp -i ' + forward_reads + ' -o ' + \
                 self.forward_filtered + ' -j ' + json + ' -h ' + html
         else:
-            fastp_str = 'fastp -i ' + self.forward + ' -I ' + self.reverse + \
+            command = 'fastp -i ' + forward_reads + ' -I ' + reverse_reads + \
                 ' -o ' + self.forward_filtered + ' -O ' + self.reverse_filtered + ' -j ' + json + ' -h ' + html
 
-        return fastp_str
+        return command
 
-    # Method for running fastp command
-    def __fastp_func(self, fastp_str):
-        '''Creating fastp log file'''
-        fastp_log = open(os.path.join(self.output_dir, 'fastp.log'), 'w+')
+    def __run_fastp(self):
+        """
+        Runs the FASTP program in order to perform filtering on reads.
+        """
 
-        '''Running fastp as a subprocess module. Raising error otherwise'''
+        logfile_location = open(os.path.join(self.output_directory, 'fastp.log'), 'w+')
+        command = self.__build_fastp_command()
+
         try:
-            subprocess.check_call(fastp_str, shell=True, stderr=fastp_log)
+            subprocess.check_call(command, shell=True, stderr=logfile_location)
 
         except subprocess.CalledProcessError as e:
             raise e
 
-    # Method for integrating private functions
-    def filter_read(self):
-        fastp_string = self.__fastp_string()
-        self.__fastp_func(fastp_string)
+        filtered_reads = Reads(self.forward_filtered, self.reverse_filtered)
+        return filtered_reads
+
+    def filter_reads(self):
+        """
+        Filters reads in order to improve their quality.
+
+        RETURNS
+            filtered_reads (Reads): the filtered reads
+
+        POST
+            The FASTP program will be run and related files will be written into the output directory.
+        """
+
+        filtered_reads = self.__run_fastp()
+        return filtered_reads
 
     def summarize_quality(self):
-        json_file = os.path.join(self.output_dir, "fastp.json")
-        read_quality = parse_read_quality_from_fastp(json_file)
+        """
+        Summarizes the quality of the filtered reads. This function should be run after filtering reads.
+
+        RETURNS
+            read_quality (ReadQuality): quality statistics of filtered reads
+        """
+
+        json_file = os.path.join(self.output_directory, "fastp.json")
+
+        if os.path.isfile(json_file):
+            read_quality = parse_read_quality_from_fastp(json_file)
 
         return read_quality
