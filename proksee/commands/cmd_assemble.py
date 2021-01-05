@@ -61,7 +61,7 @@ def report_platform(platform):
 
     """
 
-    output = "SEQUENCING PLATFORM: " + str(platform) + "\n"
+    output = "SEQUENCING PLATFORM: " + str(platform.value) + "\n"
 
     click.echo(output)
 
