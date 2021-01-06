@@ -44,7 +44,14 @@ DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "da
 
 def report_valid_fastq(valid):
     """
+    Reports to output whether or not the reads appear to be in a valid FASTQ file format.
 
+    PARAMETERS
+        valid (bool): whether or not the reads appear to be in FASTQ format
+
+    POST
+        A statement reporting whether or not the reads appear to be in a valid FASTQ file format will be written to the
+        program's output.
     """
 
     if not valid:
@@ -58,7 +65,13 @@ def report_valid_fastq(valid):
 
 def report_platform(platform):
     """
+    Reports the sequencing platform to output.
 
+    PARAMETERS
+        platform (Platform (Enum)): the sequencing platform to report
+
+    POST
+        A statement reporting the sequencing platform will be written to output.
     """
 
     output = "SEQUENCING PLATFORM: " + str(platform.value) + "\n"
@@ -68,7 +81,13 @@ def report_platform(platform):
 
 def report_species(species_list):
     """
-    Reports the species in the reads.
+    Reports observed species in the reads to output.
+
+    PARAMETERS
+        species_list (List(Species)): the list of species to report
+
+    POST
+        The observed species will be reported to output.
     """
 
     species = species_list[0]
@@ -88,7 +107,13 @@ def report_species(species_list):
 
 def report_strategy(strategy):
     """
+    Reports the assembly strategy that will be used to output.
 
+    PARAMETERS
+        strategy (AssemblyStrategy): the assembly strategy that will be used for assembling
+
+    POST
+        The assembly strategy will be written to output.
     """
 
     click.echo(strategy.report)
@@ -99,7 +124,13 @@ def report_strategy(strategy):
 
 def report_contamination(evaluation):
     """
+    Reports observed contamination to output.
 
+    PARAMETERS
+        evaluation (Evaluation): an evaluation of observed contamination
+
+    POST
+        The evaluation of observed contamination will be written to output.
     """
 
     click.echo(evaluation.report)
