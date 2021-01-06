@@ -127,7 +127,13 @@ def are_valid_fastq(reads):
 
 def is_gzipped(file_location):
     """
+    Determines whether or not the passed file appears to be in GZIP format.
 
+    ARGUMENTS
+        file_location (str): the location of the file to check
+
+    RETURNS
+        gzipped (bool): whether or not the file appears to be in GZIP format
     """
 
     GZIP = ".gz"
