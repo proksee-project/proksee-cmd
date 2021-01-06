@@ -1,4 +1,4 @@
-'''
+"""
 Copyright Government of Canada 2020
 
 Written by:
@@ -17,13 +17,11 @@ Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-'''
+"""
 
 import os
 import subprocess
 
-
-# Defining read filtering class for filtering reads using fastp
 from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
 from proksee.reads import Reads
 
@@ -102,6 +100,12 @@ class ReadFilterer():
         POST
             The FASTP program will be run and related files will be written into the output directory.
         """
+
+        if not os.path.isfile(self.reads.forward):
+            raise FileNotFoundError("Read input file not found: " + str(self.reads.forward))
+
+        if self.reads.reverse is not None and not os.path.isfile(self.reads.reverse):
+            raise FileNotFoundError("Read input file not found: " + str(self.reads.reverse))
 
         filtered_reads = self.__run_fastp()
         return filtered_reads
