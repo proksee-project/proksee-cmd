@@ -46,7 +46,7 @@ def report_valid_fastq(valid):
     """
     Reports to output whether or not the reads appear to be in a valid FASTQ file format.
 
-    PARAMETERS
+    ARGUMENTS
         valid (bool): whether or not the reads appear to be in FASTQ format
 
     POST
@@ -67,7 +67,7 @@ def report_platform(platform):
     """
     Reports the sequencing platform to output.
 
-    PARAMETERS
+    ARGUMENTS
         platform (Platform (Enum)): the sequencing platform to report
 
     POST
@@ -83,7 +83,7 @@ def report_species(species_list):
     """
     Reports observed species in the reads to output.
 
-    PARAMETERS
+    ARGUMENTS
         species_list (List(Species)): the list of species to report
 
     POST
@@ -109,7 +109,7 @@ def report_strategy(strategy):
     """
     Reports the assembly strategy that will be used to output.
 
-    PARAMETERS
+    ARGUMENTS
         strategy (AssemblyStrategy): the assembly strategy that will be used for assembling
 
     POST
@@ -126,7 +126,7 @@ def report_contamination(evaluation):
     """
     Reports observed contamination to output.
 
-    PARAMETERS
+    ARGUMENTS
         evaluation (Evaluation): an evaluation of observed contamination
 
     POST
