@@ -20,12 +20,33 @@ specific language governing permissions and limitations under the License.
 
 
 class Reads:
+    """
+    A class representing a collection of reads.
+
+    ATTRIBUTES
+        forward (str): the file location of the forward reads; should not be None
+        reverse (str): the file location of the reverse reads; may be None
+    """
 
     def __init__(self, forward, reverse):
+        """
+        Initializes the Reads.
+
+        PARAMETERS
+            forward (str): the file location of the forward reads; should not be None
+            reverse (str): the file location of the reverse reads; may be None
+        """
+
         self.forward = forward
         self.reverse = reverse
 
     def get_file_locations(self):
+        """
+        Gets the file locations of all files associated with the Reads.
+
+        RETURNS
+            file_list (List (str)): a list of string file locations of all files associated with the reads
+        """
 
         file_list = []
 
