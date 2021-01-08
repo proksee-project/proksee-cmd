@@ -1,4 +1,4 @@
-'''
+"""
 Copyright:
 
 University of Manitoba & National Microbiology Laboratory, Canada, 2020
@@ -15,17 +15,18 @@ Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
-'''
+"""
 
 import os
 from pathlib import Path
 
 # Importing ReadFilterer class from read_filterer.py
 from proksee.read_filterer import ReadFilterer
-import subprocess
 import pytest
 
 #  Defining global variables for testing
+from proksee.reads import Reads
+
 START_DIR = Path(__file__).parent.absolute()
 TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))
 TEST_OUTPUT_DIR = '{}/data/testout'.format(str(START_DIR))
@@ -40,8 +41,8 @@ reverse1 = os.path.join(TEST_INPUT_DIR, 'NA12878_rev.fastq')
 forward2 = os.path.join(TEST_INPUT_DIR, 'ATCC_MSA-1003_16S_5reads.fastq.gz')
 
 # Defining instances of ReadFilterer class
-read_filtering1 = ReadFilterer(forward1, reverse1, TEST_OUTPUT_DIR)
-read_filtering2 = ReadFilterer(forward2, None, TEST_OUTPUT_DIR)
+read_filtering1 = ReadFilterer(Reads(forward1, reverse1), TEST_OUTPUT_DIR)
+read_filtering2 = ReadFilterer(Reads(forward2, None), TEST_OUTPUT_DIR)
 
 # Defining output filtered reads
 forward_filt = os.path.join(TEST_OUTPUT_DIR, 'fwd_filtered.fastq')
@@ -56,59 +57,63 @@ fastp_func_good = 'FASTP filtered reads'
 
 class TestReadFilter():
 
-    # Test for checking good fastp string
-    def test_fastp_string1_good(self):
-        method_string_good = read_filtering1._ReadFilterer__fastp_string()
+    def test_build_fastp_command_paired(self):
+        """
+        Tests that the correct FASTP command is built when given both forward and reverse reads.
+        """
+
+        method_string_good = read_filtering1._ReadFilterer__build_fastp_command()
         assert fastp_str1 == method_string_good
 
-    # Test for negating bad fastp string
-    def test_fastp_string1_bad(self):
-        fastp_str_bad = 'fastp -i ' + forward1
-        method_string_good = read_filtering1._ReadFilterer__fastp_string()
-        assert fastp_str_bad != method_string_good
+    def test_build_fastp_command_single(self):
+        """
+        Tests that the correct FASTP command is built when only given forward reads.
+        """
 
-    # Test for fastp function with paired illumina reads
-    def test_fastp_func1_good(self):
-        method_func_good = read_filtering1._ReadFilterer__fastp_func(fastp_str1)
-        assert fastp_func_good == method_func_good
-
-    # Test for fastp function with incorrect parameters
-    def test_fastp_func1_badparams(self):
-        fastp_str_bad = 'fastp --incorrect params'
-        with pytest.raises(subprocess.CalledProcessError):
-            assert read_filtering1._ReadFilterer__fastp_func(fastp_str_bad)
-
-    # Test for fastp function when fastp isn't installed
-    def test_fastp_func1_badcommand(self):
-        fastp_str_bad = 'conda deactivate && fastp -h'
-        with pytest.raises(subprocess.CalledProcessError):
-            assert read_filtering1._ReadFilterer__fastp_func(fastp_str_bad)
-
-    # Test for ReadFilterer class method integrating all methods
-    def test_filter_read1_good(self):
-        fastp_output_string_good = 'FASTP filtered reads ' + 'written to output directory'
-        method_string = read_filtering1.filter_read()
-        assert fastp_output_string_good == method_string
-
-    # Test for failed integrating method
-    def test_filter_read1_bad(self):
-        forward_bad = 'does_not_exist.fastq'
-        read_filtering_bad = ReadFilterer(forward_bad, None, TEST_OUTPUT_DIR)
-        with pytest.raises(subprocess.CalledProcessError):
-            assert read_filtering_bad.filter_read()
-
-    # Test for fastp string with single read
-    def test_fastp_string2_good(self):
-        method_string_good = read_filtering2._ReadFilterer__fastp_string()
+        method_string_good = read_filtering2._ReadFilterer__build_fastp_command()
         assert fastp_str2 == method_string_good
 
-    # Test for fastp function with single read
-    def test_fastp_func2_good(self):
-        method_func_good = read_filtering2._ReadFilterer__fastp_func(fastp_str2)
-        assert fastp_func_good == method_func_good
+    def test_filter_reads_missing_files(self):
+        """
+        Tests that a FileNotFoundError is raised when read files are missing.
+        """
 
-    # Test for ReadFilterer integrating method with single read
-    def test_filter_read2_good(self):
-        fastp_output_string_good = 'FASTP filtered reads' + ' written to output directory'
-        method_string = read_filtering2.filter_read()
-        assert fastp_output_string_good == method_string
+        # forward missing
+        forward = 'does_not_exist.fastq'
+        reverse = None
+        read_filterer = ReadFilterer(Reads(forward, reverse), TEST_OUTPUT_DIR)
+
+        with pytest.raises(FileNotFoundError):
+            assert read_filterer.filter_reads()
+
+        # reverse missing
+        forward = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
+        reverse = 'does_not_exist.fastq'
+        read_filterer = ReadFilterer(Reads(forward, reverse), TEST_OUTPUT_DIR)
+
+        with pytest.raises(FileNotFoundError):
+            assert read_filterer.filter_reads()
+
+        # forward good, reverse 'None' -- no error
+        forward = os.path.join(TEST_INPUT_DIR, 'NA12878_fwd.fastq')
+        reverse = None
+        read_filterer = ReadFilterer(Reads(forward, reverse), TEST_OUTPUT_DIR)
+
+        filtered_reads = read_filterer.filter_reads()
+        assert os.path.isfile(filtered_reads.forward)
+        assert filtered_reads.reverse is None
+
+    def test_filter_reads_simple(self):
+        """
+        Tests a simple, expected execution of read filtering.
+        """
+
+        reads = Reads(forward1, reverse1)
+        filterer = ReadFilterer(reads, TEST_OUTPUT_DIR)
+
+        filtered_reads = filterer.filter_reads()
+
+        assert filtered_reads.forward == os.path.join(TEST_OUTPUT_DIR, 'fwd_filtered.fastq')
+        assert filtered_reads.reverse == os.path.join(TEST_OUTPUT_DIR, 'rev_filtered.fastq')
+        assert os.path.isfile(filtered_reads.forward)
+        assert os.path.isfile(filtered_reads.reverse)

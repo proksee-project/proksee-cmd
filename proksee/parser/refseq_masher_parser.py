@@ -19,6 +19,7 @@ specific language governing permissions and limitations under the License.
 import os
 
 from proksee.species import Species
+from proksee.species_estimation import Estimation
 
 
 def parse_species_from_refseq_masher(refseq_masher_file):
@@ -91,43 +92,3 @@ def parse_species_from_refseq_masher(refseq_masher_file):
                     estimations.append(estimation)
 
     return estimations
-
-
-class Estimation:
-    """
-    This class represents a RefSeq Masher "estimation" of a species found in the input data.
-
-    ATTRIBUTES
-        species (Species): the Species object representing the species
-        identity (float): an estimation of what fraction of bases are shared between the genome of the species and the
-            input data (estimated from the fraction of shared k-mers)
-        shared_hashes (float): what fraction of the k-mer hashes were shared
-        median_multiplicity (int): an estimation of coverage in the input data
-        full_taxonomy (string): a full string name of the taxonomy
-    """
-
-    def __init__(self, species, identity, shared_hashes, median_multiplicity, full_taxonomy):
-        """
-        Initializes the Estimation.
-
-        PARAMETERS
-            species (Species): the Species object representing the species
-            identity (float): an estimation of what fraction of bases are shared between the genome of the species and
-                the input data (estimated from the fraction of shared k-mers)
-            shared_hashes (float): what fraction of the k-mer hashes were shared
-            median_multiplicity (int): an estimation of coverage in the input data
-            full_taxonomy (string): a full string name of the taxonomy
-        """
-
-        self.species = species
-        self.identity = float(identity)
-        self.shared_hashes = float(shared_hashes)
-        self.median_multiplicity = int(median_multiplicity)
-        self.full_taxonomy = str(full_taxonomy)
-
-    def __eq__(self, other):
-        """
-        Replaces the default equals function.
-        """
-
-        return self.species.name == other.species.name

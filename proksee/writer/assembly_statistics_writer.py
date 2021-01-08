@@ -60,9 +60,16 @@ class AssemblyStatisticsWriter:
 
         with open(self.output_filename, "w") as csvfile:
 
+            ASSEMBLY_NAME = "Assembly Name"
+            NUM_CONTIGS = "Number of Contigs"
+            N50 = "N50"
+            L50 = "L50"
+            GC_CONTENT = "GC Content"
+            LENGTH = "Length"
+
             csv_writer = csv.writer(csvfile, delimiter=',')
 
-            headers = ["Assembly Name", "Number of Contigs", "N50", "L50", "GC Content", "Length"]
+            headers = [ASSEMBLY_NAME, NUM_CONTIGS, N50, L50, GC_CONTENT, LENGTH]
             csv_writer.writerow(headers)
 
             for i in range(len(names)):

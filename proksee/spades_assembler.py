@@ -20,6 +20,7 @@ specific language governing permissions and limitations under the License.
 
 import os
 import subprocess
+import sys
 
 from proksee.assembler import Assembler
 
@@ -27,6 +28,9 @@ from proksee.assembler import Assembler
 class SpadesAssembler(Assembler):
     """
     A class representing a SPAdes assembler.
+
+    ATTRIBUTES
+        contigs_filename (str): the filename of the assembled contigs output
     """
 
     DIRECTORY_NAME = "spades"
@@ -73,8 +77,13 @@ class SpadesAssembler(Assembler):
         try:
             subprocess.check_call(command, shell=True, stdout=output, stderr=error)
 
-        except subprocess.CalledProcessError as exception:
-            raise exception
+        except subprocess.CalledProcessError:
+
+            message = "ERROR: Encountered an error when performing a SPAdes assembly.\n" \
+                + "       Please see the error file for more information: " + str(error_filename) + "\n"
+
+            print(message)
+            sys.exit(1)
 
         finally:
             output.close()
