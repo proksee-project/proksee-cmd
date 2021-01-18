@@ -30,7 +30,7 @@ class TestAssemblyDatabase:
         Tests the database with a valid file.
         """
 
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
         SPECIES = "Staphylococcus aureus"
 
@@ -63,7 +63,7 @@ class TestAssemblyDatabase:
         Tests the database by requesting a missing quantiles.
         """
 
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
         SPECIES = "Staphylococcus aureus"
 

@@ -38,7 +38,7 @@ from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 
-DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "database",
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "database.csv")
 
 
