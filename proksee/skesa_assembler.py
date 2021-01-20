@@ -32,12 +32,22 @@ from proksee.assembler import Assembler
 class SkesaAssembler(Assembler):
     """
     A class representing a Skesa assembler.
+
+    ATTRIBUTES
+        contigs_filename (str): the filename of the assembled contigs output
     """
 
     DIRECTORY_NAME = "skesa"
 
-    # Defining __init__ method with reads and output directory parameters
     def __init__(self, forward, reverse, output_dir):
+        """
+        Initializes the Skesa assembler.
+
+        PARAMETERS
+            forward (str): the filename of the forward reads
+            reverse (str): the filename of the reverse reads
+            output_dir (str): the filename of the output directory
+        """
 
         NAME = "Skesa"
 
@@ -47,42 +57,51 @@ class SkesaAssembler(Assembler):
         self.contigs_filename = os.path.join(skesa_directory, 'contigs.fasta')
         self.log_filename = os.path.join(skesa_directory, 'skesa.log')
 
-    # Creating skesa command to be executed
-    def __skesa_string(self):
-        if self.reverse is None:
+    def build_command(self):
+        """
+        Builds the command line string for running Skesa.
 
-            '''The flag --use_paired_ends is rightfully used for interleaved reads
-            For non-interleaved reads, the flag (or not) doesn't affect output'''
-            skesa_str = 'skesa --fastq ' + self.forward + ' --use_paired_ends'
+        RETURNS
+            command (str): the command for running Skesa on the command line
+        """
+
+        if self.reverse is None:
+            command = 'skesa --fastq ' + self.forward
 
         else:
-            skesa_str = 'skesa --fastq ' + self.forward + ',' + self.reverse
+            command = 'skesa --fastq ' + self.forward + ',' + self.reverse
 
-        return skesa_str
+        return command
 
-    # Method for running skesa command
-    def __skesa_func(self, skesa_str):
+    def run_skesa(self):
+        """
+        Runs the Skesa assembler on the reads.
+
+        POST
+            The assembled reads will be written into the output directory.
+        """
 
         if not os.path.isdir(self.output_dir):
             os.mkdir(self.output_dir)
 
-        # Creating skesa output and log files
-        skesa_out = open(self.contigs_filename, 'w+')
-        skesa_log = open(self.log_filename, 'w+')
+        output = open(self.contigs_filename, 'w+')
+        logfile = open(self.log_filename, 'w+')
+
+        command = self.build_command()
 
         try:
-            subprocess.check_call(skesa_str, shell=True, stdout=skesa_out, stderr=skesa_log)
-            success = 'SKESA assembled reads and log files'
+            subprocess.check_call(command, shell=True, stdout=output, stderr=logfile)
 
         except subprocess.CalledProcessError:
-
             message = "ERROR: Encountered an error when performing a SKESA assembly.\n" \
                 + "       Please see the log file for more information: " + str(self.log_filename) + "\n"
 
             print(message)
             sys.exit(1)
 
-        return success
+        finally:
+            output.close()
+            logfile.close()
 
     def assemble(self):
         """
@@ -95,9 +114,8 @@ class SkesaAssembler(Assembler):
             If completed without error, the output will be placed in the output directory.
         """
 
-        skesa_string = self.__skesa_string()
-        skesa_func = self.__skesa_func(skesa_string)
-        output_string = skesa_func + ' written to output directory'
+        self.run_skesa()
+        output_string = "Assembled reads using Skesa."
 
         return output_string
 

@@ -77,7 +77,7 @@ class TestExpertSystem:
         FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
         REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
@@ -98,7 +98,7 @@ class TestExpertSystem:
         FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
         REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
@@ -119,7 +119,7 @@ class TestExpertSystem:
         FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
         REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "big_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
@@ -140,7 +140,7 @@ class TestExpertSystem:
         FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
         REVERSE = None
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
-        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
 
         system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)

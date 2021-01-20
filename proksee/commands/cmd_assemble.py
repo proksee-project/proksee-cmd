@@ -30,20 +30,28 @@ from pathlib import Path
 from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_assembly, compare_assemblies
 from proksee.assembly_database import AssemblyDatabase
 from proksee.contamination_handler import ContaminationHandler
+from proksee.input_verification import are_valid_fastq
+from proksee.reads import Reads
 from proksee.species_estimator import SpeciesEstimator
-from proksee.utilities import FastqCheck
 from proksee.platform_identify import PlatformIdentifier
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 
-DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "database",
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "database.csv")
 
 
 def report_valid_fastq(valid):
     """
+    Reports to output whether or not the reads appear to be in a valid FASTQ file format.
 
+    ARGUMENTS
+        valid (bool): whether or not the reads appear to be in FASTQ format
+
+    POST
+        A statement reporting whether or not the reads appear to be in a valid FASTQ file format will be written to the
+        program's output.
     """
 
     if not valid:
@@ -57,17 +65,29 @@ def report_valid_fastq(valid):
 
 def report_platform(platform):
     """
+    Reports the sequencing platform to output.
 
+    ARGUMENTS
+        platform (Platform (Enum)): the sequencing platform to report
+
+    POST
+        A statement reporting the sequencing platform will be written to output.
     """
 
-    output = "SEQUENCING PLATFORM: " + str(platform) + "\n"
+    output = "SEQUENCING PLATFORM: " + str(platform.value) + "\n"
 
     click.echo(output)
 
 
 def report_species(species_list):
     """
-    Reports the species in the reads.
+    Reports observed species in the reads to output.
+
+    ARGUMENTS
+        species_list (List(Species)): the list of species to report
+
+    POST
+        The observed species will be reported to output.
     """
 
     species = species_list[0]
@@ -87,7 +107,13 @@ def report_species(species_list):
 
 def report_strategy(strategy):
     """
+    Reports the assembly strategy that will be used to output.
 
+    ARGUMENTS
+        strategy (AssemblyStrategy): the assembly strategy that will be used for assembling
+
+    POST
+        The assembly strategy will be written to output.
     """
 
     click.echo(strategy.report)
@@ -98,7 +124,13 @@ def report_strategy(strategy):
 
 def report_contamination(evaluation):
     """
+    Reports observed contamination to output.
 
+    ARGUMENTS
+        evaluation (Evaluation): an evaluation of observed contamination
+
+    POST
+        The evaluation of observed contamination will be written to output.
     """
 
     click.echo(evaluation.report)
@@ -124,25 +156,26 @@ def cli(ctx, forward, reverse, output_dir, force):
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
+    reads = Reads(forward, reverse)
+
     # Validate FASTQ inputs:
-    fastq_check = FastqCheck(forward, reverse)
-    valid_fastq = fastq_check.fastq_input_check()
+    valid_fastq = are_valid_fastq(reads)
     report_valid_fastq(valid_fastq)
 
     if not valid_fastq and not force:
         return
 
     # Identify sequencing platform:
-    platform_identifier = PlatformIdentifier(forward, reverse)
+    platform_identifier = PlatformIdentifier(reads)
     platform = platform_identifier.identify()
     report_platform(platform)
 
     # Filter reads:
-    read_filterer = ReadFilterer(forward, reverse, output_dir)
-    read_filterer.filter_read()
+    read_filterer = ReadFilterer(reads, output_dir)
+    filtered_reads = read_filterer.filter_reads()
 
-    forward_filtered = read_filterer.forward_filtered
-    reverse_filtered = read_filterer.reverse_filtered
+    forward_filtered = filtered_reads.forward
+    reverse_filtered = filtered_reads.reverse
     read_quality = read_filterer.summarize_quality()
 
     # Estimate species
