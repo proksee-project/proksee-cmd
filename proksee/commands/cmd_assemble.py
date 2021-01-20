@@ -32,6 +32,7 @@ from proksee.assembly_database import AssemblyDatabase
 from proksee.contamination_handler import ContaminationHandler
 from proksee.input_verification import are_valid_fastq
 from proksee.reads import Reads
+from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
 from proksee.platform_identify import PlatformIdentifier
 from proksee.read_filterer import ReadFilterer
@@ -148,9 +149,10 @@ def report_contamination(evaluation):
 @click.option('-o', '--output_dir', required=True,
               type=click.Path(exists=False, file_okay=False,
                               dir_okay=True, writable=True))
+@click.option('-s', '--species_name', required=False, default=None)
 @click.option('--force', is_flag=True)
 @click.pass_context
-def cli(ctx, forward, reverse, output_dir, force):
+def cli(ctx, forward, reverse, output_dir, force, species_name):
 
     # Make output directory:
     if not os.path.isdir(output_dir):
@@ -179,10 +181,15 @@ def cli(ctx, forward, reverse, output_dir, force):
     read_quality = read_filterer.summarize_quality()
 
     # Estimate species
-    species_estimator = SpeciesEstimator([forward_filtered, reverse_filtered], output_dir)
-    species_list = species_estimator.estimate_major_species()
-    species = species_list[0]
-    report_species(species_list)
+    if not species_name:
+        species_estimator = SpeciesEstimator([forward_filtered, reverse_filtered], output_dir)
+        species_list = species_estimator.estimate_major_species()
+        species = species_list[0]
+        report_species(species_list)
+
+    else:
+        species = Species(species_name, 1.0)
+        report_species([species])
 
     # Determine a fast assembly strategy:
     expert = ExpertSystem(platform, species, forward_filtered, reverse_filtered, output_dir)
