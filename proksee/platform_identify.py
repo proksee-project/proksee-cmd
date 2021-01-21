@@ -125,6 +125,32 @@ def identify_reads(reads):
     return platform
 
 
+def identify_name(platform_name):
+    """
+    Identifies the sequencing platform based on the passed name of the platform.
+
+    PARAMETERS:
+        platform_name (string): the name of the platform
+
+    RETURNS:
+        platform (Platform): the sequencing platform
+    """
+
+    if platform_name.lower() == Platform.ILLUMINA.value.lower():
+        platform = Platform.ILLUMINA
+
+    elif platform_name.lower() == Platform.PAC_BIO.value.lower():
+        platform = Platform.PAC_BIO
+
+    elif platform_name.lower() == Platform.ION_TORRENT.value.lower():
+        platform = Platform.ION_TORRENT
+
+    else:
+        platform = Platform.UNIDENTIFIABLE
+
+    return platform
+
+
 class PlatformIdentifier():
 
     def __init__(self, reads):

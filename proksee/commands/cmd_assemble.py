@@ -34,7 +34,7 @@ from proksee.input_verification import are_valid_fastq
 from proksee.reads import Reads
 from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
-from proksee.platform_identify import PlatformIdentifier
+from proksee.platform_identify import PlatformIdentifier, identify_name
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
@@ -149,10 +149,11 @@ def report_contamination(evaluation):
 @click.option('-o', '--output_dir', required=True,
               type=click.Path(exists=False, file_okay=False,
                               dir_okay=True, writable=True))
-@click.option('-s', '--species_name', required=False, default=None)
 @click.option('--force', is_flag=True)
+@click.option('-s', '--species_name', required=False, default=None)
+@click.option('-p', '--platform_name', required=False, default=None)
 @click.pass_context
-def cli(ctx, forward, reverse, output_dir, force, species_name):
+def cli(ctx, forward, reverse, output_dir, force, species_name, platform_name):
 
     # Make output directory:
     if not os.path.isdir(output_dir):
@@ -168,8 +169,13 @@ def cli(ctx, forward, reverse, output_dir, force, species_name):
         return
 
     # Identify sequencing platform:
-    platform_identifier = PlatformIdentifier(reads)
-    platform = platform_identifier.identify()
+    if not platform_name:
+        platform_identifier = PlatformIdentifier(reads)
+        platform = platform_identifier.identify()
+
+    else:
+        platform = identify_name(platform_name)
+
     report_platform(platform)
 
     # Filter reads:
