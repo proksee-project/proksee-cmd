@@ -32,28 +32,25 @@ class Assembler(ABC):
 
     ATTRIBUTES:
         name (str): the plain-language name of the assembler
-        forward (str): the filename of the forward reads
-        reverse (str): the filename of the reverse reads
+        reads (Reads): the reads to assemble
         output_dir (str): the filename of the output directory
     """
 
-    def __init__(self, name, forward, reverse, output_dir):
+    def __init__(self, name, reads, output_dir):
         """
         Initializes the abstract assembler.
 
         ATTRIBUTES:
             name (str): the plain-language name of the assembler
-            forward (str): the filename of the forward reads
-            reverse (str): the filename of the reverse reads
+            reads (Reads): the reads to assemble
             output_dir (str): the filename of the output directory
         """
 
-        if not os.path.isfile(forward):
-            raise FileNotFoundError(str(forward) + " not found.")
+        if not os.path.isfile(reads.forward):
+            raise FileNotFoundError(str(reads.forward) + " not found.")
 
         self.name = name
-        self.forward = forward
-        self.reverse = reverse
+        self.reads = reads
         self.output_dir = output_dir
 
     @abstractmethod

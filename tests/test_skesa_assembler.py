@@ -21,6 +21,7 @@ import pytest
 
 from pathlib import Path
 
+from proksee.reads import Reads
 from proksee.skesa_assembler import SkesaAssembler
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
@@ -36,8 +37,9 @@ class TestSkesaAssembler:
 
         forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
         reverse_filename = None
+        reads = Reads(forward_filename, reverse_filename)
 
-        assembler = SkesaAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+        assembler = SkesaAssembler(reads, OUTPUT_DIR)
         contigs_filename = assembler.get_contigs_filename()
 
         # Remove previous assembly if it exists:
@@ -56,8 +58,9 @@ class TestSkesaAssembler:
 
         forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
         reverse_filename = os.path.join(INPUT_DIR, "NA12878_rev.fastq")
+        reads = Reads(forward_filename, reverse_filename)
 
-        assembler = SkesaAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+        assembler = SkesaAssembler(reads, OUTPUT_DIR)
         contigs_filename = assembler.get_contigs_filename()
 
         # Remove previous assembly if it exists:
@@ -76,6 +79,7 @@ class TestSkesaAssembler:
 
         forward_filename = os.path.join(INPUT_DIR, "missing.file")
         reverse_filename = None
+        reads = Reads(forward_filename, reverse_filename)
 
         with pytest.raises(FileNotFoundError):
-            SkesaAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+            SkesaAssembler(reads, OUTPUT_DIR)

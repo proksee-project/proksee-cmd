@@ -20,6 +20,8 @@ import os
 import pytest
 
 from pathlib import Path
+
+from proksee.reads import Reads
 from proksee.spades_assembler import SpadesAssembler
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
@@ -35,8 +37,9 @@ class TestSpadesAssembler:
 
         forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
         reverse_filename = None
+        reads = Reads(forward_filename, reverse_filename)
 
-        assembler = SpadesAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+        assembler = SpadesAssembler(reads, OUTPUT_DIR)
         contigs_filename = assembler.get_contigs_filename()
 
         # Remove previous assembly if it exists:
@@ -55,8 +58,9 @@ class TestSpadesAssembler:
 
         forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
         reverse_filename = os.path.join(INPUT_DIR, "NA12878_rev.fastq")
+        reads = Reads(forward_filename, reverse_filename)
 
-        assembler = SpadesAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+        assembler = SpadesAssembler(reads, OUTPUT_DIR)
         contigs_filename = assembler.get_contigs_filename()
 
         # Remove previous assembly if it exists:
@@ -75,6 +79,7 @@ class TestSpadesAssembler:
 
         forward_filename = os.path.join(INPUT_DIR, "missing.file")
         reverse_filename = None
+        reads = Reads(forward_filename, reverse_filename)
 
         with pytest.raises(FileNotFoundError):
-            SpadesAssembler(forward_filename, reverse_filename, OUTPUT_DIR)
+            SpadesAssembler(reads, OUTPUT_DIR)
