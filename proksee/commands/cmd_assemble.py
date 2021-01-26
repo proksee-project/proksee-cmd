@@ -75,7 +75,7 @@ def report_platform(platform):
         A statement reporting the sequencing platform will be written to output.
     """
 
-    output = "Sequencing Platform: " + str(platform.value) + "\n"
+    output = "Sequencing Platform: " + str(platform.value)
 
     click.echo(output)
 
@@ -161,6 +161,9 @@ def determine_platform(reads, platform_name=None):
             click.echo("\nThe platform name '" + str(platform_name) + "' is unrecognized.")
             click.echo("Please see the help message for valid platform names.")
 
+        else:
+            click.echo("\nThe platform name '" + str(platform_name) + "' was recognized.")
+
     if platform is Platform.UNIDENTIFIABLE:
         click.echo("\nAttempting to identify the sequencing platform from the reads.")
 
@@ -170,12 +173,13 @@ def determine_platform(reads, platform_name=None):
     return platform
 
 
-def determine_species(reads, output_directory, species_name=None):
+def determine_species(reads, assembly_database, output_directory, species_name=None):
     """
     Attempts to determine the species in the reads.
 
     ARGUMENTS:
         reads (Reads): the reads to determine the species from
+        assembly_database (AssemblyDatabase): the assembly database
         output_directory (string): the location  of the output directory -- for placing temporary output
         species_name (string): optional; the scientific name of the species
 
@@ -183,10 +187,19 @@ def determine_species(reads, output_directory, species_name=None):
         species_list (List(Species)): a list of major species estimated to be present in the reads
     """
 
-    if species_name:
-        species_list = [Species(species_name, 1.0)]
+    species_list = None
 
-    else:
+    if species_name:
+        if assembly_database.contains(species_name):
+            click.echo("\nThe species '" + str(species_name) + "' was recognized.")
+            species_list = [Species(species_name, 1.0)]
+
+        else:
+            click.echo("\nThe species name '" + str(species_name) + "' is unrecognized.")
+
+    if species_list is None:
+        click.echo("\nAttempting to identify the species from the reads.")
+
         input_file_locations = reads.get_file_locations()
         species_estimator = SpeciesEstimator(input_file_locations, output_directory)
         species_list = species_estimator.estimate_major_species()
@@ -250,8 +263,11 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     filtered_reads = read_filterer.filter_reads()
     read_quality = read_filterer.summarize_quality()
 
+    # Species and assembly database:
+    assembly_database = AssemblyDatabase(DATABASE_PATH)
+
     # Estimate species
-    species_list = determine_species(filtered_reads, output_directory, species_name)
+    species_list = determine_species(filtered_reads, assembly_database, output_directory, species_name)
     species = species_list[0]
     report_species(species_list)
 
@@ -280,8 +296,7 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_directory)
     fast_assembly_quality = assembly_evaluator.evaluate()
 
-    # Slow assembly:
-    assembly_database = AssemblyDatabase(DATABASE_PATH)
+    # Expert assembly:
     slow_strategy = expert.create_full_assembly_strategy(fast_assembly_quality, assembly_database)
     report_strategy(slow_strategy)
 
