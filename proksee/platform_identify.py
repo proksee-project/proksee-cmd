@@ -133,7 +133,7 @@ def identify_name(platform_name):
         platform_name (string): the name of the platform
 
     RETURNS:
-        platform (Platform): the sequencing platform
+        platform (Platform): the sequencing platform, or Platform.UNIDENTIFIABLE if unidentifiable
     """
 
     if platform_name.lower() == Platform.ILLUMINA.value.lower():

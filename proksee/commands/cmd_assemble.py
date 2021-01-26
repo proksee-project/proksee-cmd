@@ -34,7 +34,7 @@ from proksee.input_verification import are_valid_fastq
 from proksee.reads import Reads
 from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
-from proksee.platform_identify import PlatformIdentifier, identify_name
+from proksee.platform_identify import PlatformIdentifier, identify_name, Platform
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
@@ -75,7 +75,7 @@ def report_platform(platform):
         A statement reporting the sequencing platform will be written to output.
     """
 
-    output = "SEQUENCING PLATFORM: " + str(platform.value) + "\n"
+    output = "Sequencing Platform: " + str(platform.value) + "\n"
 
     click.echo(output)
 
@@ -152,10 +152,18 @@ def determine_platform(reads, platform_name=None):
         platform (Platform): the estimated sequencing platform
     """
 
+    platform = Platform.UNIDENTIFIABLE
+
     if platform_name:
         platform = identify_name(platform_name)
 
-    else:
+        if platform is Platform.UNIDENTIFIABLE:
+            click.echo("\nThe platform name '" + str(platform_name) + "' is unrecognized.")
+            click.echo("Please see the help message for valid platform names.")
+
+    if platform is Platform.UNIDENTIFIABLE:
+        click.echo("\nAttempting to identify the sequencing platform from the reads.")
+
         platform_identifier = PlatformIdentifier(reads)
         platform = platform_identifier.identify()
 
@@ -179,7 +187,8 @@ def determine_species(reads, output_directory, species_name=None):
         species_list = [Species(species_name, 1.0)]
 
     else:
-        species_estimator = SpeciesEstimator(reads, output_directory)
+        input_file_locations = reads.get_file_locations()
+        species_estimator = SpeciesEstimator(input_file_locations, output_directory)
         species_list = species_estimator.estimate_major_species()
 
     return species_list
@@ -194,9 +203,12 @@ def determine_species(reads, output_directory, species_name=None):
 @click.option('-o', '--output', required=True,
               type=click.Path(exists=False, file_okay=False,
                               dir_okay=True, writable=True))
-@click.option('--force', is_flag=True)
-@click.option('-s', '--species', required=False, default=None)
-@click.option('-p', '--platform', required=False, default=None)
+@click.option('--force', is_flag=True,
+              help="This will force the assembler to proceed when the assembly appears to be poor.")
+@click.option('-s', '--species', required=False, default=None,
+              help="The species to assemble. This will override species estimation. Must be spelled correctly.")
+@click.option('-p', '--platform', required=False, default=None,
+              help="The sequencing platform used to generate the reads. 'Illumina', 'Ion Torrent', or 'Pac Bio'.")
 @click.pass_context
 def cli(ctx, forward, reverse, output, force, species, platform):
     reads = Reads(forward, reverse)
@@ -230,7 +242,7 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     if not valid_fastq and not force:
         return
 
-    platform = determine_platform()
+    platform = determine_platform(reads, platform_name)
     report_platform(platform)
 
     # Filter reads:
@@ -239,7 +251,7 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     read_quality = read_filterer.summarize_quality()
 
     # Estimate species
-    species_list = determine_species(species_name, filtered_reads)
+    species_list = determine_species(filtered_reads, output_directory, species_name)
     species = species_list[0]
     report_species(species_list)
 
