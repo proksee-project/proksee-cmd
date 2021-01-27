@@ -32,27 +32,24 @@ class ExpertSystem:
     ATTRIBUTES
         platform (str): the sequence platform used to sequence the reads
         species (species): the species to be assembled
-        forward (str): the filename of the forward reads to be assembled
-        reverse (str): the filename of the reverse reads to be assembled
+        reads (Reads): the reads to assemble
         output_directory (str): the directory to use for program output
     """
 
-    def __init__(self, platform, species, forward, reverse, output_directory):
+    def __init__(self, platform, species, reads, output_directory):
         """
         Initializes the expert system.
 
         PARAMETERS
             platform (str): the sequence platform used to sequence the reads
-            species (species): the species to be assembled
-            forward (str): the filename of the forward reads to be assembled
-            reverse (str): the filename of the reverse reads to be assembled
+            species (species): the species to assemble
+            reads (Reads): the reads to assemble
             output_directory (str): the directory to use for program output
         """
 
         self.platform = platform
         self.species = species
-        self.forward = forward
-        self.reverse = reverse
+        self.reads = reads
         self.output_directory = output_directory
 
         return
@@ -80,7 +77,7 @@ class ExpertSystem:
         else:
             report += "The read quality is acceptable.\n"
 
-        assembler = SkesaAssembler(self.forward, self.reverse, self.output_directory)
+        assembler = SkesaAssembler(self.reads, self.output_directory)
 
         return AssemblyStrategy(proceed, assembler, report)
 
@@ -104,7 +101,7 @@ class ExpertSystem:
 
             evaluation = evaluate_assembly(self.species, assembly_quality, assembly_database)
 
-            assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
+            assembler = SpadesAssembler(self.reads, self.output_directory)
             strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
 
         else:
@@ -128,7 +125,7 @@ class ExpertSystem:
 
         evaluation = evaluate_assembly_from_fallback(assembly_quality)
 
-        assembler = SpadesAssembler(self.forward, self.reverse, self.output_directory)
+        assembler = SpadesAssembler(self.reads, self.output_directory)
         strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
 
         return strategy

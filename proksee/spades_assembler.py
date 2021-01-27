@@ -35,20 +35,19 @@ class SpadesAssembler(Assembler):
 
     DIRECTORY_NAME = "spades"
 
-    def __init__(self, forward, reverse, output_dir):
+    def __init__(self, reads, output_dir):
         """
         Initializes the SPAdes assembler.
 
         PARAMETERS
-            forward (str): the filename of the forward reads
-            reverse (str): the filename of the reverse reads
+            reads (Reads): the reads to assemble
             output_dir (str): the filename of the output directory
         """
 
         NAME = "SPAdes"
 
         spades_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
-        super().__init__(NAME, forward, reverse, spades_directory)
+        super().__init__(NAME, reads, spades_directory)
 
         self.contigs_filename = os.path.join(spades_directory, "contigs.fasta")
 
@@ -69,10 +68,11 @@ class SpadesAssembler(Assembler):
         error_filename = os.path.join(self.output_dir, 'spades.e')
         error = open(error_filename, 'w+')
 
-        if self.reverse is None:
-            command = "spades.py -s " + str(self.forward) + " -o " + str(self.output_dir)
+        if self.reads.reverse is None:
+            command = "spades.py -s " + str(self.reads.forward) + " -o " + str(self.output_dir)
         else:
-            command = "spades.py -1 " + str(self.forward) + " -2 " + str(self.reverse) + " -o " + str(self.output_dir)
+            command = "spades.py -1 " + str(self.reads.forward) + " -2 " + str(self.reads.reverse) + " -o " + \
+                      str(self.output_dir)
 
         try:
             subprocess.check_call(command, shell=True, stdout=output, stderr=error)

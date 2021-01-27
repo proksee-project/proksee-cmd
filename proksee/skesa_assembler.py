@@ -39,20 +39,19 @@ class SkesaAssembler(Assembler):
 
     DIRECTORY_NAME = "skesa"
 
-    def __init__(self, forward, reverse, output_dir):
+    def __init__(self, reads, output_dir):
         """
         Initializes the Skesa assembler.
 
         PARAMETERS
-            forward (str): the filename of the forward reads
-            reverse (str): the filename of the reverse reads
+            reads (Reads): the reads to assemble
             output_dir (str): the filename of the output directory
         """
 
         NAME = "Skesa"
 
         skesa_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
-        super().__init__(NAME, forward, reverse, skesa_directory)
+        super().__init__(NAME, reads, skesa_directory)
 
         self.contigs_filename = os.path.join(skesa_directory, 'contigs.fasta')
         self.log_filename = os.path.join(skesa_directory, 'skesa.log')
@@ -65,11 +64,11 @@ class SkesaAssembler(Assembler):
             command (str): the command for running Skesa on the command line
         """
 
-        if self.reverse is None:
-            command = 'skesa --fastq ' + self.forward
+        if self.reads.reverse is None:
+            command = 'skesa --fastq ' + self.reads.forward
 
         else:
-            command = 'skesa --fastq ' + self.forward + ',' + self.reverse
+            command = 'skesa --fastq ' + self.reads.forward + ',' + self.reads.reverse
 
         return command
 

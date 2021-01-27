@@ -23,6 +23,7 @@ from proksee.assembly_database import AssemblyDatabase
 from proksee.expert_system import ExpertSystem
 from proksee.parser.assembly_quality_parser import parse_assembly_quality_from_quast_report
 from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
+from proksee.reads import Reads
 from proksee.species import Species
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
@@ -36,13 +37,14 @@ class TestExpertSystem:
         Tests the expert system's evaluation of "good" reads.
         """
 
-        PLATFORM = "Illumina"
-        SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
-        REVERSE = None
+        platform = "Illumina"
+        species = Species("Staphylococcus aureus", 1.0)
+        forward = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        reverse = None
+        reads = Reads(forward, reverse)
         FASTP_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_reads.json")
 
-        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         read_quality = parse_read_quality_from_fastp(FASTP_PATH)
 
         strategy = system.create_fast_assembly_strategy(read_quality)
@@ -54,13 +56,14 @@ class TestExpertSystem:
         Tests the expert system's evaluation of "bad" reads.
         """
 
-        PLATFORM = "Illumina"
-        SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
-        REVERSE = None
+        platform = "Illumina"
+        species = Species("Staphylococcus aureus", 1.0)
+        forward = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        reverse = None
+        reads = Reads(forward, reverse)
         FASTP_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_reads.json")
 
-        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         read_quality = parse_read_quality_from_fastp(FASTP_PATH)
 
         strategy = system.create_fast_assembly_strategy(read_quality)
@@ -72,15 +75,16 @@ class TestExpertSystem:
         Tests the expert system's evaluation of a "good" assembly.
         """
 
-        PLATFORM = "Illumina"
-        SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
-        REVERSE = None
+        platform = "Illumina"
+        species = Species("Staphylococcus aureus", 1.0)
+        forward = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        reverse = None
+        reads = Reads(forward, reverse)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
 
-        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
@@ -93,15 +97,16 @@ class TestExpertSystem:
         Tests the expert system's evaluation of a "bad" assembly.
         """
 
-        PLATFORM = "Illumina"
-        SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
-        REVERSE = None
+        platform = "Illumina"
+        species = Species("Staphylococcus aureus", 1.0)
+        forward = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        reverse = None
+        reads = Reads(forward, reverse)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
 
-        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
@@ -114,15 +119,16 @@ class TestExpertSystem:
         Tests the expert system's evaluation of an assembly that seems to be too large.
         """
 
-        PLATFORM = "Illumina"
-        SPECIES = Species("Staphylococcus aureus", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
-        REVERSE = None
+        platform = "Illumina"
+        species = Species("Staphylococcus aureus", 1.0)
+        forward = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        reverse = None
+        reads = Reads(forward, reverse)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "big_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
 
-        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
@@ -135,15 +141,16 @@ class TestExpertSystem:
         Tests the expert system's evaluation when a species is not present in the database.
         """
 
-        PLATFORM = "Illumina"
-        SPECIES = Species("ABCDEFG987", 1.0)
-        FORWARD = os.path.join(INPUT_DIR, "staph_mini.fastq")
-        REVERSE = None
+        platform = "Illumina"
+        species = Species("ABCDEFG987", 1.0)
+        forward = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        reverse = None
+        reads = Reads(forward, reverse)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "database.csv")
 
-        system = ExpertSystem(PLATFORM, SPECIES, FORWARD, REVERSE, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
