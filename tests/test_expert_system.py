@@ -88,7 +88,7 @@ class TestExpertSystem:
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = system.create_full_assembly_strategy(assembly_quality, database)
+        strategy = system.create_expert_assembly_strategy(assembly_quality, database)
         print(strategy.report)
         assert strategy.proceed
 
@@ -110,7 +110,7 @@ class TestExpertSystem:
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = system.create_full_assembly_strategy(assembly_quality, database)
+        strategy = system.create_expert_assembly_strategy(assembly_quality, database)
 
         assert not strategy.proceed
 
@@ -132,7 +132,7 @@ class TestExpertSystem:
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = system.create_full_assembly_strategy(assembly_quality, database)
+        strategy = system.create_expert_assembly_strategy(assembly_quality, database)
 
         assert not strategy.proceed
 
@@ -154,6 +154,6 @@ class TestExpertSystem:
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
-        strategy = system.create_full_assembly_strategy(assembly_quality, database)
+        strategy = system.create_expert_assembly_strategy(assembly_quality, database)
 
         assert strategy.proceed

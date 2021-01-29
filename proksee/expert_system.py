@@ -18,8 +18,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee.assembly_evaluator import evaluate_assembly, evaluate_assembly_from_fallback
 from proksee.assembly_strategy import AssemblyStrategy
+from proksee.heuristic_evaluator import HeuristicEvaluator
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
 
@@ -81,49 +81,50 @@ class ExpertSystem:
 
         return AssemblyStrategy(proceed, assembler, report)
 
-    def create_full_assembly_strategy(self, assembly_quality, assembly_database):
+    def create_expert_assembly_strategy(self, assembly_quality, assembly_database):
         """
-        Creates a full assembly strategy by comparing the assembly quality and species to statistical information in an
-        assembly database about similar assemblies.
+        Creates an expert assembly strategy by comparing the assembly quality and species to statistical information in
+        an assembly database about similar assemblies.
 
         PARAMETERS
             assembly_quality (AssemblyQuality): an object representing the quality of an assembly
-            assembly_database (AssemblyDatabase): an object containing assembly statistics for various species
+            assembly_database (AssemblyDatabase): a database containing assembly statistics for various species
 
         RETURN
-            strategy (AssemblyStrategy): a strategy for assembly, based on the information provided from a
-                previous assembly
+            strategy (AssemblyStrategy): a strategy for assembly
         """
 
         species_name = self.species.name
 
         if assembly_database.contains(species_name):
 
-            evaluation = evaluate_assembly(self.species, assembly_quality, assembly_database)
+            evaluator = HeuristicEvaluator(self.species, assembly_quality, assembly_database)
+            evaluation = evaluator.evaluate()
 
             assembler = SpadesAssembler(self.reads, self.output_directory)
             strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
 
         else:
 
-            strategy = self.create_fallback_assembly_strategy(assembly_quality)
+            strategy = self.create_fallback_assembly_strategy(assembly_quality, assembly_database)
 
         return strategy
 
-    def create_fallback_assembly_strategy(self, assembly_quality):
+    def create_fallback_assembly_strategy(self, assembly_quality, assembly_database):
         """
         Creates a fallback assembly strategy, to be used when the species is unidentifiable or not present in the
         assembly database.
 
         PARAMETERS
             assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_database (AssemblyDatabase): a database containing assembly statistics for various species
 
         RETURN
-            strategy (AssemblyStrategy): a strategy for assembly, based on the information provided from a
-                previous assembly
+            strategy (AssemblyStrategy): a strategy for assembly
         """
 
-        evaluation = evaluate_assembly_from_fallback(assembly_quality)
+        evaluator = HeuristicEvaluator(self.species, assembly_quality, assembly_database)
+        evaluation = evaluator.evaluate()
 
         assembler = SpadesAssembler(self.reads, self.output_directory)
         strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
