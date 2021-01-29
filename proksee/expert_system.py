@@ -102,7 +102,8 @@ class ExpertSystem:
             evaluation = evaluator.evaluate()
 
             assembler = SpadesAssembler(self.reads, self.output_directory)
-            strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
+            proceed = evaluation.success  # proceed if evaluation was successful
+            strategy = AssemblyStrategy(proceed, assembler, evaluation.report)
 
         else:
 
@@ -127,6 +128,7 @@ class ExpertSystem:
         evaluation = evaluator.evaluate()
 
         assembler = SpadesAssembler(self.reads, self.output_directory)
-        strategy = AssemblyStrategy(evaluation.proceed, assembler, evaluation.report)
+        proceed = evaluation.success  # proceed if evaluation was successful
+        strategy = AssemblyStrategy(proceed, assembler, evaluation.report)
 
         return strategy

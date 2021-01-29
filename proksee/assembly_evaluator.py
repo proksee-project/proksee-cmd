@@ -46,7 +46,7 @@ class AssemblyEvaluator(ABC):
         Evaluates the assembly.
 
         RETURN
-            evaluation (AssemblyEvaluation): an evaluation of the assembly's quality
+            evaluation (Evaluation): an evaluation of the assembly's quality
         """
 
         pass

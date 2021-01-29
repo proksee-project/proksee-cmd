@@ -73,7 +73,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         l50_evaluation = self.evaluate_l50()
         length_evaluation = self.evaluate_length()
 
-        proceed = n50_evaluation.success and contigs_evaluation.success \
+        success = n50_evaluation.success and contigs_evaluation.success \
             and l50_evaluation.success and length_evaluation.success
 
         report = "\n"
@@ -83,7 +83,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         report += length_evaluation.report
 
         assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                 proceed, report)
+                                                 success, report)
 
         return assembly_evaluation
 
@@ -106,39 +106,39 @@ class HeuristicEvaluator(AssemblyEvaluator):
         l50 = self.assembly_quality.l50
 
         if n50 < 5000:
-            proceed = False
+            success = False
             report = "FAIL: The N50 is smaller than expected: {}\n".format(n50)
             report += "      The N50 lower bound is: {}\n".format(MIN_N50)
 
         else:
-            proceed = True
+            success = True
             report = "PASS: The N50 is acceptable: {}\n".format(n50)
             report += "      The N50 lower bound is: {}\n".format(MIN_N50)
 
-        n50_evaluation = Evaluation(proceed, report)
+        n50_evaluation = Evaluation(success, report)
 
         if num_contigs > MAX_CONTIGS:
-            proceed = False
+            success = False
             report = "FAIL: The number of contigs is larger than expected: {}\n".format(num_contigs)
             report += "      The number of contigs upper bound is: {}\n".format(MAX_CONTIGS)
         else:
-            proceed = True
+            success = True
             report = "PASS: The number of contigs is acceptable: {}\n".format(num_contigs)
             report += "      The number of contigs lower bound is: {}\n".format(MIN_N50)
 
-        contigs_evaluation = Evaluation(proceed, report)
+        contigs_evaluation = Evaluation(success, report)
 
         if l50 > MAX_L50:
-            proceed = False
+            success = False
             report = "FAIL: The L50 is larger than expected: {}\n".format(l50)
             report += "      The L50 upper bound is: {}\n".format(MAX_L50)
 
         else:
-            proceed = True
+            success = True
             report = "PASS: The L50 is acceptable: {}\n".format(l50)
             report += "      The L50 upper bound is: {}\n".format(MAX_L50)
 
-        l50_evaluation = Evaluation(proceed, report)
+        l50_evaluation = Evaluation(success, report)
 
         report = "\nWARNING: No assembly statistics available for the species!\n\n"
         report += n50_evaluation.report
@@ -146,7 +146,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         report += l50_evaluation.report
 
         assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, None,
-                                                 proceed, report)
+                                                 success, report)
 
         return assembly_evaluation
 

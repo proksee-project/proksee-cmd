@@ -19,10 +19,10 @@ specific language governing permissions and limitations under the License.
 
 class Evaluation:
     """
-    A class representing a simple evaluation of a test.
+    A class representing a simple evaluation.
 
     ATTRIBUTES
-        success (bool): whether or not the test was passed
+        success (bool): whether or not the evaluation is successful
         report (str): a plain-language String describing the evaluation
     """
 
@@ -31,14 +31,14 @@ class Evaluation:
         Initializes the Evaluation.
 
         PARAMETERS
-            success (bool): whether or not the test was passed
+            success (bool): whether or not the evaluation is successful
             report (str): a plain-language String describing the evaluation
         """
         self.success = success
         self.report = report
 
 
-class AssemblyEvaluation:
+class AssemblyEvaluation(Evaluation):
     """
     A class representing an evaluation of an assembly.
 
@@ -47,8 +47,6 @@ class AssemblyEvaluation:
         contigs_evaluation (Evaluation): an evaluation of the assembly's number of contigs
         l50_evaluation (Evaluation): an evaluation of the assembly's l50
         length_evaluation (Evaluation): an evaluation of the assembly's length
-        proceed (bool): whether or not to proceed with assembly
-        report (str): a plain-language String describing the assembly evaluation
     """
 
     def __init__(self, n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation, proceed, report):
@@ -60,9 +58,11 @@ class AssemblyEvaluation:
             contigs_evaluation (Evaluation): an evaluation of the assembly's number of contigs
             l50_evaluation (Evaluation): an evaluation of the assembly's l50
             length_evaluation (Evaluation): an evaluation of the assembly's length
-            proceed (bool): whether or not to proceed with assembly
+            success (bool): whether or not the evaluation is successful
             report (str): a plain-language String describing the assembly evaluation
         """
+
+        super().__init__(proceed, report)
 
         self.n50_evaluation = n50_evaluation
         self.contigs_evaluation = contigs_evaluation
