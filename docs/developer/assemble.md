@@ -71,12 +71,20 @@ Evaluates the assembly using QUAST. The pipeline uses a non-reference-based QUAS
 
 ![expert assembly](images/expert_assembly.png)
 
-The expert assembly stage consists of the following parts:
+The expert assembly stage uses information collected in the pre-assembly and fast assembly stages to create an expert strategy for assembling the reads. The assembly generated in this stage should be higher quality than the assembly created in the fast assembly stage.
 
 ### Create Stategy
 
+Creates a strategy using the expert system by analyzing the assembly metrics of the fast assembly (N50, L50, number of contigs, assembly length). The fast assembly metrics are compared against the sequence assembly database to see if the assembly metrics agree with what would be expect for the species. If these assembly metrics are in major disagreement with what would be expected for the species, then the pipeline is terminated.
+
 ### Assemble
+
+Assembles the reads by executing the expert assembly strategy. Currently, this will always involve using SPAdes. However, it is possible to expand this in the future.
 
 ### Evaluate Assembly
 
+Evaluates the assembly using QUAST, in the same manner as previously done in the fast assembly stage. The QUAST analysis is done without a reference, because of the difficulties of regularly selecting a good reference.
+
 ### Compare Assemblies
+
+Compares all assembly metrics of all assemblies run in the pipeline (fast, expert) and reports them. These assembly metrics include N50, L50, number of contigs, and assembly length.
