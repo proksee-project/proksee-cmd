@@ -88,3 +88,27 @@ Evaluates the assembly using QUAST, in the same manner as previously done in the
 ### Compare Assemblies
 
 Compares all assembly metrics of all assemblies run in the pipeline (fast, expert) and reports them. These assembly metrics include N50, L50, number of contigs, and assembly length.
+
+# Data Structures
+
+The following is a high-level overview of some of the data structures used in the pipeline.
+
+## Assembler
+
+The Assembler class is an abstract base class and, importantly, is returned as part of the AssemblyStrategy object. Functions that use the Assembler class don't need to worry about the specific assembler implemented, but rather can just invoke the .assemble() method. This should allow for easier incorporation of other assemblers in the future.
+
+The Assembler class is currently implemented by the SpadesAssembler and SkesaAssembler classes.
+
+## AssemblyDatabase
+
+The AssemblyDatabase class serves as an object wrapper for the assembly database file. It provides functions for interacting with the database file without the caller needing to worry about the specific implementation.
+
+Currently, the class loads a CSV file where assembly metrics are organized by species.
+
+## AssemblyEvaluator
+
+Evaluates the quality of assembles. Many of the functions for this class are static. Namely, the functions that compare assembly values and create an output string. However, the .evaluate() function, which in turn calls QUAST, requires am AssemblyEvaluator object to be instantiated. The decision for not making this function static is because there is a lot of parameters to provide QUAST and several outputs that would need to be returned. Encapsulating all this information into an object makes organizing and passing data much easier.
+
+## AssemblyQuality
+
+Encapsulates many assembly statistic measurements (ex: N50, L50, number of contigs, assembly length) into a single object to facilitate passing this information around the pipeline much easier.
