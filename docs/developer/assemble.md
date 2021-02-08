@@ -12,7 +12,7 @@ The assemble command is responsible for assembling sequencing reads into contigs
 The assemble pipeline consists of three major stages:
 
 - **Stage 1: Pre-Assembly**: Attempts to estimate information about the reads and prepares the reads for sequence assembly.
-- **Stage 2: Fast Assembly**: Assembles the reads in a hastey manner in order to derive more information for expert assembly.
+- **Stage 2: Fast Assembly**: Assembles the reads hastily in order to derive more information for expert assembly.
 - **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
 
 ## Pre-Assembly
@@ -45,10 +45,38 @@ Attempts to estimate the species using MASH. Since MASH is not designed to be a 
 
 ![fast assembly](images/fast_assembly.png)
 
-The fast assembly stage consists of the following parts:
+The fast assembly stage assembles the reads hastily in order to gather some approximate structural information that can be seen after assembling reads into contigs. It should provide the pipeline with more accurate information about which major species are present, approximately how large the assembly will be, and if there is any major contamination present.
+
+### Create Strategy
+
+Creates a fast assembly strategy for assembly using the information gathered during the pre-assembly stage. The sequencing platform, estimated species, and read quality are provided to the expert system, which creates a fast assembly strategy using this information.
+
+It is possible that the expert system will decide that the best course of action is to terminate the pipeline because the provided information suggests no good assemble can be produced. This might happen if the read quality after filtering remains too low, or if there are too many major species present in the reads, suggesting major contamination.
+
+### Assemble
+
+Assembles the reads by executing the fast assembly strategy. Currently, this will always involve using SKESA. However, it is possible to expand this in the future.
+
+### Evaluate Contamination
+
+Evaluates possible contamination in the assembled reads. This is achieved using MASH to ensure that the five largest assembled contigs are estimated to have the same major species as the initial pipeline species estimation. This will not identify minor or medium levels of contamination, but should identify major levels of species contamination in the contigs.
+
+The pipeline will terminate if there is a disagreement in the species estimations.
+
+### Evaluate Assembly
+
+Evaluates the assembly using QUAST. The pipeline uses a non-reference-based QUAST analysis, because of the difficulty of selecting a reference correctly and needing to maintain either a database of references or the ability to download references on the fly. Several assembly metrics are collected, including N50, number of contigs, L50, and total assembly size.
 
 ## Expert Assembly
 
 ![expert assembly](images/expert_assembly.png)
 
 The expert assembly stage consists of the following parts:
+
+### Create Stategy
+
+### Assemble
+
+### Evaluate Assembly
+
+### Compare Assemblies
