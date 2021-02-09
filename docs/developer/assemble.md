@@ -112,3 +112,15 @@ Evaluates the quality of assembles. Many of the functions for this class are sta
 ## AssemblyQuality
 
 Encapsulates many assembly statistic measurements (ex: N50, L50, number of contigs, assembly length) into a single object to facilitate passing this information around the pipeline much easier.
+
+## AssemblyStrategy
+
+Encapsulates information about an assembly stategy to follow, including whether or not to proceed with the strategy, a plain-language report to provide the user about the strategy, and the assembler to use for assembly. The assembler object should be proconfigured with all necessary parameters, such that only .assemble() needs to be called to perform the determined assembly.
+
+## ContaminationHandler
+
+Identifies, filters and otherwise handles contamination in assembled contigs. In particular, it's responsible for estimating contamination in the contigs, using MASH, and checking to see that the species estimated in individual contigs agrees with the species estimated for the entire read set. As contamination handling is very difficult and resource intense, this heuristic approach should help catch some of the worse cases of contamination in the assembled contig data.
+
+## Evaluation
+
+A simple, generic class representing an evaluation. It encapsulates two attributes: success (whether or not the subject was evaluated positively or negatively) and report (a plain-language text report explaining the evaluation). This class functions as a way to return a boolean from a test / evaluation / check alongside an explanation of the result. Evaluation is extended by AssemblyEvaluation, which contains more specific attributes for sequence assembly statistic evaluations.
