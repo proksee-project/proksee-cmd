@@ -107,7 +107,7 @@ Currently, the class loads a CSV file where assembly metrics are organized by sp
 
 ## AssemblyEvaluator
 
-Evaluates the quality of assembles. Many of the functions for this class are static. Namely, the functions that compare assembly values and create an output string. However, the .evaluate() function, which in turn calls QUAST, requires am AssemblyEvaluator object to be instantiated. The decision for not making this function static is because there is a lot of parameters to provide QUAST and several outputs that would need to be returned. Encapsulating all this information into an object makes organizing and passing data much easier.
+An abstract class used to evaluatee the quality of assembles. The .evaluate() function, which returns an Evaluation object, is used to evaluate the assemblies and must be implemented by classes implementing this abstract class. Currently, HeuristicEvaluator and MachineLearningEvaluator implement this abstract class.
 
 ## AssemblyQuality
 
@@ -127,3 +127,12 @@ A simple, generic class representing an evaluation. It encapsulates two attribut
 
 ## Expert System
 
+The ExpertSystem class represents a system for evaluating read data or assembly data in order to make decisions about how best to perform sequence assembly. It is principally responsible for creating AssemblyStrategy objects, which contain an Assembler object that can be used to perform an assembly.
+
+## Platform Identifier
+
+The PlatformIdentifier class is attempts to identify the sequencing platform that was used to sequence the reads. This is accomplished by looking at the FASTQ file encoding and seeing if any of the information can be used to uniquely identify a sequencing platform. However, this process is not always successful and sometimes the platform will be declared as "Unidentifiable".
+
+## Read Filterer
+
+Filters the reads using FASTP. The object encapsulates information about the input reads, and several ouput files created by running FASTP.
