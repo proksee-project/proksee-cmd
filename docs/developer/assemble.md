@@ -124,3 +124,6 @@ Identifies, filters and otherwise handles contamination in assembled contigs. In
 ## Evaluation
 
 A simple, generic class representing an evaluation. It encapsulates two attributes: success (whether or not the subject was evaluated positively or negatively) and report (a plain-language text report explaining the evaluation). This class functions as a way to return a boolean from a test / evaluation / check alongside an explanation of the result. Evaluation is extended by AssemblyEvaluation, which contains more specific attributes for sequence assembly statistic evaluations.
+
+## Expert System
+
