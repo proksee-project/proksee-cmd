@@ -136,3 +136,23 @@ The PlatformIdentifier class is attempts to identify the sequencing platform tha
 ## Read Filterer
 
 Filters the reads using FASTP. The object encapsulates information about the input reads, and several ouput files created by running FASTP.
+
+## Read Quality
+
+The ReadQuality object encapsulates information about the quality of reads. It includes measures such as the number of reads, the rate of Q30 or higher bases, and the GC-content.
+
+## Reads
+
+Encapsulates sequencing reads into a single object. This simplifies the need to pass forward and optionally reverse reads and accommodates a future possibility of having more than two read sets.
+
+## Species
+
+Represents a biological species. The name attribute should exactly match the scientific name for the species (including capitalization). The confidence attribute relates to the confidence of the species assignment, which may be derived from species estimation tools, such as MASH.
+
+## SpeciesEstimation
+
+Encapsulates a single "estimation" of a species. In particular, it is designed to encapsulate an estimation from RefSeq Masher into a single onject that can be passed and operated on more easily.
+
+## SpeciesEstimator
+
+The SpeciesEstimator represents a tool used to estimate species from either sequencing reads or contigs. It is not designed to be a species classifier, but rather simply estimate the species, based on the information on hand (in particular, the RefSeq Masher database).
