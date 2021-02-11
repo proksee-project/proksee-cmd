@@ -139,25 +139,25 @@ Identifies, filters and otherwise handles contamination in assembled contigs. In
 
 A simple, generic class representing an evaluation. It encapsulates two attributes: success (whether or not the subject was evaluated positively or negatively) and report (a plain-language text report explaining the evaluation). This class functions as a way to return a boolean from a test / evaluation / check alongside an explanation of the result. Evaluation is extended by AssemblyEvaluation, which contains more specific attributes for sequence assembly statistic evaluations.
 
-## Expert System
+## ExpertSystem
 
 *expert_system.py*
 
 The ExpertSystem class represents a system for evaluating read data or assembly data in order to make decisions about how best to perform sequence assembly. It is principally responsible for creating AssemblyStrategy objects, which contain an Assembler object that can be used to perform an assembly.
 
-## Platform Identifier
+## PlatformIdentifier
 
 *platform_identify.py*
 
 The PlatformIdentifier class is attempts to identify the sequencing platform that was used to sequence the reads. This is accomplished by looking at the FASTQ file encoding and seeing if any of the information can be used to uniquely identify a sequencing platform. However, this process is not always successful and sometimes the platform will be declared as "Unidentifiable".
 
-## Read Filterer
+## ReadFilterer
 
 *read_filterer.py*
 
 Filters the reads using FASTP. The object encapsulates information about the input reads, and several ouput files created by running FASTP.
 
-## Read Quality
+## ReadQuality
 
 *read_quality.py*
 
