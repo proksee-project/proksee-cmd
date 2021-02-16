@@ -17,39 +17,29 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 '''
 
-import pandas as pd
 import os
 from collections import defaultdict
 import numpy as np
 import joblib
 from pathlib import Path
 
-#from proksee.species import Species
-#from proksee.assembly_evaluator import AssemblyEvaluator
-#DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
-DATABASE_PATH = Path(__file__).parent.absolute()
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
 
 class MachineLearningAssemQC():
 
-	def __init__(self, species, coverage, n50, contig_count, l50, totlen):
+	def __init__(self, species, n50, contig_count, l50, totlen):
 
-		#self.species = Species()
 		self.species = species
-
-		#self.coverage = Coverge_TBD()
-		self.coverage = coverage
-		
-		#self.n50 = AssemblyEvaluator.n50
 		self.n50 = n50
-		
-		#self.contig_count = AssemblyEvaluator.num_contigs
 		self.contig_count = contig_count
-		
-		#self.l50 = AssemblyEvaluator.l50
 		self.l50 = l50
-
-		#self.totlen = AssemblyEvaluator.length
 		self.totlen = totlen
+
+		"""
+		Keeping room for coverage and gc content to be included later
+		#self.coverage = coverage
+		#self.gc_content = gc_content
+		"""
 
 	#load species median log metrics as dictionary with key as species and list of numerical attributes as value
 	def __median_log_database_read(self):
@@ -84,8 +74,9 @@ class MachineLearningAssemQC():
 
 		#log transformation and median normalization of assembly attributes
 		try:
-			input_logcoverage = round(np.log10(self.coverage),3)
-			normalized_coverage = input_logcoverage - sp_log_median_dicn[self.species][4]
+			'''Normalizing coverage, commenting for now'''
+			#input_logcoverage = round(np.log10(self.coverage),3)
+			#normalized_coverage = input_logcoverage - sp_log_median_dicn[self.species][4]
 
 			input_logn50 = round(np.log10(self.n50),3)
 			normalized_n50 = input_logn50 - sp_log_median_dicn[self.species][0]
@@ -99,8 +90,9 @@ class MachineLearningAssemQC():
 			input_logtotlen = round(np.log10(self.totlen),3)
 			normalized_totlen = input_logtotlen - sp_log_median_dicn[self.species][3]
 
-			X_test = [normalized_n50, normalized_contigcount, normalized_l50, normalized_totlen, normalized_coverage]
-			X_test_input = np.reshape(X_test, (1, -1))
+			'''Generating numpy input vector with coverage, commenting for now'''
+			#X_test = [normalized_n50, normalized_contigcount, normalized_l50, normalized_totlen, normalized_coverage]
+			#X_test_input = np.reshape(X_test, (1, -1))
 
 			X_test_minus_coverage = [normalized_n50, normalized_contigcount, normalized_l50, normalized_totlen]
 			X_test_input_minus_coverage = np.reshape(X_test_minus_coverage, (1, -1))
@@ -109,29 +101,31 @@ class MachineLearningAssemQC():
 			#Species dictionary for its median metrics does not exist
 			raise IndexError('Assembly statistics cannot be normalized and probabilistically evaluated')
 
-		return (X_test_input, X_test_input_minus_coverage)
+		return X_test_input_minus_coverage
 
 	#Pass the assembly numpy vector to machine learning model and generate prediction probability
-	def __predict_proba(self, X_test, X_test_minus_coverage):
+	def __predict_proba(self, X_test_minus_coverage):
 		
-		#predicting from model that includes coverage as predictor
+		'''predicting from model that includes coverage as predictor, commenting for now'''
+		"""
 		loaded_model1 = joblib.load(os.path.join(DATABASE_PATH,'random_forest_n50_contigcount_l50_totlen_coverage.joblib'))
 		pred_nparr1 = loaded_model1.predict_proba(X_test)
 		pred_val1 = pred_nparr1[0,0]
-		
+		"""
+
 		#predicting from model without coverage as predictor
 		loaded_model2 = joblib.load(os.path.join(DATABASE_PATH,'random_forest_n50_contigcount_l50_totlen.joblib'))
 		pred_nparr2 = loaded_model2.predict_proba(X_test_minus_coverage)
 		pred_val2 = pred_nparr2[0,0]
 
-		string1 = 'Probability of assembly being good is {} when coverage is included as predictor.\n'.format(pred_val1)
-		string2 = 'Probability of assembly being good is {} when coverage is excluded as predictor.'.format(pred_val2)
-
-		return string1 + string2
+		'''Commenting evaluation with coverage as predictor'''
+		#output_string = 'Probability of assembly being good is {} when coverage is included as predictor.\n'.format(pred_val1)
+		
+		return float(pred_val2)
 
 	def machine_learning_proba(self):
 		sp_log_median_dicn = self.__median_log_database_read()
-		input_vector_coverage, input_vector_minus_coverage = self.__assembly_normalize_feedtoml(sp_log_median_dicn)
-		probability_ml = self.__predict_proba(input_vector_coverage, input_vector_minus_coverage)
+		input_vector_minus_coverage = self.__assembly_normalize_feedtoml(sp_log_median_dicn)
+		probability_ml = self.__predict_proba(input_vector_minus_coverage)
 		
 		return probability_ml

@@ -19,13 +19,14 @@ specific language governing permissions and limitations under the License.
 
 from machine_learning_assembly_qc import MachineLearningAssemQC
 
+"""Including a hypothetical assembly with species and metrics"""
 species = 'Neisseria meningitidis'
-coverage = 100
+#coverage = 100
 n50 = 5373
-contig_count = 1128
 l50 = 117
-totlen = 2393084
+num_contigs = 1128
+assembly_length = 2393084
 
-ml_instance = MachineLearningAssemQC(species, coverage, n50, contig_count, l50, totlen)
+ml_instance = MachineLearningAssemQC(species, n50, num_contigs, l50, assembly_length)
 probability = ml_instance.machine_learning_proba()
 print(probability)

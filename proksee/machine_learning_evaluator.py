@@ -24,7 +24,7 @@ specific language governing permissions and limitations under the License.
 
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.evaluation import Evaluation
-
+from proksee.machine_learning_assembly_qc import MachineLearningAssemQC
 
 class MachineLearningEvaluator(AssemblyEvaluator):
     """
@@ -55,9 +55,12 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         num_contigs = self.assembly_quality.num_contigs
         assembly_length = self.assembly_quality.length
 
+        #Create instance of machine learning object
+        machine_learning_instance = MachineLearningAssemQC(species, n50, num_contigs, l50, assembly_length)
+        
         # (Use the ML to evaluate the assembly)
         print(str(n50) + " " + str(l50) + " " + str(num_contigs) + " " + str(assembly_length))  # TODO: REMOVE PRINT
-        probability = 0.01
+        probability = machine_learning_instance.machine_learning_proba()
 
         success = False
         report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
