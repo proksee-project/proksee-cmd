@@ -49,11 +49,14 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         RETURN
             evaluation (Evaluation): an evaluation of the assembly's quality
         """
-
+        species = self.species
         n50 = self.assembly_quality.n50
         l50 = self.assembly_quality.l50
         num_contigs = self.assembly_quality.num_contigs
         assembly_length = self.assembly_quality.length
+
+        '''TODO: create model with gc content as predictor, commenting for now'''
+        #gc_content = self.assembly_quality.gc_content
 
         #Create instance of machine learning object
         machine_learning_instance = MachineLearningAssemQC(species, n50, num_contigs, l50, assembly_length)
