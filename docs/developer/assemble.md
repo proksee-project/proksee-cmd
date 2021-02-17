@@ -15,7 +15,7 @@ The assemble pipeline consists of three major stages:
 - **Stage 2: Fast Assembly**: Assembles the reads hastily in order to derive more information for expert assembly.
 - **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
 
-## Pre-Assembly
+## Stage 1: Pre-Assembly
 
 ![pre-assembly](images/pre_assembly.png)
 
@@ -41,7 +41,7 @@ The read quality is determined from the filtered reads by parsing the output of 
 
 Attempts to estimate the species using MASH. Since MASH is not designed to be a classifier, we shouldn't say that the species is *classified*, but rather the species is *estimated* from  *k*-mer information in the reads. MASH output can be messy on real-world data and will often report multiple species present in the data. High thresholds are therefore used in order to only report species that are very likely to be present. As a consequence of this approach, we cannot confidently make claims about low levels of contamination in the reads and thus ignore contamination.
 
-## Fast Assembly
+## Stage 2: Fast Assembly
 
 ![fast assembly](images/fast_assembly.png)
 
@@ -67,13 +67,13 @@ The pipeline will terminate if there is a disagreement in the species estimation
 
 Evaluates the assembly using QUAST. The pipeline uses a non-reference-based QUAST analysis, because of the difficulty of selecting a reference correctly and needing to maintain either a database of references or the ability to download references on the fly. Several assembly metrics are collected, including N50, number of contigs, L50, and total assembly size.
 
-## Expert Assembly
+## Stage 3: Expert Assembly
 
 ![expert assembly](images/expert_assembly.png)
 
 The expert assembly stage uses information collected in the pre-assembly and fast assembly stages to create an expert strategy for assembling the reads. The assembly generated in this stage should be higher quality than the assembly created in the fast assembly stage.
 
-### Create Stategy
+### Create Strategy
 
 Creates a strategy using the expert system by analyzing the assembly metrics of the fast assembly (N50, L50, number of contigs, assembly length). The fast assembly metrics are compared against the sequence assembly database to see if the assembly metrics agree with what would be expect for the species. If these assembly metrics are in major disagreement with what would be expected for the species, then the pipeline is terminated.
 
@@ -113,7 +113,7 @@ Currently, the class loads a CSV file where assembly metrics are organized by sp
 
 *assembly_evaluator.py, heuristic_evaluation.py, machine_learning_evaluator.py*
 
-An abstract class used to evaluatee the quality of assembles. The .evaluate() function, which returns an Evaluation object, is used to evaluate the assemblies and must be implemented by classes implementing this abstract class. Currently, HeuristicEvaluator and MachineLearningEvaluator implement this abstract class.
+An abstract class used to evaluate the quality of assembles. The .evaluate() function, which returns an Evaluation object, is used to evaluate the assemblies and must be implemented by classes implementing this abstract class. Currently, HeuristicEvaluator and MachineLearningEvaluator implement this abstract class.
 
 ## AssemblyQuality
 
@@ -125,7 +125,7 @@ Encapsulates many assembly statistic measurements (ex: N50, L50, number of conti
 
 *assembly_strategy.py*
 
-Encapsulates information about an assembly stategy to follow, including whether or not to proceed with the strategy, a plain-language report to provide the user about the strategy, and the assembler to use for assembly. The assembler object should be proconfigured with all necessary parameters, such that only .assemble() needs to be called to perform the determined assembly.
+Encapsulates information about an assembly strategy to follow, including whether or not to proceed with the strategy, a plain-language report to provide the user about the strategy, and the assembler to use for assembly. The assembler object should be proconfigured with all necessary parameters, such that only .assemble() needs to be called to perform the determined assembly.
 
 ## ContaminationHandler
 
@@ -149,13 +149,13 @@ The ExpertSystem class represents a system for evaluating read data or assembly 
 
 *platform_identify.py*
 
-The PlatformIdentifier class is attempts to identify the sequencing platform that was used to sequence the reads. This is accomplished by looking at the FASTQ file encoding and seeing if any of the information can be used to uniquely identify a sequencing platform. However, this process is not always successful and sometimes the platform will be declared as "Unidentifiable".
+The PlatformIdentifier class attempts to identify the sequencing platform that was used to sequence the reads. This is accomplished by looking at the FASTQ file encoding and seeing if any of the information can be used to uniquely identify a sequencing platform. However, this process is not always successful and sometimes the platform will be declared as "Unidentifiable".
 
 ## ReadFilterer
 
 *read_filterer.py*
 
-Filters the reads using FASTP. The object encapsulates information about the input reads, and several ouput files created by running FASTP.
+Filters the reads using FASTP. The object encapsulates information about the input reads, and several output files created by running FASTP.
 
 ## ReadQuality
 
@@ -179,7 +179,7 @@ Represents a biological species. The name attribute should exactly match the sci
 
 *species_estimation.py*
 
-Encapsulates a single "estimation" of a species. In particular, it is designed to encapsulate an estimation from RefSeq Masher into a single onject that can be passed and operated on more easily.
+Encapsulates a single "estimation" of a species. In particular, it is designed to encapsulate an estimation from RefSeq Masher into a single object that can be passed and operated on more easily.
 
 ## SpeciesEstimator
 
