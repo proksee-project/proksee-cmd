@@ -1,6 +1,6 @@
 # Assemble
 
-This pipeline assembles sequencing reads using an expert system to guide decision-making through the various stages of sequence assembly. The pipeline consists of pre-assembly, fast assembly, and expert assembly stages.
+The assemble pipeline assembles sequencing reads using an expert system to guide decision-making through the various stages of sequence assembly. The pipeline consists of pre-assembly, fast assembly, and expert assembly stages.
 
 ## Stage 1: Pre-Assembly
 
@@ -16,8 +16,16 @@ Expert assembly leverages the information obtained in the pre-assembly and fast 
 
 ## Basic Usage
 
+**Command Line**
+
 ```bash
 proksee assemble [options] <forward reads> (<reverse reads>)
+```
+
+**Example**
+
+```bash
+proksee assemble -o output forward_reads.fastq reverse_reads.fastq
 ```
 
 ## Arguments
@@ -28,7 +36,7 @@ The FASTQ-formatted short-length forward reads to assemble. These reads may eith
 
 ### Reverse Reads
 
-The FASTQ-formatted short-length reverse reads to assemble. This argument is optional and only provided as the pair to the forward reads provided in the previous argument.
+The FASTQ-formatted short-length reverse reads to assemble. This argument is optional and only provided as the matching pair to the forward reads provided in the previous argument.
 
 ## Options
 
