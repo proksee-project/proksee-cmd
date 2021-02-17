@@ -33,7 +33,7 @@ Proksee is comprised of the following commands:
 - annotate
 - assemble
 
-These commands are implemented using the (Click Python packagage)[https://click.palletsprojects.com/en/7.x/]. The entry point of the program is `proksee/cli.py`, which in turn calls the individual commands located in the `proksee/commands` directory.
+These commands are implemented using the [Click Python package](https://click.palletsprojects.com/en/7.x/). The entry point of the program is `proksee/cli.py`, which in turn calls the individual commands located in the `proksee/commands` directory.
 
 Commands are invoked on the command line by entering the name of the program, proksee, followed by the name of the command being invoked. For example:
 
