@@ -45,7 +45,7 @@ pip install .
 proksee assemble -o /path/to/output/directory FORWARD REVERSE
 ```
 
-Where the argument provided after -o lets a user to specify a desired output directory. `FORWARD` and `REVERSE`  are fastq sequencing read files. If `REVERSE` is not specified, only single strand (`FORWARD`) is processed by proksee pipeline.  
+Where the argument provided after -o lets a user to specify a desired output directory. `FORWARD` and `REVERSE`  are fastq sequencing read files. If `REVERSE` is not specified, only single strand (`FORWARD`) is processed by the Proksee pipeline.  
 
 **Example**
 
