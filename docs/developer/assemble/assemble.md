@@ -7,7 +7,7 @@ The assemble command is responsible for assembling sequencing reads into contigs
 
 ## Pipeline
 
-![overview](images/overview.png)
+![overview](../images/overview.png)
 
 The assemble pipeline consists of three major stages:
 
@@ -17,7 +17,7 @@ The assemble pipeline consists of three major stages:
 
 ## Stage 1: Pre-Assembly
 
-![pre-assembly](images/pre_assembly.png)
+![pre-assembly](../images/pre_assembly.png)
 
 The pre-assembly stage is responsible for estimating information about the reads, including the species and sequencing technology, and preparing the reads for sequence assembly.
 
@@ -43,7 +43,7 @@ Attempts to estimate the species using MASH. Since MASH is not designed to be a 
 
 ## Stage 2: Fast Assembly
 
-![fast assembly](images/fast_assembly.png)
+![fast assembly](../images/fast_assembly.png)
 
 The fast assembly stage assembles the reads hastily in order to gather some approximate structural information that can be seen after assembling reads into contigs. It should provide the pipeline with more accurate information about which major species are present, approximately how large the assembly will be, and if there is any major contamination present.
 
@@ -69,7 +69,7 @@ Evaluates the assembly using QUAST. The pipeline uses a non-reference-based QUAS
 
 ## Stage 3: Expert Assembly
 
-![expert assembly](images/expert_assembly.png)
+![expert assembly](../images/expert_assembly.png)
 
 The expert assembly stage uses information collected in the pre-assembly and fast assembly stages to create an expert strategy for assembling the reads. The assembly generated in this stage should be of higher quality than the assembly created in the fast assembly stage.
 
