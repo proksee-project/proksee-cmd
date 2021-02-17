@@ -1,24 +1,70 @@
 # Proksee
 
-Proksee is a suite of command line tools for performing assembly, annotation and visualization of microbial genomes.  
+Proksee is a suite of command line tools for performing assembly, annotation and visualization of microbial genomes.
 
-Usage: `proksee assemble -o /path/to/output/directory FORWARD REVERSE`  
+## Assemble
 
-where the argument provided after -o lets a user to specify a desired output directory. `FORWARD` and `REVERSE`  are fastq sequencing read files. If `REVERSE` is not specified, only single strand (`FORWARD`) is processed by proksee pipeline.  
-Currently `proksee` performs the following tasks:
+The assemble pipeline consists of three major stages:
 
-- Checking for validity of fastq files. Both zipped and unzipped fastq files are acceptable.  
-- Identification of sequencing platform (Illumina, Pacbio, others) based on input reads.  
-- Filtering of reads using `fastp` which preprocesses and filters fastq files using a variety of quality metrics.    
-- Identifying reference genome of the filtered sequence files using `refseq_masher`, which creates a Mash sketch   using MinHash algorithm and further processing of refseq_masher output to identify the most probable reference  genome organism.    
-- Constructing a de-novo sequence assembly using `skesa`, which performs assembly on the filtered fastq read files using optimal k-mer length based on DeBruijn graphs.  
+- **Stage 1: Pre-Assembly**: Verifies inputs, estimates information about the reads, filters the reads, and prepares the reads for sequence assembly.
+- **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive structural information for expert assembly.
+- **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
 
-Users are recommended to install packages `fastp`, `refseq_masher` and `skesa` in a conda environment as follows:  
-`conda env create -f environment.yml`  
-`conda activate proksee`
+## Release
 
+v1.0.0
 
+This is the initial public release of Proksee.
 
+## Installation
 
+Proksee requires the following packages:
 
+- fastp
+- refseq_masher
+- skesa
+ 
+This can be accomplished by installing dependencies into a conda environment, using the provided installation script as follows:
 
+```bash
+conda env create -f environment.yml
+conda activate proksee
+```
+
+Proksee can then be installed by running the setup script (when inside the Proksee directory):
+
+```bash
+pip install .
+```
+
+## Usage:
+
+**Command**
+
+```bash
+proksee assemble -o /path/to/output/directory FORWARD REVERSE
+```
+
+Where the argument provided after -o lets a user to specify a desired output directory. `FORWARD` and `REVERSE`  are fastq sequencing read files. If `REVERSE` is not specified, only single strand (`FORWARD`) is processed by proksee pipeline.  
+
+**Example**
+
+```bash
+proksee assemble -o output forward_reads.fastq reverse_reads.fastq
+```
+
+## Contact
+
+**Eric Enns**: eric.enns@canada.ca
+
+## Legal
+
+Copyright Government of Canada 2020-2021
+
+Written by: National Microbiology Laboratory, Public Health Agency of Canada
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License at:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
