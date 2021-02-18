@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 from machine_learning_assembly_qc import MachineLearningAssemQC
 
 
-#Case 1: Likely fair assembly
+# Case 1: Likely fair assembly
 species = 'Streptococcus pyogenes'
 n50 = 133891
 contig_count = 42

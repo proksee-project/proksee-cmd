@@ -26,6 +26,7 @@ from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.evaluation import Evaluation
 from proksee.machine_learning_assembly_qc import MachineLearningAssemQC
 
+
 class MachineLearningEvaluator(AssemblyEvaluator):
     """
     A machine learning-based sequence assembly evaluator.
@@ -49,21 +50,22 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         RETURN
             evaluation (Evaluation): an evaluation of the assembly's quality
         """
-        
+
         species = self.species
         n50 = self.assembly_quality.n50
         l50 = self.assembly_quality.l50
         num_contigs = self.assembly_quality.num_contigs
         assembly_length = self.assembly_quality.length
-        
-        #gc_content as floating point decimal between 0 and 1
+
+        # gc_content as floating point decimal between 0 and 1
         gc_content = self.assembly_quality.gc_content
 
-        #Create instance of machine learning object
+        # Create instance of machine learning object
         machine_learning_instance = MachineLearningAssemQC(species, n50, num_contigs, l50, assembly_length, gc_content)
-        
-        # (Use the ML to evaluate the assembly)
-        print(str(n50) + " " + str(l50) + " " + str(num_contigs) + " " + str(assembly_length) + " " + str(gc_content))  # TODO: REMOVE PRINT
+
+        # Use the ML object for probabilistic evaluation of assembly qc
+        print(str(n50) + " " + str(l50) + " " + str(num_contigs) + " " +
+              str(assembly_length) + " " + str(gc_content))  # TODO: REMOVE PRINT
         probability = machine_learning_instance.machine_learning_proba()
 
         success = False
