@@ -21,7 +21,7 @@ from proksee.machine_learning_evaluator import MachineLearningEvaluator
 from proksee.species import Species
 
 
-class TestHeuristicEvaluator:
+class TestMachineLearningEvaluator:
 
     def test_evaluate_value(self):
         """
