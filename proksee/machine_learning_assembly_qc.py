@@ -27,19 +27,14 @@ DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee",
 
 class MachineLearningAssemQC():
 
-	def __init__(self, species, n50, contig_count, l50, totlen):
+	def __init__(self, species, n50, contig_count, l50, totlen, gc_content):
 
 		self.species = species
 		self.n50 = n50
 		self.contig_count = contig_count
 		self.l50 = l50
 		self.totlen = totlen
-
-		"""
-		Keeping room for coverage and gc content to be included later
-		#self.coverage = coverage
-		#self.gc_content = gc_content
-		"""
+		self.gc_content = gc_content
 
 	#load species median log metrics as dictionary with key as species and list of numerical attributes as value
 	def __median_log_database_read(self):
@@ -74,10 +69,6 @@ class MachineLearningAssemQC():
 
 		#log transformation and median normalization of assembly attributes
 		try:
-			'''Normalizing coverage, commenting for now'''
-			#input_logcoverage = round(np.log10(self.coverage),3)
-			#normalized_coverage = input_logcoverage - sp_log_median_dicn[self.species][4]
-
 			input_logn50 = round(np.log10(self.n50),3)
 			normalized_n50 = input_logn50 - sp_log_median_dicn[self.species][0]
 
@@ -90,42 +81,29 @@ class MachineLearningAssemQC():
 			input_logtotlen = round(np.log10(self.totlen),3)
 			normalized_totlen = input_logtotlen - sp_log_median_dicn[self.species][3]
 
-			'''Generating numpy input vector with coverage, commenting for now'''
-			#X_test = [normalized_n50, normalized_contigcount, normalized_l50, normalized_totlen, normalized_coverage]
-			#X_test_input = np.reshape(X_test, (1, -1))
+			normalized_gccontent = self.gc_content - sp_log_median_dicn[self.species][5]
 
-			X_test_minus_coverage = [normalized_n50, normalized_contigcount, normalized_l50, normalized_totlen]
-			X_test_input_minus_coverage = np.reshape(X_test_minus_coverage, (1, -1))
-		
+			X_test = [normalized_n50, normalized_contigcount, normalized_l50, normalized_totlen, normalized_gccontent]
+			X_test_input = np.reshape(X_test, (1, -1))
+
 		except IndexError:
 			#Species dictionary for its median metrics does not exist
 			raise IndexError('Assembly statistics cannot be normalized and probabilistically evaluated')
 
-		return X_test_input_minus_coverage
+		return X_test_input
 
 	#Pass the assembly numpy vector to machine learning model and generate prediction probability
-	def __predict_proba(self, X_test_minus_coverage):
-		
-		'''predicting from model that includes coverage as predictor, commenting for now'''
-		"""
-		loaded_model1 = joblib.load(os.path.join(DATABASE_PATH,'random_forest_n50_contigcount_l50_totlen_coverage.joblib'))
-		pred_nparr1 = loaded_model1.predict_proba(X_test)
-		pred_val1 = pred_nparr1[0,0]
-		"""
+	def __predict_proba(self, X_test):
 
-		#predicting from model without coverage as predictor
-		loaded_model2 = joblib.load(os.path.join(DATABASE_PATH,'random_forest_n50_contigcount_l50_totlen.joblib'))
-		pred_nparr2 = loaded_model2.predict_proba(X_test_minus_coverage)
-		pred_val2 = pred_nparr2[0,0]
-
-		'''Commenting evaluation with coverage as predictor'''
-		#output_string = 'Probability of assembly being good is {} when coverage is included as predictor.\n'.format(pred_val1)
+		loaded_model = joblib.load(os.path.join(DATABASE_PATH,'random_forest_n50_contigcount_l50_totlen_gccontent.joblib'))
+		pred_nparr = loaded_model.predict_proba(X_test)
+		pred_val = pred_nparr[0,0]
 		
-		return float(pred_val2)
+		return float(pred_val)
 
 	def machine_learning_proba(self):
 		sp_log_median_dicn = self.__median_log_database_read()
-		input_vector_minus_coverage = self.__assembly_normalize_feedtoml(sp_log_median_dicn)
-		probability_ml = self.__predict_proba(input_vector_minus_coverage)
+		input_vector = self.__assembly_normalize_feedtoml(sp_log_median_dicn)
+		probability_ml = self.__predict_proba(input_vector)
 		
 		return probability_ml
