@@ -30,7 +30,7 @@ class MachineLearningAssemQC():
 
     def __init__(self, species, n50, contig_count, l50, totlen, gc_content):
 
-        self.species = species.name
+        self.species = species
         self.n50 = n50
         self.contig_count = contig_count
         self.l50 = l50

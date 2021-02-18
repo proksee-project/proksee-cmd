@@ -50,7 +50,7 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         RETURN
             evaluation (Evaluation): an evaluation of the assembly's quality
         """
-
+        species = self.species
         n50 = self.assembly_quality.n50
         l50 = self.assembly_quality.l50
         num_contigs = self.assembly_quality.num_contigs
