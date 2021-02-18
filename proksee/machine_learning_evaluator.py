@@ -62,7 +62,7 @@ class MachineLearningEvaluator(AssemblyEvaluator):
 
         # Create instance of machine learning object
         machine_learning_instance = MachineLearningAssemQC(
-            species.name, n50, num_contigs, l50, assembly_length, gc_content
+            species, n50, num_contigs, l50, assembly_length, gc_content
         )
 
         # Use the ML object for probabilistic evaluation of assembly qc
