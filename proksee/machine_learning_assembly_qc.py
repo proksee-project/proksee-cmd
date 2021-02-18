@@ -30,7 +30,7 @@ class MachineLearningAssemQC():
 
     def __init__(self, species, n50, contig_count, l50, totlen, gc_content):
 
-        self.species = species
+        self.species.name = species.name
         self.n50 = n50
         self.contig_count = contig_count
         self.l50 = l50
@@ -71,18 +71,18 @@ class MachineLearningAssemQC():
         # Log transformation and median normalization of assembly attributes
         try:
             input_logn50 = round(np.log10(self.n50), 3)
-            normalized_n50 = input_logn50 - sp_log_median_dicn[self.species][0]
+            normalized_n50 = input_logn50 - sp_log_median_dicn[self.species.name][0]
 
             input_logcontigcount = round(np.log10(self.contig_count), 3)
-            normalized_contigcount = input_logcontigcount - sp_log_median_dicn[self.species][1]
+            normalized_contigcount = input_logcontigcount - sp_log_median_dicn[self.species.name][1]
 
             input_logl50 = round(np.log10(self.l50), 3)
-            normalized_l50 = input_logl50 - sp_log_median_dicn[self.species][2]
+            normalized_l50 = input_logl50 - sp_log_median_dicn[self.species.name][2]
 
             input_logtotlen = round(np.log10(self.totlen), 3)
-            normalized_totlen = input_logtotlen - sp_log_median_dicn[self.species][3]
+            normalized_totlen = input_logtotlen - sp_log_median_dicn[self.species.name][3]
 
-            normalized_gccontent = self.gc_content - sp_log_median_dicn[self.species][5]
+            normalized_gccontent = self.gc_content - sp_log_median_dicn[self.species.name][5]
 
             X_test = [normalized_n50, normalized_contigcount, normalized_l50, normalized_totlen, normalized_gccontent]
             X_test_input = np.reshape(X_test, (1, -1))

@@ -51,7 +51,7 @@ class MachineLearningEvaluator(AssemblyEvaluator):
             evaluation (Evaluation): an evaluation of the assembly's quality
         """
 
-        species = self.species
+        species = self.species.name
         n50 = self.assembly_quality.n50
         l50 = self.assembly_quality.l50
         num_contigs = self.assembly_quality.num_contigs
@@ -61,7 +61,9 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         gc_content = self.assembly_quality.gc_content
 
         # Create instance of machine learning object
-        machine_learning_instance = MachineLearningAssemQC(species, n50, num_contigs, l50, assembly_length, gc_content)
+        machine_learning_instance = MachineLearningAssemQC(
+            species.name, n50, num_contigs, l50, assembly_length, gc_content
+        )
 
         # Use the ML object for probabilistic evaluation of assembly qc
         print(str(n50) + " " + str(l50) + " " + str(num_contigs) + " " +
