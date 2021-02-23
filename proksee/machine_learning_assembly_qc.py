@@ -26,88 +26,139 @@ from pathlib import Path
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
 
 
-class MachineLearningAssemQC():
+class MachineLearningAssemblyQC():
+    """
+    A class representing machine learning based evaluation of genomic assembly attributes
 
-    def __init__(self, species, n50, contig_count, l50, totlen, gc_content):
+    ATTRIBUTES:
+        species (Species): the Species object representing the species
+        n50 (int): shortest contig at 50% of the assembly length
+        num_contigs (int): the number of contigs in the assembly
+        l50 (int): smallest number of contigs summing up to 50% of the assembly length
+        length (int): the total assembly length
+        gc_content (float): the GC-ratio of the bases in the assembly
+    """
+
+    def __init__(self, species, n50, num_contigs, l50, length, gc_content):
+        """
+        Initializes the MachineLearningAssemblyQC object
+
+        PARAMETERS:
+            species (Species): the Species object representing the species
+            n50 (int): shortest contig at 50% of the assembly length
+            num_contigs (int): the number of contigs in the assembly
+            l50 (int): smallest number of contigs summing up to 50% of the assembly length
+            length (int): the total assembly length
+            gc_content (float): the GC-ratio of the bases in the assembly
+        """
 
         self.species = species
         self.n50 = n50
-        self.contig_count = contig_count
+        self.num_contigs = num_contigs
         self.l50 = l50
-        self.totlen = totlen
+        self.length = length
         self.gc_content = gc_content
 
-    # Load species median log metrics as dictionary with key as species and list of numerical attributes as value
-    def __median_log_database_read(self):
-        reader_fh = open(os.path.join(DATABASE_PATH, "species_median_log_metrics.txt"), 'r')
+    def __read_median_database(self):
+        """
+        Reads median (or median of logarithm) of genomic attributes from database
+
+        RETURNS
+            database (dict): dictionary of median normalized genomic attributes
+        """
+
+        database_file = open(os.path.join(DATABASE_PATH, "species_median_log_metrics.txt"), 'r')
 
         # Skips header
-        next(reader_fh)
+        next(database_file)
 
         # Initializing dictionary for species
-        sp_log_median_dicn = defaultdict(list)
-        for line in reader_fh:
+        database = defaultdict(list)
+        for line in database_file:
             row = line.rstrip().split('\t')
-            sp_info = []
+            species_name = row[0]
 
-            '''
-            species specific median logn50, logcontigcount, logl50, logtotlen, logcoverage
-            written in order as a list. The list serves as value to species key
-            '''
-            for element in range(1, len(row)):
-                sp_info.append(float(row[element]))
+            # Species specific median log(n50), log(num_contigs), log(l50), log(length), log(coverage)
+            # and gc_content written in order as a list.
+            species_info = [float(i) for i in row[1:]]
+            database[species_name] = species_info
 
-            sp_log_median_dicn[row[0]] = sp_info
+        return database
 
-        return sp_log_median_dicn
+    def __normalize_vectorize_assembly(self, database):
+        """
+        Normalizes input assembly metrics and outputs them to a numpy 1D array
 
-    """
-    Takes assembly metrics from Quast and species from Mash/Refseq Masher
-    Does log transformation and median log normalization of species specific assembly attributes
-    Generates numpy vector (single case) to be used as input feed to machine learning model
-    """
-    def __assembly_normalize_feedtoml(self, sp_log_median_dicn):
+        PARAMETERS
+            database (dict): dictionary of median normalized genomic attributes
+
+        RETURNS
+            normalized_assembly_numpy_row (numpy array): numpy vector of normalized genomic attributes
+        """
+
+        # Constants for assembly attributes to identify array indices
+        N50 = 0
+        NUM_CONTIGS = 1
+        L50 = 2
+        LENGTH = 3
+        GC_CONTENT = 5
 
         # Log transformation and median normalization of assembly attributes
-        try:
+        if self.species.name in database:
             input_logn50 = round(np.log10(self.n50), 3)
-            normalized_n50 = input_logn50 - sp_log_median_dicn[self.species.name][0]
+            normalized_n50 = input_logn50 - database[self.species.name][N50]
 
-            input_logcontigcount = round(np.log10(self.contig_count), 3)
-            normalized_contigcount = input_logcontigcount - sp_log_median_dicn[self.species.name][1]
+            input_lognumcontigs = round(np.log10(self.num_contigs), 3)
+            normalized_numcontigs = input_lognumcontigs - database[self.species.name][NUM_CONTIGS]
 
             input_logl50 = round(np.log10(self.l50), 3)
-            normalized_l50 = input_logl50 - sp_log_median_dicn[self.species.name][2]
+            normalized_l50 = input_logl50 - database[self.species.name][L50]
 
-            input_logtotlen = round(np.log10(self.totlen), 3)
-            normalized_totlen = input_logtotlen - sp_log_median_dicn[self.species.name][3]
+            input_loglength = round(np.log10(self.length), 3)
+            normalized_length = input_loglength - database[self.species.name][LENGTH]
 
-            normalized_gccontent = self.gc_content - sp_log_median_dicn[self.species.name][5]
+            normalized_gccontent = self.gc_content - database[self.species.name][GC_CONTENT]
 
-            X_test = [normalized_n50, normalized_contigcount, normalized_l50, normalized_totlen, normalized_gccontent]
-            X_test_input = np.reshape(X_test, (1, -1))
+            normalized_assembly_array = [normalized_n50, normalized_numcontigs,
+                                         normalized_l50, normalized_length, normalized_gccontent]
 
-        except IndexError:
-            # Species dictionary for its median metrics does not exist
-            raise IndexError('Assembly statistics cannot be normalized and probabilistically evaluated')
+            # Numpy vectorization of array
+            normalized_assembly_numpy_row = np.reshape(normalized_assembly_array, (1, -1))
 
-        return X_test_input
+        else:
+            raise UnboundLocalError('Species missing in database. Machine learning evaluation cannot be done')
 
-    # Pass the assembly numpy vector to machine learning model and generate prediction probability
-    def __predict_proba(self, X_test):
+        return normalized_assembly_numpy_row
 
-        loaded_model = joblib.load(os.path.join(
-            DATABASE_PATH, 'random_forest_n50_contigcount_l50_totlen_gccontent.joblib')
+    def __predict_probability(self, normalized_assembly_numpy_row):
+        """
+        Loads a pre-trained random forest machine learning model and evaluates assembly metrics
+
+        PARAMETERS
+            assembly_normalized_numpy_row (numpy array): numpy vector of normalized genomic attributes
+
+        RETURNS
+            predicted_value (float): Prediction probability of the assembly being good
+        """
+
+        random_forest_model = joblib.load(os.path.join(
+            DATABASE_PATH, 'random_forest_n50_numcontigs_l50_length_gccontent.joblib')
         )
-        pred_nparr = loaded_model.predict_proba(X_test)
-        pred_val = pred_nparr[0, 0]
+        prediction_arr = random_forest_model.predict_proba(normalized_assembly_numpy_row)
+        predicted_value = prediction_arr[0, 0]
 
-        return float(pred_val)
+        return float(predicted_value)
 
-    # Integrating all private functions to return probability
-    def machine_learning_proba(self):
-        sp_log_median_dicn = self.__median_log_database_read()
-        input_vector = self.__assembly_normalize_feedtoml(sp_log_median_dicn)
-        probability_ml = self.__predict_proba(input_vector)
+    def machine_learning_probability(self):
+        """
+        Reads median database, parses input assembly attributes and returns machine learning prediction
 
-        return probability_ml
+        RETURNS
+            probability (float): Prediction probability of the assembly being good
+        """
+
+        database = self.__read_median_database()
+        assembly_normalized_numpy_row = self.__normalize_vectorize_assembly(database)
+        probability = self.__predict_probability(assembly_normalized_numpy_row)
+
+        return probability
