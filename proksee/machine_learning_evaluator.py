@@ -24,7 +24,7 @@ specific language governing permissions and limitations under the License.
 
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.evaluation import Evaluation
-from proksee.machine_learning_assembly_qc import MachineLearningAssemQC
+from proksee.machine_learning_assembly_qc import MachineLearningAssemblyQC
 
 
 class MachineLearningEvaluator(AssemblyEvaluator):
@@ -55,21 +55,19 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         l50 = self.assembly_quality.l50
         num_contigs = self.assembly_quality.num_contigs
         assembly_length = self.assembly_quality.length
-
-        # gc_content as floating point decimal between 0 and 1
         gc_content = self.assembly_quality.gc_content
 
-        # Create instance of machine learning object
-        machine_learning_instance = MachineLearningAssemQC(
+        machine_learning_instance = MachineLearningAssemblyQC(
             species, n50, num_contigs, l50, assembly_length, gc_content
         )
 
-        # Use the ML object for probabilistic evaluation of assembly qc
-        print(str(n50) + " " + str(l50) + " " + str(num_contigs) + " " +
-              str(assembly_length) + " " + str(gc_content))  # TODO: REMOVE PRINT
-        probability = machine_learning_instance.machine_learning_proba()
+        probability = machine_learning_instance.machine_learning_probability()
 
-        success = False
+        if probability > 0.5:
+            success = True
+        else:
+            success = False
+
         report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
         evaluation = Evaluation(success, report)
 
