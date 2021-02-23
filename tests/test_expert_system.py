@@ -82,7 +82,7 @@ class TestExpertSystem:
         reads = Reads(forward, reverse)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
-                                     "database.csv")
+                                     "refseq_short.csv")
 
         system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -104,7 +104,7 @@ class TestExpertSystem:
         reads = Reads(forward, reverse)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
-                                     "database.csv")
+                                     "refseq_short.csv")
 
         system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -126,7 +126,7 @@ class TestExpertSystem:
         reads = Reads(forward, reverse)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "big_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
-                                     "database.csv")
+                                     "refseq_short.csv")
 
         system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
@@ -148,7 +148,7 @@ class TestExpertSystem:
         reads = Reads(forward, reverse)
         QUAST_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_assembly.tsv")
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
-                                     "database.csv")
+                                     "refseq_short.csv")
 
         system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
