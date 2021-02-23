@@ -19,21 +19,93 @@ specific language governing permissions and limitations under the License.
 from proksee.assembly_quality import AssemblyQuality
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
 from proksee.species import Species
+import pytest
+import numpy as np
 
 
 class TestMachineLearningEvaluator:
 
-    def test_evaluate_value(self):
+    def test_evaluate_probability(self):
         """
-        Tests the ability to evaluate a bad assembly as bad.
+        Tests the ability to evaluate a good or bad assembly.
         """
 
+        # Evaluating very bad assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(1000, 3000, 4000, 500, 600, 0.99, 20000)
-        species = Species("Listeria monocytogenes", 1.0)
+        assembly_quality = AssemblyQuality(788, 4029, 4000, 195, 600, 0.66, 2475580)
+        species = Species("Actinobacteria bacterium", 1.0)
 
         evaluator = MachineLearningEvaluator(species, assembly_quality)
         evaluation = evaluator.evaluate()
 
         assert not evaluation.success
-        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.01.")
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.0.")
+
+        # Evaluating fairly bad assembly
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(42, 133891, 4000, 6, 600, 0.383, 1986343)
+        species = Species("Streptococcus pyogenes", 1.0)
+
+        evaluator = MachineLearningEvaluator(species, assembly_quality)
+        evaluation = evaluator.evaluate()
+
+        assert not evaluation.success
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.23.")
+
+        # Evaluating fairly good assembly
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(157, 20000, 4000, 14, 600, 0.311, 1993406)
+        species = Species("Campylobacter coli", 1.0)
+
+        evaluator = MachineLearningEvaluator(species, assembly_quality)
+        evaluation = evaluator.evaluate()
+
+        assert evaluation.success
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.58.")
+
+        # Evaluating very good assembly
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(19, 481968, 4000, 3, 600, 0.379, 2877876)
+        species = Species("Listeria monocytogenes", 1.0)
+
+        evaluator = MachineLearningEvaluator(species, assembly_quality)
+        evaluation = evaluator.evaluate()
+
+        assert evaluation.success
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.95.")
+
+    def test_valid_species(self):
+        """
+        Tests machine learning evaluator with invalid species name.
+        """
+
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(788, 4029, 4000, 195, 600, 0.66, 2475580)
+        species = Species("Awesome species", 1.0)
+        evaluator = MachineLearningEvaluator(species, assembly_quality)
+        with pytest.raises(UnboundLocalError):
+            evaluator.evaluate()
+
+    def test_missing_genomic_attributes(self):
+        """
+        Tests machine learning evaluator with missing genomic attributes.
+        """
+
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(np.nan, 4029, 4000, 195, 600, 0.66, 2475580)
+        species = Species("Listeria monocytogenes", 1.0)
+        evaluator = MachineLearningEvaluator(species, assembly_quality)
+        with pytest.raises(ValueError):
+            evaluator.evaluate()
+
+    def test_invalid_genomic_attributes(self):
+        """
+        Tests machine learning evaluator with numerically incompatible genomic attributes.
+        """
+
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(0, 0, 4000, 0, 600, 0, 0)
+        species = Species("Listeria monocytogenes", 1.0)
+        evaluator = MachineLearningEvaluator(species, assembly_quality)
+        with pytest.raises(ValueError):
+            evaluator.evaluate()

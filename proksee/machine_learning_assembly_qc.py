@@ -144,8 +144,14 @@ class MachineLearningAssemblyQC():
         random_forest_model = joblib.load(os.path.join(
             DATABASE_PATH, 'random_forest_n50_numcontigs_l50_length_gccontent.joblib')
         )
-        prediction_arr = random_forest_model.predict_proba(normalized_assembly_numpy_row)
-        predicted_value = prediction_arr[0, 0]
+
+        try:
+            prediction_arr = random_forest_model.predict_proba(normalized_assembly_numpy_row)
+            predicted_value = prediction_arr[0, 0]
+
+        except ValueError:
+            raise ValueError('Missing or numerically incompatible genomic attributes. ' +
+                             'Machine learning evaluation cannot be done.')
 
         return float(predicted_value)
 
