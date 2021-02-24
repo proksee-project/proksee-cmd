@@ -23,7 +23,7 @@ specific language governing permissions and limitations under the License.
 """
 
 from proksee.assembly_evaluator import AssemblyEvaluator
-from proksee.evaluation import Evaluation
+from proksee.evaluation import MachineLearningEvaluation
 from proksee.machine_learning_assembly_qc import MachineLearningAssemblyQC
 
 
@@ -61,6 +61,7 @@ class MachineLearningEvaluator(AssemblyEvaluator):
             species, n50, num_contigs, l50, assembly_length, gc_content
         )
 
+        species_present = True
         probability = machine_learning_instance.machine_learning_probability()
 
         if probability > 0.5:
@@ -69,6 +70,6 @@ class MachineLearningEvaluator(AssemblyEvaluator):
             success = False
 
         report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
-        evaluation = Evaluation(success, report)
+        evaluation = MachineLearningEvaluation(success, report, probability, species_present)
 
         return evaluation
