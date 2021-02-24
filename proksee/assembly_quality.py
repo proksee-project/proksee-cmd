@@ -23,10 +23,10 @@ class AssemblyQuality:
 
     ATTRIBUTES:
         num_contigs (int): the number of contigs in the assembly
-        n50 (int): shortest contig needed to cover 50% of the assembly
-        n75 (int): shortest contig needed to cover 75% of the assembly
-        l50 (int): the length of the shortest contig needed to cover 50% of the assembly
-        l75 (int): the length of the shortest contig needed to cover 75% of the assembly
+        n50 (int): the length of shortest contig in the smallest set of contigs needed to cover 50% of the assembly
+        n75 (int): the length of shortest contig in the smallest set of contigs needed to cover 75% of the assembly
+        l50 (int): the number of contigs in the smallest set of contigs needed to cover 50% of the assembly
+        l75 (int): the number of contigs in the smallest set of contigs needed to cover 75% of the assembly
         gc_content (float): the GC-ratio of the bases in the assembly
         length (int): the total assembly length
     """
@@ -37,10 +37,10 @@ class AssemblyQuality:
 
         PARAMETERS:
             num_contigs (int): the number of contigs in the assembly
-            n50 (int): shortest contig needed to cover 50% of the assembly
-            n75 (int): shortest contig needed to cover 75% of the assembly
-            l50 (int): the length of the shortest contig needed to cover 50% of the assembly
-            l75 (int): the length of the shortest contig needed to cover 75% of the assembly
+            n50 (int): the length of shortest contig in the smallest set of contigs needed to cover 50% of the assembly
+            n75 (int): the length of shortest contig in the smallest set of contigs needed to cover 75% of the assembly
+            l50 (int): the number of contigs in the smallest set of contigs needed to cover 50% of the assembly
+            l75 (int): the number of contigs in the smallest set of contigs needed to cover 75% of the assembly
             gc_content (float): the GC-ratio of the bases in the assembly
             length (int): the total assembly length
         """
