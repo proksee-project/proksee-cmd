@@ -24,7 +24,7 @@ specific language governing permissions and limitations under the License.
 
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.evaluation import MachineLearningEvaluation
-from proksee.machine_learning_assembly_qc import MachineLearningAssemblyQC
+from proksee.machine_learning_assembly_qc import MachineLearningAssemblyQC, NormalizedDatabase
 
 
 class MachineLearningEvaluator(AssemblyEvaluator):
@@ -57,19 +57,23 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         assembly_length = self.assembly_quality.length
         gc_content = self.assembly_quality.gc_content
 
-        machine_learning_instance = MachineLearningAssemblyQC(
-            species, n50, num_contigs, l50, assembly_length, gc_content
-        )
+        normalized_database = NormalizedDatabase()
 
-        species_present = True
-        probability = machine_learning_instance.machine_learning_probability()
+        if normalized_database.contains(self.species.name):
+            species_present = True
+            machine_learning_instance = MachineLearningAssemblyQC(
+                normalized_database, species, n50, num_contigs, l50, assembly_length, gc_content
+            )
+            probability = machine_learning_instance.machine_learning_probability()
+            success = True if probability > 0.5 else False
+            report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
 
-        if probability > 0.5:
-            success = True
         else:
+            species_present = False
+            probability = 0.0
             success = False
+            report = "The species is not present in the database."
 
-        report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
         evaluation = MachineLearningEvaluation(success, report, probability, species_present)
 
         return evaluation

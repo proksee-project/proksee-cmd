@@ -74,18 +74,6 @@ class TestMachineLearningEvaluator:
         assert evaluation.success
         assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.95.")
 
-    def test_valid_species(self):
-        """
-        Tests machine learning evaluator with invalid species name.
-        """
-
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(788, 4029, 4000, 195, 600, 0.66, 2475580)
-        species = Species("Awesome species", 1.0)
-        evaluator = MachineLearningEvaluator(species, assembly_quality)
-        with pytest.raises(UnboundLocalError):
-            evaluator.evaluate()
-
     def test_missing_genomic_attributes(self):
         """
         Tests machine learning evaluator with missing genomic attributes.
