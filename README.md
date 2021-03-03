@@ -33,10 +33,10 @@ pip install .
 The assemble pipeline consists of three major stages:
 
 - **Stage 1: Pre-Assembly**: Verifies inputs, estimates information about the reads, filters the reads, and prepares the reads for sequence assembly.
-- **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive approximate information about the assembly, such asquality metrics. This information will assist the expert assembly.
+- **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive approximate information about the assembly, such as quality metrics. This information will assist the expert assembly.
 - **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
 
-**Command**
+### Command
 
 ```bash
 proksee assemble -o /path/to/output/directory FORWARD REVERSE
@@ -44,7 +44,7 @@ proksee assemble -o /path/to/output/directory FORWARD REVERSE
 
 Where the argument provided after -o lets a user to specify a desired output directory. `FORWARD` and `REVERSE`  are fastq sequencing read files. If `REVERSE` is not specified, only single strand (`FORWARD`) is processed by the Proksee pipeline.  
 
-**Example**
+### Example
 
 ```bash
 proksee assemble -o output forward_reads.fastq reverse_reads.fastq
