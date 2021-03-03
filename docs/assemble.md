@@ -12,7 +12,7 @@ Fast assembly involves quickly assembling the reads in an approximate way to obt
 
 ## Stage 3: Expert Assembly
 
-Expert assembly leverages the information obtained in the pre-assembly and fast assembly stages to produce a higher-quality assembly. This stage involves using the expert system to create an assembly strategy, assembling the reads, evaluating the assembly, and finally generating a report by comparing the expert assembly to the fast assembly. The pipeline may terminate assembly during the creation of the assembly strategy if the assembly statistics (N50, L50, etc.) for the fast assembly appear to vary widely from what is expected for the assembled species.
+Expert assembly leverages the information obtained in the pre-assembly and fast assembly stages to produce a higher-quality assembly. This stage involves using the expert system to create an assembly strategy, assembling the reads, evaluating the assembly, and finally generating a report by comparing the expert assembly to the fast assembly. The pipeline may terminate assembly during the creation of the assembly strategy if the assembly statistics (N50, L50, etc.) for the fast assembly appear to deviate from what is expected for the assembled species. This deviation is currently defined as outside a 5th to 95h percentile range of RefSeq-included assemblies for that species.
 
 ## Basic Usage
 
@@ -82,7 +82,7 @@ Shows a help message and exits.
 
 All output will be written to the specified output directory or, if unspecified, the current directory. The output directory will contain the following files:
 
-- assembly_statistics.csv: an overview of the assemblies produced during pipeline
+- assembly_statistics.csv: assembly statistics for the assemblies produced during pipeline
 - contigs.fasta: the final contigs generated from the expert assembly
 - fwd_filtered.fastq: the forward filtered reads
 - rev_filtered.fastq: the reverse filtered reads (if they exist)
