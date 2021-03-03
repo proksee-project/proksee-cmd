@@ -2,19 +2,11 @@
 
 Proksee is a suite of command line tools for performing assembly, annotation and visualization of microbial genomes.
 
-## Assemble
-
-The assemble pipeline consists of three major stages:
-
-- **Stage 1: Pre-Assembly**: Verifies inputs, estimates information about the reads, filters the reads, and prepares the reads for sequence assembly.
-- **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive structural information for expert assembly.
-- **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
-
 ## Release
 
 v1.0.0
 
-This is the initial public release of Proksee.
+This is the initial public release of Proksee. This release focuses on Proksee Assemble, the sequence assembly component of Proksee.
 
 ## Installation
 
@@ -36,8 +28,13 @@ Proksee can then be installed by running the setup script (when inside the Proks
 ```bash
 pip install .
 ```
+## Assemble
 
-## Usage:
+The assemble pipeline consists of three major stages:
+
+- **Stage 1: Pre-Assembly**: Verifies inputs, estimates information about the reads, filters the reads, and prepares the reads for sequence assembly.
+- **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive structural information for expert assembly.
+- **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
 
 **Command**
 
