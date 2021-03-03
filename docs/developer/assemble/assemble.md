@@ -12,7 +12,7 @@ The assemble command is responsible for assembling sequencing reads into contigs
 The assemble pipeline consists of three major stages:
 
 - **Stage 1: Pre-Assembly**: Attempts to estimate information about the reads and prepares the reads for sequence assembly.
-- **Stage 2: Fast Assembly**: Assembles the reads hastily in order to derive more information for expert assembly.
+- **Stage 2: Fast Assembly**: Assembles the quickly in order to produce a draft assemble that will help inform the expert assembly.
 - **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
 
 ## Stage 1: Pre-Assembly
@@ -51,11 +51,11 @@ The fast assembly stage assembles the reads hastily in order to gather some appr
 
 Creates a fast assembly strategy using the information gathered during the pre-assembly stage. The sequencing platform, estimated species, and read quality are provided to the expert system, which creates a fast assembly strategy using this information.
 
-It is possible that the expert system will decide that the best course of action is to terminate the pipeline because the provided information suggests no good assemble can be produced. This might happen if the read quality after filtering remains too low, or if there are too many major species present in the reads, suggesting major contamination.
+It is possible that the expert system will decide that the best course of action is to terminate the pipeline because the provided information suggests no good assembly can be produced. This might happen if the read quality after filtering remains too low, or if there are too many major species present in the reads, suggesting major contamination.
 
 ### Assemble
 
-Assembles the reads by executing the fast assembly strategy. Currently, this will always involve using the SKESA assembler0. However, it is possible to expand to other assemblers in the future.
+Assembles the reads by executing the fast assembly strategy. Currently, this will always involve using the SKESA assembler. However, it is possible to expand to other assemblers in the future.
 
 ### Evaluate Contamination
 
