@@ -33,7 +33,7 @@ pip install .
 The assemble pipeline consists of three major stages:
 
 - **Stage 1: Pre-Assembly**: Verifies inputs, estimates information about the reads, filters the reads, and prepares the reads for sequence assembly.
-- **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive structural information for expert assembly.
+- **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive approximate information about the assembly, such asquality metrics. This information will assist the expert assembly.
 - **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
 
 **Command**
