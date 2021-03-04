@@ -78,13 +78,94 @@ class NormalizedDatabase():
 
         return species_present
 
+    # Constants for assembly attributes to identify array indices
+    N50 = 0
+    NUM_CONTIGS = 1
+    L50 = 2
+    LENGTH = 3
+    GC_CONTENT = 5
+
+    def get_median_log_n50(self, species_name):
+        """
+        Returns median value of log n50 of a species from the database
+
+        PARAMETERS
+            species_name (str): string representation of a species
+
+        RETURNS
+            median_log_n50 (float): median of log n50 of a species in the database
+        """
+
+        median_log_n50 = self.database[species_name][self.N50]
+
+        return median_log_n50
+
+    def get_median_log_num_contigs(self, species_name):
+        """
+        Returns median value of log number of contigs of a species from the database
+
+        PARAMETERS
+            species_name (str): string representation of a species
+
+        RETURNS
+            median_log_num_contigs (float): median of log number of contigs of a species in the database
+        """
+
+        median_log_num_contigs = self.database[species_name][self.NUM_CONTIGS]
+
+        return median_log_num_contigs
+
+    def get_median_log_l50(self, species_name):
+        """
+        Returns median value of log l50 of a species from the database
+
+        PARAMETERS
+            species_name (str): string representation of a species
+
+        RETURNS
+            median_log_l50 (float): median of log l50 of a species in the database
+        """
+
+        median_log_l50 = self.database[species_name][self.L50]
+
+        return median_log_l50
+
+    def get_median_log_length(self, species_name):
+        """
+        Returns median value of log of assembly length of a species from the database
+
+        PARAMETERS
+            species_name (str): string representation of a species
+
+        RETURNS
+            median_log_length (float): median of log of assembly length of a species in the database
+        """
+
+        median_log_length = self.database[species_name][self.LENGTH]
+
+        return median_log_length
+
+    def get_median_gc_content(self, species_name):
+        """
+        Returns median value of gc content of a species from the database
+
+        PARAMETERS
+            species_name (str): string representation of a species
+
+        RETURNS
+            median_gc_content (float) : median of log of gc content of a species in the database
+        """
+
+        median_gc_content = self.database[species_name][self.GC_CONTENT]
+
+        return median_gc_content
+
 
 class MachineLearningAssemblyQC():
     """
     A class representing machine learning based evaluation of genomic assembly attributes
 
     ATTRIBUTES:
-        database (database): database object
         species (Species): the Species object representing the species
         n50 (int): shortest contig at 50% of the assembly length
         num_contigs (int): the number of contigs in the assembly
@@ -93,12 +174,11 @@ class MachineLearningAssemblyQC():
         gc_content (float): the GC-ratio of the bases in the assembly
     """
 
-    def __init__(self, database, species, n50, num_contigs, l50, length, gc_content):
+    def __init__(self, species, n50, num_contigs, l50, length, gc_content):
         """
         Initializes the MachineLearningAssemblyQC object
 
         PARAMETERS:
-            database (database): database object
             species (Species): the Species object representing the species
             n50 (int): shortest contig at 50% of the assembly length
             num_contigs (int): the number of contigs in the assembly
@@ -107,7 +187,6 @@ class MachineLearningAssemblyQC():
             gc_content (float): the GC-ratio of the bases in the assembly
         """
 
-        self.database = database
         self.species = species
         self.n50 = n50
         self.num_contigs = num_contigs
@@ -124,30 +203,20 @@ class MachineLearningAssemblyQC():
             normalized_assembly_statistics (numpy array): numpy vector of normalized genomic attributes
         """
 
-        # Constants for assembly attributes to identify array indices
-        N50 = 0
-        NUM_CONTIGS = 1
-        L50 = 2
-        LENGTH = 3
-        GC_CONTENT = 5
-
-        # Dictionary representation of database
-        database_dict = self.database.__dict__['database']
-
         # Log transformation and median normalization of assembly attributes
         input_logn50 = round(np.log10(self.n50), 3)
-        normalized_n50 = input_logn50 - database_dict[self.species.name][N50]
+        normalized_n50 = input_logn50 - NormalizedDatabase().get_median_log_n50(self.species.name)
 
         input_lognumcontigs = round(np.log10(self.num_contigs), 3)
-        normalized_numcontigs = input_lognumcontigs - database_dict[self.species.name][NUM_CONTIGS]
+        normalized_numcontigs = input_lognumcontigs - NormalizedDatabase().get_median_log_num_contigs(self.species.name)
 
         input_logl50 = round(np.log10(self.l50), 3)
-        normalized_l50 = input_logl50 - database_dict[self.species.name][L50]
+        normalized_l50 = input_logl50 - NormalizedDatabase().get_median_log_l50(self.species.name)
 
         input_loglength = round(np.log10(self.length), 3)
-        normalized_length = input_loglength - database_dict[self.species.name][LENGTH]
+        normalized_length = input_loglength - NormalizedDatabase().get_median_log_length(self.species.name)
 
-        normalized_gccontent = self.gc_content - database_dict[self.species.name][GC_CONTENT]
+        normalized_gccontent = self.gc_content - NormalizedDatabase().get_median_gc_content(self.species.name)
 
         normalized_assembly_array = [normalized_n50, normalized_numcontigs,
                                      normalized_l50, normalized_length, normalized_gccontent]
