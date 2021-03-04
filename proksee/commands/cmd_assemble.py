@@ -32,6 +32,7 @@ from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
 from proksee.heuristic_evaluator import HeuristicEvaluator, compare_assemblies
 from proksee.input_verification import are_valid_fastq
+from proksee.machine_learning_evaluator import MachineLearningEvaluator
 from proksee.reads import Reads
 from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
@@ -297,6 +298,11 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory)
     fast_assembly_quality = assembly_measurer.measure_quality()
 
+    # Machine learning evaluation (fast assembly)
+    evaluator = MachineLearningEvaluator(species, fast_assembly_quality)
+    evaluation = evaluator.evaluate()
+    click.echo(evaluation.report)
+
     # Expert assembly:
     expert_strategy = expert.create_expert_assembly_strategy(fast_assembly_quality, assembly_database)
     report_strategy(expert_strategy)
@@ -312,6 +318,11 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     # Measure assembly quality:
     assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory)
     expert_assembly_quality = assembly_measurer.measure_quality()
+
+    # Machine learning evaluation (fast assembly)
+    evaluator = MachineLearningEvaluator(species, expert_assembly_quality)
+    evaluation = evaluator.evaluate()
+    click.echo(evaluation.report)
 
     # Evaluate assembly quality
     assembly_evaluator = HeuristicEvaluator(species, expert_assembly_quality, assembly_database)
