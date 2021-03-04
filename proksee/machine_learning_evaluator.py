@@ -64,7 +64,7 @@ class MachineLearningEvaluator(AssemblyEvaluator):
             machine_learning_instance = MachineLearningAssemblyQC(
                 normalized_database, species, n50, num_contigs, l50, assembly_length, gc_content
             )
-            probability = machine_learning_instance.machine_learning_probability()
+            probability = machine_learning_instance.calculate_probability()
             success = True if probability > 0.5 else False
             report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
 

@@ -29,21 +29,13 @@ MACHINE_LEARNING_MODEL_FILENAME = "random_forest_n50_numcontigs_l50_length_gccon
 
 class NormalizedDatabase():
     """
-    A class representing database of median or median-log values
-    of genomic assembly attributes for different species
-
-    ATTRIBUTES
-        database (dict): a dictionary mapping species to assembly atttributes
-        create_dictionary_database (function): function to create database object
+    A class representing a database of median or median-log values
+    of genomic assembly attributes (list of floats) for different species
     """
 
     def __init__(self):
         """
         Initializes the database
-
-        PARAMETERS
-            database (dict): a dictionary mapping species to assembly atttributes
-            create_dictionary_database (function): function to create database object
         """
 
         self.database = {}
@@ -51,10 +43,10 @@ class NormalizedDatabase():
 
     def create_dictionary_database(self):
         """
-        Creates dictionary of database of median normalized genomic attributes
+        Creates dictionary of database of median normalized genomic attributes (list of floats)
 
         POST
-            The dictionary is created upon initialization of the class
+            The database dictionary will be created as a class attribute called 'database'
         """
 
         database_file = open(os.path.join(DATABASE_PATH, DATABASE_FILENAME), 'r')
@@ -123,12 +115,13 @@ class MachineLearningAssemblyQC():
         self.length = length
         self.gc_content = gc_content
 
-    def __normalize_vectorize_assembly(self):
+    def normalize_assembly_statistics(self):
         """
-        Normalizes input assembly metrics and outputs them to a numpy 1D array
+        Normalizes class attributes (n50, num_contigs, l50, length, gc_content)
+        and returns numpy vector
 
         RETURNS
-            normalized_assembly_numpy_row (numpy array): numpy vector of normalized genomic attributes
+            normalized_assembly_statistics (numpy array): numpy vector of normalized genomic attributes
         """
 
         # Constants for assembly attributes to identify array indices
@@ -160,16 +153,16 @@ class MachineLearningAssemblyQC():
                                      normalized_l50, normalized_length, normalized_gccontent]
 
         # Numpy vectorization of array
-        normalized_assembly_numpy_row = np.reshape(normalized_assembly_array, (1, -1))
+        normalized_assembly_statistics = np.reshape(normalized_assembly_array, (1, -1))
 
-        return normalized_assembly_numpy_row
+        return normalized_assembly_statistics
 
-    def __predict_probability(self, normalized_assembly_numpy_row):
+    def __predict_probability(self, normalized_assembly_statistics):
         """
         Loads a pre-trained random forest machine learning model and evaluates assembly metrics
 
         PARAMETERS
-            assembly_normalized_numpy_row (numpy array): numpy vector of normalized genomic attributes
+            normalized_assembly_statistics (numpy array): numpy vector of normalized genomic attributes
 
         RETURNS
             predicted_value (float): Prediction probability of the assembly being good
@@ -178,7 +171,7 @@ class MachineLearningAssemblyQC():
         random_forest_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
 
         try:
-            prediction_array = random_forest_model.predict_proba(normalized_assembly_numpy_row)
+            prediction_array = random_forest_model.predict_proba(normalized_assembly_statistics)
             predicted_value = prediction_array[0, 0]
 
         except ValueError:
@@ -187,15 +180,15 @@ class MachineLearningAssemblyQC():
 
         return float(predicted_value)
 
-    def machine_learning_probability(self):
+    def calculate_probability(self):
         """
-        Reads median database, parses input assembly attributes and returns machine learning prediction
+        Reads median database, parses input assembly attributes and returns machine learning predicted probability
 
         RETURNS
             probability (float): Prediction probability of the assembly being good
         """
 
-        assembly_normalized_numpy_row = self.__normalize_vectorize_assembly()
-        probability = self.__predict_probability(assembly_normalized_numpy_row)
+        normalized_assembly_statistics = self.normalize_assembly_statistics()
+        probability = self.__predict_probability(normalized_assembly_statistics)
 
         return probability
