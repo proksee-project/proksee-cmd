@@ -21,6 +21,7 @@ import os
 import numpy as np
 import joblib
 from pathlib import Path
+import warnings
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
 DATABASE_FILENAME = "species_median_log_metrics.txt"
@@ -153,7 +154,7 @@ class NormalizedDatabase():
             species_name (str): string representation of a species
 
         RETURNS
-            median_gc_content (float) : median of log of gc content of a species in the database
+            median_gc_content (float) : median of gc content of a species in the database
         """
 
         median_gc_content = self.database[species_name][self.GC_CONTENT]
@@ -203,6 +204,9 @@ class MachineLearningAssemblyQC():
             normalized_assembly_statistics (numpy array): numpy vector of normalized genomic attributes
         """
 
+        # Suppress divide by zero warning
+        np.seterr(divide='ignore')
+
         # Log transformation and median normalization of assembly attributes
         input_logn50 = round(np.log10(self.n50), 3)
         normalized_n50 = input_logn50 - NormalizedDatabase().get_median_log_n50(self.species.name)
@@ -237,7 +241,13 @@ class MachineLearningAssemblyQC():
             predicted_value (float): Prediction probability of the assembly being good
         """
 
-        random_forest_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
+        # Suppress numpy incompatibility warnings and unpickling machine learning model warnings
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", message='numpy.ufunc size changed')
+            warnings.filterwarnings("ignore", message='Trying to unpickle estimator')
+
+            # Load pre-trained random forest machine learning model
+            random_forest_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
 
         try:
             prediction_array = random_forest_model.predict_proba(normalized_assembly_statistics)
