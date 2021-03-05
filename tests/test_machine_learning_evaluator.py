@@ -50,18 +50,18 @@ class TestMachineLearningEvaluator:
         evaluation = evaluator.evaluate()
 
         assert not evaluation.success
-        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.23.")
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.09.")
 
         # Evaluating fairly good assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(157, 20000, 4000, 14, 600, 0.311, 1993406)
-        species = Species("Campylobacter coli", 1.0)
+        assembly_quality = AssemblyQuality(35, 41086, 4000, 5, 600, 0.521, 4689259)
+        species = Species("Salmonella enterica", 1.0)
 
         evaluator = MachineLearningEvaluator(species, assembly_quality)
         evaluation = evaluator.evaluate()
 
         assert evaluation.success
-        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.58.")
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.54.")
 
         # Evaluating very good assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
@@ -72,7 +72,7 @@ class TestMachineLearningEvaluator:
         evaluation = evaluator.evaluate()
 
         assert evaluation.success
-        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.95.")
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.92.")
 
     def test_missing_genomic_attributes(self):
         """

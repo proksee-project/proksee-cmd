@@ -21,7 +21,6 @@ import os
 import numpy as np
 import joblib
 from pathlib import Path
-import warnings
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
 DATABASE_FILENAME = "species_median_log_metrics.txt"
@@ -241,13 +240,7 @@ class MachineLearningAssemblyQC():
             predicted_value (float): Prediction probability of the assembly being good
         """
 
-        # Suppress numpy incompatibility warnings and unpickling machine learning model warnings
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore", message='numpy.ufunc size changed')
-            warnings.filterwarnings("ignore", message='Trying to unpickle estimator')
-
-            # Load pre-trained random forest machine learning model
-            random_forest_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
+        random_forest_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
 
         try:
             prediction_array = random_forest_model.predict_proba(normalized_assembly_statistics)
