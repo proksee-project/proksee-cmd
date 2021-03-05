@@ -261,7 +261,7 @@ class MachineLearningAssemblyQC():
 
     def calculate_probability(self):
         """
-        Reads median database, parses input assembly attributes and returns machine learning predicted probability
+        Parses and normalizes input assembly attributes. Returns machine learning prediction probability
 
         RETURNS
             probability (float): Prediction probability of the assembly being good
