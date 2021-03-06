@@ -13,6 +13,6 @@ dependencies:
 - spades
 - pip
 - pip:
-  - numpy=1.19.5
-  - scikit-learn=0.24.1
-  - joblib=1.0.1
+  - numpy==1.19.5
+  - scikit-learn==0.24.1
+  - joblib==1.0.1
