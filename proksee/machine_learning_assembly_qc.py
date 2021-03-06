@@ -21,6 +21,7 @@ import os
 import numpy as np
 import joblib
 from pathlib import Path
+import math
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
 DATABASE_FILENAME = "species_median_log_metrics.txt"
@@ -203,31 +204,41 @@ class MachineLearningAssemblyQC():
             normalized_assembly_statistics (numpy array): numpy vector of normalized genomic attributes
         """
 
-        # Suppress divide by zero warning
-        np.seterr(divide='ignore')
+        if (self.n50 <= 0 or self.num_contigs <= 0 or self.l50 <= 0 or
+                self.length <= 0 or self.gc_content < 0):
+            raise ValueError('One or more genomic attributes are numerically incompatible. ' +
+                             'Machine learning evaluation cannot be done.')
 
-        # Log transformation and median normalization of assembly attributes
-        input_logn50 = round(np.log10(self.n50), 3)
-        normalized_n50 = input_logn50 - NormalizedDatabase().get_median_log_n50(self.species.name)
+        elif (math.isnan(self.n50) or math.isnan(self.num_contigs) or math.isnan(self.l50) or
+                math.isnan(self.length) or math.isnan(self.gc_content)):
+            raise ValueError('One or more genomic attributes are missing. ' +
+                             'Machine learning evaluation cannot be done.')
 
-        input_lognumcontigs = round(np.log10(self.num_contigs), 3)
-        normalized_numcontigs = input_lognumcontigs - NormalizedDatabase().get_median_log_num_contigs(self.species.name)
+        else:
 
-        input_logl50 = round(np.log10(self.l50), 3)
-        normalized_l50 = input_logl50 - NormalizedDatabase().get_median_log_l50(self.species.name)
+            # Log transformation and median normalization of assembly attributes
+            input_logn50 = round(np.log10(self.n50), 3)
+            normalized_n50 = input_logn50 - NormalizedDatabase().get_median_log_n50(self.species.name)
 
-        input_loglength = round(np.log10(self.length), 3)
-        normalized_length = input_loglength - NormalizedDatabase().get_median_log_length(self.species.name)
+            input_lognumcontigs = round(np.log10(self.num_contigs), 3)
+            normalized_numcontigs = (input_lognumcontigs -
+                                     NormalizedDatabase().get_median_log_num_contigs(self.species.name))
 
-        normalized_gccontent = self.gc_content - NormalizedDatabase().get_median_gc_content(self.species.name)
+            input_logl50 = round(np.log10(self.l50), 3)
+            normalized_l50 = input_logl50 - NormalizedDatabase().get_median_log_l50(self.species.name)
 
-        normalized_assembly_array = [normalized_n50, normalized_numcontigs,
-                                     normalized_l50, normalized_length, normalized_gccontent]
+            input_loglength = round(np.log10(self.length), 3)
+            normalized_length = input_loglength - NormalizedDatabase().get_median_log_length(self.species.name)
 
-        # Numpy vectorization of array
-        normalized_assembly_statistics = np.reshape(normalized_assembly_array, (1, -1))
+            normalized_gccontent = self.gc_content - NormalizedDatabase().get_median_gc_content(self.species.name)
 
-        return normalized_assembly_statistics
+            normalized_assembly_array = [normalized_n50, normalized_numcontigs,
+                                         normalized_l50, normalized_length, normalized_gccontent]
+
+            # Numpy vectorization of array
+            normalized_assembly_statistics = np.reshape(normalized_assembly_array, (1, -1))
+
+            return normalized_assembly_statistics
 
     def __predict_probability(self, normalized_assembly_statistics):
         """
@@ -241,14 +252,8 @@ class MachineLearningAssemblyQC():
         """
 
         random_forest_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
-
-        try:
-            prediction_array = random_forest_model.predict_proba(normalized_assembly_statistics)
-            predicted_value = prediction_array[0, 0]
-
-        except ValueError:
-            raise ValueError('Missing or numerically incompatible genomic attributes. ' +
-                             'Machine learning evaluation cannot be done.')
+        prediction_array = random_forest_model.predict_proba(normalized_assembly_statistics)
+        predicted_value = prediction_array[0, 0]
 
         return float(predicted_value)
 
