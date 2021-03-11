@@ -35,7 +35,7 @@ class NormalizedDatabase():
     of genomic assembly attributes (list of floats) for different species
 
     ATTRIBUTES
-        database (dict): a dictionary mapping species to assembly attributes
+        database (dict): a dictionary mapping species (str) to assembly attributes (list of floats)
     """
 
     # Constants for assembly attributes to identify array indices
