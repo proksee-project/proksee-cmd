@@ -33,7 +33,17 @@ class NormalizedDatabase():
     """
     A class representing a database of median or median-log values
     of genomic assembly attributes (list of floats) for different species
+
+    ATTRIBUTES
+        database (dict): a dictionary mapping species to assembly attributes
     """
+
+    # Constants for assembly attributes to identify array indices
+    N50 = 0
+    NUM_CONTIGS = 1
+    L50 = 2
+    LENGTH = 3
+    GC_CONTENT = 5
 
     def __init__(self):
         """
@@ -80,22 +90,15 @@ class NormalizedDatabase():
 
         return species_present
 
-    # Constants for assembly attributes to identify array indices
-    N50 = 0
-    NUM_CONTIGS = 1
-    L50 = 2
-    LENGTH = 3
-    GC_CONTENT = 5
-
     def get_median_log_n50(self, species_name):
         """
-        Returns median value of log n50 of a species from the database
+        Returns median value of log(n50) of a species from the database
 
         PARAMETERS
             species_name (str): string representation of a species
 
         RETURNS
-            median_log_n50 (float): median of log n50 of a species in the database
+            median_log_n50 (float): median of log(n50) of a species in the database
         """
 
         median_log_n50 = self.database[species_name][self.N50]
@@ -104,13 +107,13 @@ class NormalizedDatabase():
 
     def get_median_log_num_contigs(self, species_name):
         """
-        Returns median value of log number of contigs of a species from the database
+        Returns median value of log(number of contigs) of a species from the database
 
         PARAMETERS
             species_name (str): string representation of a species
 
         RETURNS
-            median_log_num_contigs (float): median of log number of contigs of a species in the database
+            median_log_num_contigs (float): median of log(number of contigs) of a species in the database
         """
 
         median_log_num_contigs = self.database[species_name][self.NUM_CONTIGS]
@@ -119,13 +122,13 @@ class NormalizedDatabase():
 
     def get_median_log_l50(self, species_name):
         """
-        Returns median value of log l50 of a species from the database
+        Returns median value of log(l50) of a species from the database
 
         PARAMETERS
             species_name (str): string representation of a species
 
         RETURNS
-            median_log_l50 (float): median of log l50 of a species in the database
+            median_log_l50 (float): median of log(l50) of a species in the database
         """
 
         median_log_l50 = self.database[species_name][self.L50]
@@ -134,13 +137,13 @@ class NormalizedDatabase():
 
     def get_median_log_length(self, species_name):
         """
-        Returns median value of log of assembly length of a species from the database
+        Returns median value of log(assembly length) of a species from the database
 
         PARAMETERS
             species_name (str): string representation of a species
 
         RETURNS
-            median_log_length (float): median of log of assembly length of a species in the database
+            median_log_length (float): median of log(assembly length) of a species in the database
         """
 
         median_log_length = self.database[species_name][self.LENGTH]
@@ -252,7 +255,7 @@ class MachineLearningAssemblyQC():
             predicted_value (float): Prediction probability of the assembly being good
         """
 
-        # Ignore numpy.ufunc warning (this is mostly benign)
+        # Ignore numpy.ufunc warning (mostly benign, see: github.com/numpy/numpy/issues/11788)
         warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 
         random_forest_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
@@ -264,9 +267,10 @@ class MachineLearningAssemblyQC():
     def calculate_probability(self):
         """
         Parses and normalizes input assembly attributes. Returns machine learning prediction probability
+        of the assembly resembling an NCBI reference sequence assembly
 
         RETURNS
-            probability (float): Prediction probability of the assembly being good
+            probability (float): Prediction probability of the assembly resembling an NCBI reference sequence assembly
         """
 
         normalized_assembly_statistics = self.normalize_assembly_statistics()
