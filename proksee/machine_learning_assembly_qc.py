@@ -43,6 +43,7 @@ class NormalizedDatabase():
     NUM_CONTIGS = 1
     L50 = 2
     LENGTH = 3
+    GENOME_COVERAGE = 4
     GC_CONTENT = 5
 
     def __init__(self):
