@@ -25,24 +25,13 @@ from pathlib import Path
 
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
+from proksee.heuristic_evaluator import HeuristicEvaluator
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
 from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "database.csv")
-
-
-@click.command('evaluate',
-               short_help='Evaluates the quality of an assembly.')
-@click.argument('contigs', required=True,
-                type=click.Path(exists=True, file_okay=True, dir_okay=False))
-@click.option('-o', '--output', required=True,
-              type=click.Path(exists=False, file_okay=False,
-                              dir_okay=True, writable=True))
-@click.pass_context
-def cli(ctx, contigs, output):
-    evaluate(contigs, output)
 
 
 def determine_species(contigs_filename, assembly_database, output_directory, species_name=None):
@@ -79,9 +68,28 @@ def determine_species(contigs_filename, assembly_database, output_directory, spe
     return species_list
 
 
+@click.command('evaluate',
+               short_help='Evaluates the quality of an assembly.')
+@click.argument('contigs', required=True,
+                type=click.Path(exists=True, file_okay=True, dir_okay=False))
+@click.option('-o', '--output', required=True,
+              type=click.Path(exists=False, file_okay=False,
+                              dir_okay=True, writable=True))
+@click.pass_context
+def cli(ctx, contigs, output):
+    evaluate(contigs, output)
+
+
 def evaluate(contigs_filename, output_directory):
     """
     The main control flow of the program that evaluates the assembly.
+
+    ARGUMENTS:
+        contigs_filename (string): the filename of the contigs to evaluate
+        output_directory (string): the location to place all program output and temporary files
+
+    POST:
+        The contigs with passed filename will be evaluated and the results will be written to standard output.
     """
 
     # Species and assembly database:
@@ -90,15 +98,20 @@ def evaluate(contigs_filename, output_directory):
     # Estimate species
     species_list = determine_species(contigs_filename, assembly_database, output_directory, None)
     species = species_list[0]
-    print("The identified species is: " + str(species.name))
+    click.echo("The identified species is: " + str(species.name) + "\n")
 
     # Measure assembly quality statistics:
     assembly_measurer = AssemblyMeasurer(contigs_filename, output_directory)
-    fast_assembly_quality = assembly_measurer.measure_quality()
+    assembly_quality = assembly_measurer.measure_quality()
 
-    # Machine learning evaluation (fast assembly)
-    evaluator = MachineLearningEvaluator(species, fast_assembly_quality)
+    # Heuristic evaluation:
+    evaluator = HeuristicEvaluator(species, assembly_quality, assembly_database)
+    evaluation = evaluator.evaluate()
+    print(evaluation.report)
+
+    # Machine learning evaluation:
+    evaluator = MachineLearningEvaluator(species, assembly_quality)
     evaluation = evaluator.evaluate()
     click.echo(evaluation.report)
 
-    click.echo("Complete.\n")
+    click.echo("\nComplete.\n")
