@@ -74,7 +74,7 @@ def determine_species(contigs_filename, assembly_database, output_directory, spe
 
         input_file_locations = [contigs_filename]  # Needs to be a list.
         species_estimator = SpeciesEstimator(input_file_locations, output_directory)
-        species_list = species_estimator.estimate_major_species()
+        species_list = species_estimator.estimate_all_species()
 
     return species_list
 
@@ -90,8 +90,7 @@ def evaluate(contigs_filename, output_directory):
     # Estimate species
     species_list = determine_species(contigs_filename, assembly_database, output_directory, None)
     species = species_list[0]
-    #report_species(species_list)
-    print(species.name)
+    print("The identified species is: " + str(species.name))
 
     # Measure assembly quality statistics:
     assembly_measurer = AssemblyMeasurer(contigs_filename, output_directory)

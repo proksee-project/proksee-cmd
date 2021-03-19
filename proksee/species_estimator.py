@@ -87,8 +87,9 @@ class SpeciesEstimator:
 
     def estimate_major_species(self):
         """
-        Estimates the major species present in the input data. If this function returns more than one "major" species,
-        then it is possible there is major contamination in the input data.
+        Estimates the major species present in the input data. The input data will need to be in a form similar to
+        sequencing reads (i.e. have multiplicity, or depth of coverage). If this function returns more than one "major"
+        species, then it is possible there is major contamination in the input data.
 
         RETURNS
             species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
