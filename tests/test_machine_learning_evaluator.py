@@ -31,14 +31,8 @@ class TestMachineLearningEvaluator:
         """
 
         # Evaluating very bad assembly
-        num_contigs = 788
-        n50 = 4029
-        n75 = 4000
-        l50 = 195
-        l75 = 600
-        gc_content = 0.66
-        length = 2475580
-        assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(788, 4029, 4000, 195, 600, 0.66, 2475580)
         species = Species("Actinobacteria bacterium", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
@@ -48,14 +42,8 @@ class TestMachineLearningEvaluator:
         assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.0.")
 
         # Evaluating fairly bad assembly
-        num_contigs = 42
-        n50 = 133891
-        n75 = 4000
-        l50 = 6
-        l75 = 600
-        gc_content = 0.383
-        length = 1986343
-        assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(42, 133891, 4000, 6, 600, 0.383, 1986343)
         species = Species("Streptococcus pyogenes", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
@@ -65,14 +53,8 @@ class TestMachineLearningEvaluator:
         assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.09.")
 
         # Evaluating fairly good assembly
-        num_contigs = 35
-        n50 = 41086
-        n75 = 4000
-        l50 = 5
-        l75 = 600
-        gc_content = 0.521
-        length = 4689259
-        assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(35, 41086, 4000, 5, 600, 0.521, 4689259)
         species = Species("Salmonella enterica", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
@@ -82,14 +64,8 @@ class TestMachineLearningEvaluator:
         assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.54.")
 
         # Evaluating very good assembly
-        num_contigs = 19
-        n50 = 481968
-        n75 = 4000
-        l50 = 3
-        l75 = 600
-        gc_content = 0.379
-        length = 2877876
-        assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(19, 481968, 4000, 3, 600, 0.379, 2877876)
         species = Species("Listeria monocytogenes", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
@@ -103,14 +79,8 @@ class TestMachineLearningEvaluator:
         Tests machine learning evaluator with missing genomic attributes.
         """
 
-        num_contigs = 400
-        n50 = 4029
-        n75 = 4000
-        l50 = 195
-        l75 = 600
-        gc_content = math.nan
-        length = 2475580
-        assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(400, 4029, 4000, 195, 600, math.nan, 2475580)
         species = Species("Listeria monocytogenes", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
@@ -122,14 +92,8 @@ class TestMachineLearningEvaluator:
         Tests machine learning evaluator with numerically incompatible genomic attributes.
         """
 
-        num_contigs = 0
-        n50 = 0
-        n75 = 4000
-        l50 = 0
-        l75 = 600
-        gc_content = 0
-        length = 0
-        assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(0, 0, 4000, 0, 600, 0, 0)
         species = Species("Listeria monocytogenes", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
