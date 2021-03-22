@@ -105,13 +105,13 @@ def evaluate(contigs_filename, output_directory):
     assembly_quality = assembly_measurer.measure_quality()
 
     # Heuristic evaluation:
-    evaluator = HeuristicEvaluator(species, assembly_quality, assembly_database)
-    evaluation = evaluator.evaluate()
+    evaluator = HeuristicEvaluator(species, assembly_database)
+    evaluation = evaluator.evaluate(assembly_quality)
     print(evaluation.report)
 
     # Machine learning evaluation:
-    evaluator = MachineLearningEvaluator(species, assembly_quality)
-    evaluation = evaluator.evaluate()
+    evaluator = MachineLearningEvaluator(species)
+    evaluation = evaluator.evaluate(assembly_quality)
     click.echo(evaluation.report)
 
     click.echo("\nComplete.\n")
