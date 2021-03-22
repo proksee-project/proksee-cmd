@@ -32,41 +32,48 @@ class MachineLearningEvaluator(AssemblyEvaluator):
     A machine learning-based sequence assembly evaluator.
     """
 
-    def __init__(self, species):
+    def __init__(self, species, assembly_quality, normalized_database):
         """
         Initializes the machine learning-based assembly evaluator.
 
         PARAMETERS:
             species (Species): the biological species
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
+            normalized_database (NormalizedDatabase): normalized assembly attributes
         """
 
-        super().__init__(species)
+        super().__init__(species, assembly_quality)
+        self.normalized_database = NormalizedDatabase(
+                                        self.species, self.assembly_quality.n50,
+                                        self.assembly_quality.num_contigs,
+                                        self.assembly_quality.l50,
+                                        self.assembly_quality.length,
+                                        self.assembly_quality.gc_content
+        )
 
-    def evaluate(self, assembly_quality):
+    def evaluate(self):
         """
         Evaluates the quality of the assembly using a machine learning-based approach.
-
-        PARAMETERS:
-            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (Evaluation): an evaluation of the assembly's quality
         """
+
         species = self.species
-        n50 = assembly_quality.n50
-        l50 = assembly_quality.l50
-        num_contigs = assembly_quality.num_contigs
-        assembly_length = assembly_quality.length
-        gc_content = assembly_quality.gc_content
+        n50 = self.assembly_quality.n50
+        l50 = self.assembly_quality.l50
+        num_contigs = self.assembly_quality.num_contigs
+        assembly_length = self.assembly_quality.length
+        gc_content = self.assembly_quality.gc_content
 
-        normalized_database = NormalizedDatabase()
-
-        if normalized_database.contains(self.species.name):
+        if self.normalized_database.contains(self.species.name):
             species_present = True
             assembly_qc = MachineLearningAssemblyQC(
                 species, n50, num_contigs, l50, assembly_length, gc_content
             )
-            probability = assembly_qc.calculate_probability()
+            probability = assembly_qc.calculate_probability(
+                self.normalized_database.normalize_assembly_statistics()
+            )
             success = True if probability > 0.5 else False
             report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
 
