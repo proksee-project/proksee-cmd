@@ -98,8 +98,8 @@ class ExpertSystem:
 
         if assembly_database.contains(species_name):
 
-            evaluator = HeuristicEvaluator(self.species, assembly_quality, assembly_database)
-            evaluation = evaluator.evaluate()
+            evaluator = HeuristicEvaluator(self.species, assembly_database)
+            evaluation = evaluator.evaluate(assembly_quality)
 
             assembler = SpadesAssembler(self.reads, self.output_directory)
             proceed = evaluation.success  # proceed if evaluation was successful
@@ -124,8 +124,8 @@ class ExpertSystem:
             strategy (AssemblyStrategy): a strategy for assembly
         """
 
-        evaluator = HeuristicEvaluator(self.species, assembly_quality, assembly_database)
-        evaluation = evaluator.evaluate()
+        evaluator = HeuristicEvaluator(self.species, assembly_database)
+        evaluation = evaluator.evaluate(assembly_quality)
 
         assembler = SpadesAssembler(self.reads, self.output_directory)
         proceed = evaluation.success  # proceed if evaluation was successful

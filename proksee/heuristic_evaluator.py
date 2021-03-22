@@ -28,38 +28,40 @@ class HeuristicEvaluator(AssemblyEvaluator):
         assembly_database (AssemblyDatabase): a database containing assembly statistics for various species
     """
 
-    def __init__(self, species, assembly_quality, assembly_database):
+    def __init__(self, species, assembly_database):
         """
         Initializes the heuristic assembly evaluator.
 
         PARAMETERS:
             species (Species): the biological species
-            assembly_quality (AssemblyQuality): the quality measurements of the assembly
             assembly_database (AssemblyDatabase): a database containing assembly statistics for various species
         """
 
-        super().__init__(species, assembly_quality)
+        super().__init__(species)
         self.assembly_database = assembly_database
 
-    def evaluate(self):
+    def evaluate(self, assembly_quality):
         """
         Evaluates the quality of the assembly. The quality measurements will be compared against the assembly
         statistics for the given species in the assembly database. If the species is not present in the database, then
         it will be compared to fallback values.
+
+        PARAMETERS:
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (AssemblyEvaluation): an evaluation of the assembly's quality
         """
 
         if self.assembly_database.contains(self.species.name):
-            assembly_evaluation = self.evaluate_assembly_from_database()
+            assembly_evaluation = self.evaluate_assembly_from_database(assembly_quality)
 
         else:
-            assembly_evaluation = self.evaluate_assembly_from_fallback()
+            assembly_evaluation = self.evaluate_assembly_from_fallback(assembly_quality)
 
         return assembly_evaluation
 
-    def evaluate_assembly_from_database(self):
+    def evaluate_assembly_from_database(self, assembly_quality):
         """
         Evaluates the quality of the assembly. The quality measurements will be compared against the assembly
         statistics for the given species in the assembly database.
@@ -68,10 +70,10 @@ class HeuristicEvaluator(AssemblyEvaluator):
             evaluation (AssemblyEvaluation): an evaluation of the assembly's quality against the assembly database
         """
 
-        n50_evaluation = self.evaluate_n50()
-        contigs_evaluation = self.evaluate_num_contigs()
-        l50_evaluation = self.evaluate_l50()
-        length_evaluation = self.evaluate_length()
+        n50_evaluation = self.evaluate_n50(assembly_quality)
+        contigs_evaluation = self.evaluate_num_contigs(assembly_quality)
+        l50_evaluation = self.evaluate_l50(assembly_quality)
+        length_evaluation = self.evaluate_length(assembly_quality)
 
         success = n50_evaluation.success and contigs_evaluation.success \
             and l50_evaluation.success and length_evaluation.success
@@ -87,9 +89,12 @@ class HeuristicEvaluator(AssemblyEvaluator):
 
         return assembly_evaluation
 
-    def evaluate_assembly_from_fallback(self):
+    def evaluate_assembly_from_fallback(self, assembly_quality):
         """
         Evaluates the quality of the assembly. The quality measurements will be compared against fallback values.
+
+        PARAMETERS:
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (AssemblyEvaluation): an evaluation of the assembly's quality
@@ -101,9 +106,9 @@ class HeuristicEvaluator(AssemblyEvaluator):
         MAX_L50 = 500
         MAX_CONTIGS = 2000
 
-        n50 = self.assembly_quality.n50
-        num_contigs = self.assembly_quality.num_contigs
-        l50 = self.assembly_quality.l50
+        n50 = assembly_quality.n50
+        num_contigs = assembly_quality.num_contigs
+        l50 = assembly_quality.l50
 
         if n50 < 5000:
             success = False
@@ -150,9 +155,12 @@ class HeuristicEvaluator(AssemblyEvaluator):
 
         return assembly_evaluation
 
-    def evaluate_n50(self):
+    def evaluate_n50(self, assembly_quality):
         """
         Evaluates the N50 against the assembly statistics for the given species in the assembly database.
+
+        PARAMETERS:
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (Evaluation): an evaluation of the N50 against the assembly database
@@ -161,7 +169,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         database = self.assembly_database
         species = self.species
 
-        n50 = self.assembly_quality.n50
+        n50 = assembly_quality.n50
         low_fail = database.get_n50_quantile(species.name, 0.05)
         low_warning = database.get_n50_quantile(species.name, 0.20)
         high_warning = database.get_n50_quantile(species.name, 0.80)
@@ -171,10 +179,13 @@ class HeuristicEvaluator(AssemblyEvaluator):
 
         return evaluation
 
-    def evaluate_num_contigs(self):
+    def evaluate_num_contigs(self, assembly_quality):
         """
         Evaluates the number of contigs against the assembly statistics for the given species in the assembly
         database.
+
+        PARAMETERS:
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (Evaluation): an evaluation of the number of contigs against the assembly database
@@ -183,7 +194,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         database = self.assembly_database
         species = self.species
 
-        num_contigs = self.assembly_quality.num_contigs
+        num_contigs = assembly_quality.num_contigs
         low_fail = database.get_contigs_quantile(species.name, 0.05)
         low_warning = database.get_contigs_quantile(species.name, 0.20)
         high_warning = database.get_contigs_quantile(species.name, 0.80)
@@ -193,9 +204,12 @@ class HeuristicEvaluator(AssemblyEvaluator):
 
         return evaluation
 
-    def evaluate_l50(self):
+    def evaluate_l50(self, assembly_quality):
         """
         Evaluates the L50 against the assembly statistics for the given species in the assembly database.
+
+        PARAMETERS:
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (Evaluation): an evaluation of the L50 against the assembly database
@@ -204,7 +218,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         database = self.assembly_database
         species = self.species
 
-        l50 = self.assembly_quality.l50
+        l50 = assembly_quality.l50
         low_fail = database.get_l50_quantile(species.name, 0.05)
         low_warning = database.get_l50_quantile(species.name, 0.20)
         high_warning = database.get_l50_quantile(species.name, 0.80)
@@ -214,10 +228,13 @@ class HeuristicEvaluator(AssemblyEvaluator):
 
         return evaluation
 
-    def evaluate_length(self):
+    def evaluate_length(self, assembly_quality):
         """
         Evaluates the assembly length against the assembly statistics for the given species in the assembly
         database.
+
+        PARAMETERS:
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (Evaluation): an evaluation of the assembly length against the assembly database
@@ -226,7 +243,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         database = self.assembly_database
         species = self.species
 
-        length = self.assembly_quality.length
+        length = assembly_quality.length
         low_fail = database.get_length_quantile(species.name, 0.05)
         low_warning = database.get_length_quantile(species.name, 0.20)
         high_warning = database.get_length_quantile(species.name, 0.80)
