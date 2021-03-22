@@ -36,12 +36,6 @@ class NormalizedDatabase():
 
     ATTRIBUTES
         database (dict): a dictionary mapping species (str) to assembly attributes (list of floats)
-        species (Species): the Species object representing the species
-        n50 (int): shortest contig at 50% of the assembly length
-        num_contigs (int): the number of contigs in the assembly
-        l50 (int): smallest number of contigs summing up to 50% of the assembly length
-        length (int): the total assembly length
-        gc_content (float): the GC-ratio of the bases in the assembly
     """
 
     # Constants for assembly attributes to identify array indices
@@ -52,27 +46,13 @@ class NormalizedDatabase():
     GENOME_COVERAGE = 4
     GC_CONTENT = 5
 
-    def __init__(self, species, n50, num_contigs, l50, length, gc_content):
+    def __init__(self):
         """
         Initializes the database
-
-        PARAMETERS:
-            species (Species): the Species object representing the species
-            n50 (int): shortest contig at 50% of the assembly length
-            num_contigs (int): the number of contigs in the assembly
-            l50 (int): smallest number of contigs summing up to 50% of the assembly length
-            length (int): the total assembly length
-            gc_content (float): the GC-ratio of the bases in the assembly
         """
 
         self.database = {}
         self.create_dictionary_database()
-        self.species = species
-        self.n50 = n50
-        self.num_contigs = num_contigs
-        self.l50 = l50
-        self.length = length
-        self.gc_content = gc_content
 
     def create_dictionary_database(self):
         """
@@ -186,41 +166,49 @@ class NormalizedDatabase():
 
         return median_gc_content
 
-    def normalize_assembly_statistics(self):
+    def normalize_assembly_statistics(self, species_name, n50, num_contigs, l50, length, gc_content):
         """
         Normalizes class attributes (n50, num_contigs, l50, length, gc_content)
         and returns numpy vector
+
+        PARAMETERS
+            species_name (str): string representation of a species
+            n50 (int): shortest contig at 50% of the assembly length
+            num_contigs (int): the number of contigs in the assembly
+            l50 (int): smallest number of contigs summing up to 50% of the assembly length
+            length (int): the total assembly length
+            gc_content (float): the GC-ratio of the bases in the assembly
 
         RETURNS
             normalized_assembly_statistics (numpy array): numpy vector of normalized genomic attributes
         """
 
-        if (self.n50 <= 0 or self.num_contigs <= 0 or self.l50 <= 0 or
-                self.length <= 0 or self.gc_content < 0):
+        if (n50 <= 0 or num_contigs <= 0 or l50 <= 0 or
+                length <= 0 or gc_content < 0):
             raise ValueError('One or more genomic attributes are numerically incompatible. ' +
                              'Machine learning evaluation cannot be done.')
 
-        elif (math.isnan(self.n50) or math.isnan(self.num_contigs) or math.isnan(self.l50) or
-                math.isnan(self.length) or math.isnan(self.gc_content)):
+        elif (math.isnan(n50) or math.isnan(num_contigs) or math.isnan(l50) or
+                math.isnan(length) or math.isnan(gc_content)):
             raise ValueError('One or more genomic attributes are missing. ' +
                              'Machine learning evaluation cannot be done.')
 
         else:
             # Log transformation and median normalization of assembly attributes
-            input_logn50 = round(np.log10(self.n50), 3)
-            normalized_n50 = input_logn50 - self.get_median_log_n50(self.species.name)
+            input_logn50 = round(np.log10(n50), 3)
+            normalized_n50 = input_logn50 - self.get_median_log_n50(species_name)
 
-            input_lognumcontigs = round(np.log10(self.num_contigs), 3)
+            input_lognumcontigs = round(np.log10(num_contigs), 3)
             normalized_numcontigs = (input_lognumcontigs -
-                                     self.get_median_log_num_contigs(self.species.name))
+                                     self.get_median_log_num_contigs(species_name))
 
-            input_logl50 = round(np.log10(self.l50), 3)
-            normalized_l50 = input_logl50 - self.get_median_log_l50(self.species.name)
+            input_logl50 = round(np.log10(l50), 3)
+            normalized_l50 = input_logl50 - self.get_median_log_l50(species_name)
 
-            input_loglength = round(np.log10(self.length), 3)
-            normalized_length = input_loglength - self.get_median_log_length(self.species.name)
+            input_loglength = round(np.log10(length), 3)
+            normalized_length = input_loglength - self.get_median_log_length(species_name)
 
-            normalized_gccontent = self.gc_content - self.get_median_gc_content(self.species.name)
+            normalized_gccontent = gc_content - self.get_median_gc_content(species_name)
 
             normalized_assembly_array = [normalized_n50, normalized_numcontigs,
                                          normalized_l50, normalized_length, normalized_gccontent]
@@ -242,9 +230,10 @@ class MachineLearningAssemblyQC():
         l50 (int): smallest number of contigs summing up to 50% of the assembly length
         length (int): the total assembly length
         gc_content (float): the GC-ratio of the bases in the assembly
+        normalized_database (NormalizedDatabase): normalized assembly attributes
     """
 
-    def __init__(self, species, n50, num_contigs, l50, length, gc_content):
+    def __init__(self, species, n50, num_contigs, l50, length, gc_content, normalized_database):
         """
         Initializes the MachineLearningAssemblyQC object
 
@@ -255,6 +244,7 @@ class MachineLearningAssemblyQC():
             l50 (int): smallest number of contigs summing up to 50% of the assembly length
             length (int): the total assembly length
             gc_content (float): the GC-ratio of the bases in the assembly
+            normalized_database (NormalizedDatabase): normalized assembly attributes
         """
 
         self.species = species
@@ -263,22 +253,20 @@ class MachineLearningAssemblyQC():
         self.l50 = l50
         self.length = length
         self.gc_content = gc_content
+        self.normalized_database = normalized_database
 
-    def calculate_probability(self, normalized_assembly_statistics):
+    def calculate_probability(self):
         """
         Loads a pre-trained random forest machine learning model and evaluates assembly metrics
-
-        PARAMETERS
-            normalized_assembly_statistics (numpy array): numpy vector of normalized genomic attributes
 
         RETURNS
             predicted_value (float): Prediction probability of the assembly resembling an NCBI reference
             sequence assembly
         """
 
-        normalized_assembly_statistics = NormalizedDatabase(self.species, self.n50, self.num_contigs,
-                                                            self.l50, self.length, self.gc_content
-                                                            ).normalize_assembly_statistics()
+        normalized_assembly_statistics = self.normalized_database.normalize_assembly_statistics(
+            self.species.name, self.n50, self.num_contigs, self.l50, self.length, self.gc_content
+        )
 
         # Ignore numpy.ufunc warning (mostly benign, see: github.com/numpy/numpy/issues/11788)
         warnings.filterwarnings("ignore", message="numpy.ufunc size changed")

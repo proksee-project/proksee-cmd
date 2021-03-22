@@ -19,7 +19,6 @@ specific language governing permissions and limitations under the License.
 from proksee.assembly_quality import AssemblyQuality
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
 from proksee.species import Species
-from proksee.machine_learning_assembly_qc import NormalizedDatabase
 import pytest
 import math
 
@@ -41,12 +40,9 @@ class TestMachineLearningEvaluator:
         length = 2475580
         assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
         species = Species("Actinobacteria bacterium", 1.0)
-        normalized_database = NormalizedDatabase(
-            species, n50, num_contigs, l50, length, gc_content
-        )
 
-        evaluator = MachineLearningEvaluator(species, assembly_quality, normalized_database)
-        evaluation = evaluator.evaluate()
+        evaluator = MachineLearningEvaluator(species)
+        evaluation = evaluator.evaluate(assembly_quality)
 
         assert not evaluation.success
         assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.0.")
@@ -61,12 +57,9 @@ class TestMachineLearningEvaluator:
         length = 1986343
         assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
         species = Species("Streptococcus pyogenes", 1.0)
-        normalized_database = NormalizedDatabase(
-            species, n50, num_contigs, l50, length, gc_content
-        )
 
-        evaluator = MachineLearningEvaluator(species, assembly_quality, normalized_database)
-        evaluation = evaluator.evaluate()
+        evaluator = MachineLearningEvaluator(species)
+        evaluation = evaluator.evaluate(assembly_quality)
 
         assert not evaluation.success
         assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.09.")
@@ -81,12 +74,9 @@ class TestMachineLearningEvaluator:
         length = 4689259
         assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
         species = Species("Salmonella enterica", 1.0)
-        normalized_database = NormalizedDatabase(
-            species, n50, num_contigs, l50, length, gc_content
-        )
 
-        evaluator = MachineLearningEvaluator(species, assembly_quality, normalized_database)
-        evaluation = evaluator.evaluate()
+        evaluator = MachineLearningEvaluator(species)
+        evaluation = evaluator.evaluate(assembly_quality)
 
         assert evaluation.success
         assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.54.")
@@ -101,12 +91,9 @@ class TestMachineLearningEvaluator:
         length = 2877876
         assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
         species = Species("Listeria monocytogenes", 1.0)
-        normalized_database = NormalizedDatabase(
-            species, n50, num_contigs, l50, length, gc_content
-        )
 
-        evaluator = MachineLearningEvaluator(species, assembly_quality, normalized_database)
-        evaluation = evaluator.evaluate()
+        evaluator = MachineLearningEvaluator(species)
+        evaluation = evaluator.evaluate(assembly_quality)
 
         assert evaluation.success
         assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.92.")
@@ -125,13 +112,10 @@ class TestMachineLearningEvaluator:
         length = 2475580
         assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
         species = Species("Listeria monocytogenes", 1.0)
-        normalized_database = NormalizedDatabase(
-            species, n50, num_contigs, l50, length, gc_content
-        )
 
-        evaluator = MachineLearningEvaluator(species, assembly_quality, normalized_database)
+        evaluator = MachineLearningEvaluator(species)
         with pytest.raises(ValueError):
-            evaluator.evaluate()
+            evaluator.evaluate(assembly_quality)
 
     def test_invalid_genomic_attributes(self):
         """
@@ -147,10 +131,7 @@ class TestMachineLearningEvaluator:
         length = 0
         assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, length)
         species = Species("Listeria monocytogenes", 1.0)
-        normalized_database = NormalizedDatabase(
-            species, n50, num_contigs, l50, length, gc_content
-        )
 
-        evaluator = MachineLearningEvaluator(species, assembly_quality, normalized_database)
+        evaluator = MachineLearningEvaluator(species)
         with pytest.raises(ValueError):
-            evaluator.evaluate()
+            evaluator.evaluate(assembly_quality)
