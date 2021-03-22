@@ -25,25 +25,25 @@ class AssemblyEvaluator(ABC):
 
     ATTRIBUTES:
         species (Species): the biological species
-        assembly_quality (AssemblyQuality): the quality measurements of the assembly
     """
 
-    def __init__(self, species, assembly_quality):
+    def __init__(self, species):
         """
         Initializes the abstract assembly evaluator.
 
         PARAMETERS:
             species (Species): the biological species assembled
-            assembly_quality (AssemblyQuality): the quality measurements of the assembly
         """
 
         self.species = species
-        self.assembly_quality = assembly_quality
 
     @abstractmethod
-    def evaluate(self):
+    def evaluate(self, assembly_quality):
         """
         Evaluates the assembly.
+
+        PARAMETERS:
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (Evaluation): an evaluation of the assembly's quality

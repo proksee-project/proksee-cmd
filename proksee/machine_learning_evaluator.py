@@ -32,30 +32,32 @@ class MachineLearningEvaluator(AssemblyEvaluator):
     A machine learning-based sequence assembly evaluator.
     """
 
-    def __init__(self, species, assembly_quality):
+    def __init__(self, species):
         """
         Initializes the machine learning-based assembly evaluator.
 
         PARAMETERS:
             species (Species): the biological species
-            assembly_quality (AssemblyQuality): the quality measurements of the assembly
         """
 
-        super().__init__(species, assembly_quality)
+        super().__init__(species)
 
-    def evaluate(self):
+    def evaluate(self, assembly_quality):
         """
         Evaluates the quality of the assembly using a machine learning-based approach.
+
+        PARAMETERS:
+            assembly_quality (AssemblyQuality): the quality measurements of the assembly
 
         RETURN
             evaluation (Evaluation): an evaluation of the assembly's quality
         """
         species = self.species
-        n50 = self.assembly_quality.n50
-        l50 = self.assembly_quality.l50
-        num_contigs = self.assembly_quality.num_contigs
-        assembly_length = self.assembly_quality.length
-        gc_content = self.assembly_quality.gc_content
+        n50 = assembly_quality.n50
+        l50 = assembly_quality.l50
+        num_contigs = assembly_quality.num_contigs
+        assembly_length = assembly_quality.length
+        gc_content = assembly_quality.gc_content
 
         normalized_database = NormalizedDatabase()
 

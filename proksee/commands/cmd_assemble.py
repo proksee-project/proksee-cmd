@@ -299,8 +299,8 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     fast_assembly_quality = assembly_measurer.measure_quality()
 
     # Machine learning evaluation (fast assembly)
-    evaluator = MachineLearningEvaluator(species, fast_assembly_quality)
-    evaluation = evaluator.evaluate()
+    machine_learning_evaluator = MachineLearningEvaluator(species)
+    evaluation = machine_learning_evaluator.evaluate(fast_assembly_quality)
     click.echo(evaluation.report)
 
     # Expert assembly:
@@ -319,14 +319,13 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory)
     expert_assembly_quality = assembly_measurer.measure_quality()
 
-    # Machine learning evaluation (fast assembly)
-    evaluator = MachineLearningEvaluator(species, expert_assembly_quality)
-    evaluation = evaluator.evaluate()
+    # Machine learning evaluation (expert assembly)
+    evaluation = machine_learning_evaluator.evaluate(expert_assembly_quality)
     click.echo(evaluation.report)
 
     # Evaluate assembly quality
-    assembly_evaluator = HeuristicEvaluator(species, expert_assembly_quality, assembly_database)
-    evaluation = assembly_evaluator.evaluate()
+    heuristic_evaluator = HeuristicEvaluator(species, assembly_database)
+    evaluation = heuristic_evaluator.evaluate(expert_assembly_quality)
     click.echo(evaluation.report)
 
     # Compare fast and slow assemblies:
