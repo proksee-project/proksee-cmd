@@ -19,10 +19,8 @@ specific language governing permissions and limitations under the License.
 
 import os
 import numpy as np
-import joblib
 from pathlib import Path
 import math
-import warnings
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
 DATABASE_FILENAME = "species_median_log_metrics.txt"
@@ -224,40 +222,25 @@ class MachineLearningAssemblyQC():
     A class representing machine learning based evaluation of genomic assembly attributes
 
     ATTRIBUTES:
-        species (Species): the Species object representing the species
-        n50 (int): shortest contig at 50% of the assembly length
-        num_contigs (int): the number of contigs in the assembly
-        l50 (int): smallest number of contigs summing up to 50% of the assembly length
-        length (int): the total assembly length
-        gc_content (float): the GC-ratio of the bases in the assembly
         normalized_database (NormalizedDatabase): normalized assembly attributes
+        machine_learning_model : pre-trained machine learning object of assembly attributes
     """
 
-    def __init__(self, species, n50, num_contigs, l50, length, gc_content, normalized_database):
+    def __init__(self, normalized_database, machine_learning_model):
         """
         Initializes the MachineLearningAssemblyQC object
 
         PARAMETERS:
-            species (Species): the Species object representing the species
-            n50 (int): shortest contig at 50% of the assembly length
-            num_contigs (int): the number of contigs in the assembly
-            l50 (int): smallest number of contigs summing up to 50% of the assembly length
-            length (int): the total assembly length
-            gc_content (float): the GC-ratio of the bases in the assembly
             normalized_database (NormalizedDatabase): normalized assembly attributes
+            machine_learning_model : pre-trained machine learning object of assembly attributes
         """
 
-        self.species = species
-        self.n50 = n50
-        self.num_contigs = num_contigs
-        self.l50 = l50
-        self.length = length
-        self.gc_content = gc_content
         self.normalized_database = normalized_database
+        self.machine_learning_model = machine_learning_model
 
-    def calculate_probability(self):
+    def calculate_probability(self, species, n50, num_contigs, l50, length, gc_content):
         """
-        Loads a pre-trained random forest machine learning model and evaluates assembly metrics
+        Normalizes assembly metrics and returns probabilistic evaluation from machine learning model
 
         RETURNS
             predicted_value (float): Prediction probability of the assembly resembling an NCBI reference
@@ -265,14 +248,10 @@ class MachineLearningAssemblyQC():
         """
 
         normalized_assembly_statistics = self.normalized_database.normalize_assembly_statistics(
-            self.species.name, self.n50, self.num_contigs, self.l50, self.length, self.gc_content
+            species, n50, num_contigs, l50, length, gc_content
         )
 
-        # Ignore numpy.ufunc warning (mostly benign, see: github.com/numpy/numpy/issues/11788)
-        warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
-
-        random_forest_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
-        prediction_array = random_forest_model.predict_proba(normalized_assembly_statistics)
+        prediction_array = self.machine_learning_model.predict_proba(normalized_assembly_statistics)
         predicted_value = prediction_array[0, 0]
 
         return float(predicted_value)

@@ -22,9 +22,16 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import os
+import joblib
+from pathlib import Path
+import warnings
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.evaluation import MachineLearningEvaluation
 from proksee.machine_learning_assembly_qc import MachineLearningAssemblyQC, NormalizedDatabase
+
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
+MACHINE_LEARNING_MODEL_FILENAME = "random_forest_n50_numcontigs_l50_length_gccontent.joblib"
 
 
 class MachineLearningEvaluator(AssemblyEvaluator):
@@ -43,6 +50,10 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         super().__init__(species)
         self.normalized_database = NormalizedDatabase()
 
+        # Ignore numpy.ufunc warning (mostly benign, see: github.com/numpy/numpy/issues/11788)
+        warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
+        self.machine_learning_model = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
+
     def evaluate(self, assembly_quality):
         """
         Evaluates the quality of the assembly using a machine learning-based approach.
@@ -54,7 +65,6 @@ class MachineLearningEvaluator(AssemblyEvaluator):
             evaluation (Evaluation): an evaluation of the assembly's quality
         """
 
-        species = self.species
         n50 = assembly_quality.n50
         l50 = assembly_quality.l50
         num_contigs = assembly_quality.num_contigs
@@ -63,10 +73,9 @@ class MachineLearningEvaluator(AssemblyEvaluator):
 
         if self.normalized_database.contains(self.species.name):
             species_present = True
-            assembly_qc = MachineLearningAssemblyQC(
-                species, n50, num_contigs, l50, assembly_length, gc_content, self.normalized_database
-            )
-            probability = assembly_qc.calculate_probability()
+            assembly_qc = MachineLearningAssemblyQC(self.normalized_database, self.machine_learning_model)
+            probability = assembly_qc.calculate_probability(self.species.name, n50, num_contigs, l50,
+                                                            assembly_length, gc_content)
             success = True if probability > 0.5 else False
             report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
 
