@@ -20,6 +20,8 @@ specific language governing permissions and limitations under the License.
 import os
 import numpy as np
 from pathlib import Path
+import joblib
+import warnings
 import math
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
@@ -223,20 +225,22 @@ class MachineLearningAssemblyQC():
 
     ATTRIBUTES:
         normalized_database (NormalizedDatabase): normalized assembly attributes
-        machine_learning_model : pre-trained machine learning object of assembly attributes
     """
 
-    def __init__(self, normalized_database, machine_learning_model):
+    def __init__(self, normalized_database):
         """
-        Initializes the MachineLearningAssemblyQC object
+        Initializes the MachineLearningAssemblyQC object. Loads a pre-trained machine learning
+        model of assembly attributes
 
         PARAMETERS:
             normalized_database (NormalizedDatabase): normalized assembly attributes
-            machine_learning_model : pre-trained machine learning object of assembly attributes
         """
 
         self.normalized_database = normalized_database
-        self.machine_learning_model = machine_learning_model
+
+        # Ignore numpy.ufunc warning (mostly benign, see: github.com/numpy/numpy/issues/11788)
+        warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
+        self.assembly_qc = joblib.load(os.path.join(DATABASE_PATH, MACHINE_LEARNING_MODEL_FILENAME))
 
     def calculate_probability(self, species, n50, num_contigs, l50, length, gc_content):
         """
@@ -251,7 +255,7 @@ class MachineLearningAssemblyQC():
             species, n50, num_contigs, l50, length, gc_content
         )
 
-        prediction_array = self.machine_learning_model.predict_proba(normalized_assembly_statistics)
+        prediction_array = self.assembly_qc.predict_proba(normalized_assembly_statistics)
         predicted_value = prediction_array[0, 0]
 
         return float(predicted_value)
