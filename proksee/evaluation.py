@@ -19,10 +19,10 @@ specific language governing permissions and limitations under the License.
 
 class Evaluation:
     """
-    A class representing a simple evaluation of a test.
+    An abstract class representing a simple evaluation.
 
     ATTRIBUTES
-        success (bool): whether or not the test was passed
+        success (bool): whether or not the evaluation is successful
         report (str): a plain-language String describing the evaluation
     """
 
@@ -31,27 +31,25 @@ class Evaluation:
         Initializes the Evaluation.
 
         PARAMETERS
-            success (bool): whether or not the test was passed
+            success (bool): whether or not the evaluation is successful
             report (str): a plain-language String describing the evaluation
         """
         self.success = success
         self.report = report
 
 
-class AssemblyEvaluation:
+class AssemblyEvaluation(Evaluation):
     """
-    A class representing an evaluation of an assembly.
+    An evaluation of a sequence assembly.
 
     ATTRIBUTES
         n50_evaluation (Evaluation): an evaluation of the assembly's n50
         contigs_evaluation (Evaluation): an evaluation of the assembly's number of contigs
         l50_evaluation (Evaluation): an evaluation of the assembly's l50
         length_evaluation (Evaluation): an evaluation of the assembly's length
-        proceed (bool): whether or not to proceed with assembly
-        report (str): a plain-language String describing the assembly evaluation
     """
 
-    def __init__(self, n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation, proceed, report):
+    def __init__(self, n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation, success, report):
         """
         Initializes the AssemblyEvaluation.
 
@@ -60,13 +58,43 @@ class AssemblyEvaluation:
             contigs_evaluation (Evaluation): an evaluation of the assembly's number of contigs
             l50_evaluation (Evaluation): an evaluation of the assembly's l50
             length_evaluation (Evaluation): an evaluation of the assembly's length
-            proceed (bool): whether or not to proceed with assembly
+            success (bool): whether or not the evaluation is successful
             report (str): a plain-language String describing the assembly evaluation
         """
+
+        super().__init__(success, report)
 
         self.n50_evaluation = n50_evaluation
         self.contigs_evaluation = contigs_evaluation
         self.l50_evaluation = l50_evaluation
         self.length_evaluation = length_evaluation
-        self.proceed = proceed
+        self.success = success
         self.report = report
+
+
+class MachineLearningEvaluation(Evaluation):
+    """
+    An evaluation of an assembly using a machine-learning algorithm.
+
+    ATTRIBUTES
+        success (bool): whether or not the evaluation is successful
+        report (str): a plain-language String describing the evaluation
+        probability (float): the probability of the assembly being a "good" assembly
+        species_present (bool): whether or not the species is present in the ML database
+    """
+
+    def __init__(self, success, report, probability, species_present):
+        """
+        Initializes the MachineLearningEvaluation.
+
+        PARAMETERS
+           success (bool): whether or not the evaluation is successful
+           report (str): a plain-language String describing the evaluation
+           probability (float): the probability of the assembly being a "good" assembly
+           species_present (bool): whether or not the species is present in the ML database
+        """
+
+        super().__init__(success, report)
+
+        self.probability = probability
+        self.species_present = species_present

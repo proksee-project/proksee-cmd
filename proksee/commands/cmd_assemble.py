@@ -27,10 +27,12 @@ import os
 
 from pathlib import Path
 
-from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_assembly, compare_assemblies
 from proksee.assembly_database import AssemblyDatabase
+from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
+from proksee.heuristic_evaluator import HeuristicEvaluator, compare_assemblies
 from proksee.input_verification import are_valid_fastq
+from proksee.machine_learning_evaluator import MachineLearningEvaluator
 from proksee.reads import Reads
 from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
@@ -292,36 +294,48 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     if not evaluation.success and not force:
         return
 
-    # Evaluate fast assembly:
-    assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_directory)
-    fast_assembly_quality = assembly_evaluator.evaluate()
+    # Measure assembly quality statistics:
+    assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory)
+    fast_assembly_quality = assembly_measurer.measure_quality()
+
+    # Machine learning evaluation (fast assembly)
+    machine_learning_evaluator = MachineLearningEvaluator(species)
+    evaluation = machine_learning_evaluator.evaluate(fast_assembly_quality)
+    click.echo(evaluation.report)
 
     # Expert assembly:
-    slow_strategy = expert.create_full_assembly_strategy(fast_assembly_quality, assembly_database)
-    report_strategy(slow_strategy)
+    expert_strategy = expert.create_expert_assembly_strategy(fast_assembly_quality, assembly_database)
+    report_strategy(expert_strategy)
 
-    if not slow_strategy.proceed and not force:
+    if not expert_strategy.proceed and not force:
         return
 
-    click.echo("Performing full assembly.")
-    assembler = slow_strategy.assembler
+    click.echo("Performing expert assembly.")
+    assembler = expert_strategy.assembler
     output = assembler.assemble()
     click.echo(output)
 
-    # Evaluate slow assembly
-    assembly_evaluator = AssemblyEvaluator(assembler.contigs_filename, output_directory)
-    final_assembly_quality = assembly_evaluator.evaluate()
-    evaluation = evaluate_assembly(species, final_assembly_quality, assembly_database)
+    # Measure assembly quality:
+    assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory)
+    expert_assembly_quality = assembly_measurer.measure_quality()
+
+    # Machine learning evaluation (expert assembly)
+    evaluation = machine_learning_evaluator.evaluate(expert_assembly_quality)
+    click.echo(evaluation.report)
+
+    # Evaluate assembly quality
+    heuristic_evaluator = HeuristicEvaluator(species, assembly_database)
+    evaluation = heuristic_evaluator.evaluate(expert_assembly_quality)
     click.echo(evaluation.report)
 
     # Compare fast and slow assemblies:
-    report = compare_assemblies(fast_assembly_quality, final_assembly_quality)
+    report = compare_assemblies(fast_assembly_quality, expert_assembly_quality)
     click.echo(report)
 
     # Write CSV assembly statistics summary:
     assembly_statistics_writer = AssemblyStatisticsWriter(output_directory)
-    assembly_statistics_writer.write([fast_strategy.assembler.name, slow_strategy.assembler.name],
-                                     [fast_assembly_quality, final_assembly_quality])
+    assembly_statistics_writer.write([fast_strategy.assembler.name, expert_strategy.assembler.name],
+                                     [fast_assembly_quality, expert_assembly_quality])
 
     # Move final assembled contigs to the main level of the output directory and rename it.
     contigs_filename = assembler.get_contigs_filename()

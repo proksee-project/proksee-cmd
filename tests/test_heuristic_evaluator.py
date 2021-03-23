@@ -16,52 +16,15 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-import os
-import pytest
-
-from proksee.assembly_evaluator import AssemblyEvaluator, evaluate_value, compare_assemblies
 from proksee.assembly_quality import AssemblyQuality
+from proksee.heuristic_evaluator import evaluate_value, compare_assemblies
 
 
-class TestAssemblyEvaluator:
-
-    def test_valid_contig_file(self):
-        """
-        Tests the AssemblyEvaluator with a valid contig file.
-        """
-
-        contigs_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "simple_contig.fasta")
-        output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
-
-        # Create a location for output, if it doesn't already exist:
-        if not os.path.isdir(output_directory):
-            os.mkdir(output_directory)
-
-        assembly_evaluator = AssemblyEvaluator(contigs_filename, output_directory)
-        assembly_evaluator.evaluate()
-
-        assert os.path.isfile(assembly_evaluator.quast_report_filename)
-
-    def test_missing_contig_file(self):
-        """
-        Tests the AssemblyEvaluator with a missing contig file. This should raise a FileNotFound exception.
-        """
-
-        missing_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "missing.file")
-        output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
-
-        # Create a location for output, if it doesn't already exist:
-        if not os.path.isdir(output_directory):
-            os.mkdir(output_directory)
-
-        assembly_evaluator = AssemblyEvaluator(missing_filename, output_directory)
-
-        with pytest.raises(FileNotFoundError):
-            assembly_evaluator.evaluate()
+class TestHeuristicEvaluator:
 
     def test_evaluate_value(self):
         """
-        Tests the expert system's function for evaluating whether or a value is acceptable.
+        Tests the ability to evaluate whether a value is high or low.
         """
 
         low_fail = 5
