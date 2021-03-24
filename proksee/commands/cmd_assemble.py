@@ -27,6 +27,7 @@ import os
 
 from pathlib import Path
 
+from proksee import utilities
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
@@ -34,8 +35,6 @@ from proksee.heuristic_evaluator import HeuristicEvaluator, compare_assemblies
 from proksee.input_verification import are_valid_fastq
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
 from proksee.reads import Reads
-from proksee.species import Species
-from proksee.species_estimator import SpeciesEstimator
 from proksee.platform_identify import PlatformIdentifier, identify_name, Platform
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
@@ -175,40 +174,6 @@ def determine_platform(reads, platform_name=None):
     return platform
 
 
-def determine_species(reads, assembly_database, output_directory, species_name=None):
-    """
-    Attempts to determine the species in the reads.
-
-    ARGUMENTS:
-        reads (Reads): the reads to determine the species from
-        assembly_database (AssemblyDatabase): the assembly database
-        output_directory (string): the location  of the output directory -- for placing temporary output
-        species_name (string): optional; the scientific name of the species
-
-    RETURNS:
-        species_list (List(Species)): a list of major species estimated to be present in the reads
-    """
-
-    species_list = None
-
-    if species_name:
-        if assembly_database.contains(species_name):
-            click.echo("\nThe species '" + str(species_name) + "' was recognized.")
-            species_list = [Species(species_name, 1.0)]
-
-        else:
-            click.echo("\nThe species name '" + str(species_name) + "' is unrecognized.")
-
-    if species_list is None:
-        click.echo("\nAttempting to identify the species from the reads.")
-
-        input_file_locations = reads.get_file_locations()
-        species_estimator = SpeciesEstimator(input_file_locations, output_directory)
-        species_list = species_estimator.estimate_major_species()
-
-    return species_list
-
-
 @click.command('assemble',
                short_help='Assemble reads.')
 @click.argument('forward', required=True,
@@ -269,7 +234,7 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     assembly_database = AssemblyDatabase(DATABASE_PATH)
 
     # Estimate species
-    species_list = determine_species(filtered_reads, assembly_database, output_directory, species_name)
+    species_list = utilities.determine_species(filtered_reads, assembly_database, output_directory, species_name)
     species = species_list[0]
     report_species(species_list)
 
