@@ -42,7 +42,7 @@ from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                             "database.csv")
+                             "refseq_short.csv")
 
 
 def report_valid_fastq(valid):

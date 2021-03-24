@@ -82,6 +82,7 @@ class TestMachineLearningEvaluator:
         # num_contigs, n50, n75, l50, l75, gc_content, length
         assembly_quality = AssemblyQuality(400, 4029, 4000, 195, 600, math.nan, 2475580)
         species = Species("Listeria monocytogenes", 1.0)
+
         evaluator = MachineLearningEvaluator(species)
         with pytest.raises(ValueError):
             evaluator.evaluate(assembly_quality)
@@ -94,6 +95,7 @@ class TestMachineLearningEvaluator:
         # num_contigs, n50, n75, l50, l75, gc_content, length
         assembly_quality = AssemblyQuality(0, 0, 4000, 0, 600, 0, 0)
         species = Species("Listeria monocytogenes", 1.0)
+
         evaluator = MachineLearningEvaluator(species)
         with pytest.raises(ValueError):
             evaluator.evaluate(assembly_quality)

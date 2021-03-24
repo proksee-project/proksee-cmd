@@ -31,30 +31,30 @@ class TestAssemblyDatabase:
         """
 
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
-                                     "database.csv")
+                                     "refseq_short.csv")
         SPECIES = "Staphylococcus aureus"
 
         database = AssemblyDatabase(DATABASE_PATH)
 
-        assert database.get_n50_quantile(SPECIES, 0.05) == 32344
-        assert database.get_n50_quantile(SPECIES, 0.20) == 91861
-        assert database.get_n50_quantile(SPECIES, 0.80) == 371530
-        assert database.get_n50_quantile(SPECIES, 0.95) == 1055547
+        assert database.get_n50_quantile(SPECIES, 0.05) == 24300.1
+        assert database.get_n50_quantile(SPECIES, 0.20) == 73503
+        assert database.get_n50_quantile(SPECIES, 0.80) == 329268.4
+        assert database.get_n50_quantile(SPECIES, 0.95) == 672271.45
 
-        assert database.get_contigs_quantile(SPECIES, 0.05) == 12
-        assert database.get_contigs_quantile(SPECIES, 0.20) == 26
-        assert database.get_contigs_quantile(SPECIES, 0.80) == 86
-        assert database.get_contigs_quantile(SPECIES, 0.95) == 227
+        assert database.get_contigs_quantile(SPECIES, 0.05) == 17
+        assert database.get_contigs_quantile(SPECIES, 0.20) == 29
+        assert database.get_contigs_quantile(SPECIES, 0.80) == 113
+        assert database.get_contigs_quantile(SPECIES, 0.95) == 286.85
 
         assert database.get_l50_quantile(SPECIES, 0.05) == 2
         assert database.get_l50_quantile(SPECIES, 0.20) == 3
-        assert database.get_l50_quantile(SPECIES, 0.80) == 10
-        assert database.get_l50_quantile(SPECIES, 0.95) == 27
+        assert database.get_l50_quantile(SPECIES, 0.80) == 12
+        assert database.get_l50_quantile(SPECIES, 0.95) == 34
 
-        assert database.get_length_quantile(SPECIES, 0.05) == 2706770
-        assert database.get_length_quantile(SPECIES, 0.20) == 2763701
-        assert database.get_length_quantile(SPECIES, 0.80) == 2886993
-        assert database.get_length_quantile(SPECIES, 0.95) == 2945015
+        assert database.get_length_quantile(SPECIES, 0.05) == 2696014.45
+        assert database.get_length_quantile(SPECIES, 0.20) == 2754871.4
+        assert database.get_length_quantile(SPECIES, 0.80) == 2886820.4
+        assert database.get_length_quantile(SPECIES, 0.95) == 2937730.05
 
         return
 
@@ -64,7 +64,7 @@ class TestAssemblyDatabase:
         """
 
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
-                                     "database.csv")
+                                     "refseq_short.csv")
         SPECIES = "Staphylococcus aureus"
 
         database = AssemblyDatabase(DATABASE_PATH)

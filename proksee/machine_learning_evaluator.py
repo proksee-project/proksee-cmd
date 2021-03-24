@@ -41,6 +41,8 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         """
 
         super().__init__(species)
+        self.normalized_database = NormalizedDatabase()
+        self.assembly_qc = MachineLearningAssemblyQC(self.normalized_database)
 
     def evaluate(self, assembly_quality):
         """
@@ -52,21 +54,17 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         RETURN
             evaluation (Evaluation): an evaluation of the assembly's quality
         """
-        species = self.species
+
         n50 = assembly_quality.n50
         l50 = assembly_quality.l50
         num_contigs = assembly_quality.num_contigs
         assembly_length = assembly_quality.length
         gc_content = assembly_quality.gc_content
 
-        normalized_database = NormalizedDatabase()
-
-        if normalized_database.contains(self.species.name):
+        if self.normalized_database.contains(self.species.name):
             species_present = True
-            assembly_qc = MachineLearningAssemblyQC(
-                species, n50, num_contigs, l50, assembly_length, gc_content
-            )
-            probability = assembly_qc.calculate_probability()
+            probability = self.assembly_qc.calculate_probability(self.species.name, n50, num_contigs, l50,
+                                                                 assembly_length, gc_content)
             success = True if probability > 0.5 else False
             report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
 
