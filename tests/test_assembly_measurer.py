@@ -17,6 +17,8 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
+from subprocess import CalledProcessError
+
 import pytest
 
 from proksee.assembly_measurer import AssemblyMeasurer
@@ -56,4 +58,21 @@ class TestAssemblyMeasurer:
         measurer = AssemblyMeasurer(missing_filename, output_directory)
 
         with pytest.raises(FileNotFoundError):
+            measurer.measure_quality()
+
+    def test_bad_contig_file(self):
+        """
+        Tests the AssemblyMeasurer with a bad contig file. This should raise a CalledProcessError exception.
+        """
+
+        bad_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "bad_assembly.tsv")
+        output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
+
+        # Create a location for output, if it doesn't already exist:
+        if not os.path.isdir(output_directory):
+            os.mkdir(output_directory)
+
+        measurer = AssemblyMeasurer(bad_filename, output_directory)
+
+        with pytest.raises(CalledProcessError):
             measurer.measure_quality()
