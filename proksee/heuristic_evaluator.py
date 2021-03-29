@@ -110,6 +110,8 @@ class HeuristicEvaluator(AssemblyEvaluator):
         num_contigs = assembly_quality.num_contigs
         l50 = assembly_quality.l50
 
+        total_success = True  # Whether or not all checks pass.
+
         if n50 < 5000:
             success = False
             report = "FAIL: The N50 is smaller than expected: {}\n".format(n50)
@@ -121,6 +123,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
             report += "      The N50 lower bound is: {}\n".format(MIN_N50)
 
         n50_evaluation = Evaluation(success, report)
+        total_success = total_success and success
 
         if num_contigs > MAX_CONTIGS:
             success = False
@@ -132,6 +135,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
             report += "      The number of contigs lower bound is: {}\n".format(MIN_N50)
 
         contigs_evaluation = Evaluation(success, report)
+        total_success = total_success and success
 
         if l50 > MAX_L50:
             success = False
@@ -144,6 +148,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
             report += "      The L50 upper bound is: {}\n".format(MAX_L50)
 
         l50_evaluation = Evaluation(success, report)
+        total_success = total_success and success
 
         report = "\nWARNING: No assembly statistics available for the species!\n\n"
         report += n50_evaluation.report
@@ -151,7 +156,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         report += l50_evaluation.report
 
         assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, None,
-                                                 success, report)
+                                                 total_success, report)
 
         return assembly_evaluation
 
