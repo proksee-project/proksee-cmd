@@ -25,7 +25,7 @@ from proksee.reads import Reads
 from proksee.skesa_assembler import SkesaAssembler
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
-OUTPUT_DIR = TEST_INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
+OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
 
 
 class TestSkesaAssembler:
