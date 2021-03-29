@@ -86,3 +86,19 @@ class TestAssemblyDatabase:
             AssemblyDatabase(DATABASE_PATH)
 
         return
+
+    def test_missing_species(self):
+        """
+        Tests when the species are missing from the database.
+        """
+
+        DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
+                                     "refseq_short.csv")
+        SPECIES = "does not exist"
+
+        database = AssemblyDatabase(DATABASE_PATH)
+
+        assert database.get_n50_quantile(SPECIES, 0.05) is None
+        assert database.get_contigs_quantile(SPECIES, 0.2) is None
+        assert database.get_l50_quantile(SPECIES, 0.8) is None
+        assert database.get_length_quantile(SPECIES, 0.95) is None
