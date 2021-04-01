@@ -71,8 +71,9 @@ The ExpertSystem is primarily responsible for creating assembly strategies (Asse
 
 *machine_learning_assembly_qc.py*
 
-The MachineLearningAssemblyQC class loads a random forests machine learning model trained on curated NCBI assemblies. The machine learning model encapsulates feature information corresponding to species-specific normalized assembly attributes (N50, number of contigs, L50, assembly length and the overall gc content) and label information corresponding to assembly inclusion or exclusion within the NCBI RefSeq database. 
-The MachineLearningAssemblyQC class subsequently normalizes the assembly attributes using NormalizedDatabase class and returns the prediction probability of the assembly quality.
+The MachineLearningAssemblyQC class loads a random forests machine learning model trained on curated NCBI assemblies. The machine learning model encapsulates feature information corresponding to species specific normalized assembly attributes (N50, number of contigs, L50, assembly length and the overall gc content) and label information corresponding to assembly inclusion or exclusion within the NCBI RefSeq database.
+
+The MachineLearningAssemblyQC class subsequently normalizes the assembly attributes generated from AssemblyQuality class and returns the machine learning probabilistic evaluation of the assembly quality.
 
 ## NormalizedDatabase
 
@@ -80,7 +81,7 @@ The MachineLearningAssemblyQC class subsequently normalizes the assembly attribu
 
 The NormalizedDatabase class loads a CSV file which serves as a database of species specific median (or median of log-transformed) values of different assembly attributes corresponding to N50, number of contigs, L50, assembly length and overall gc content.
 
-The NormalizedDatabase class provides functions for interacting with the database file and compute species-specific normalized assembly metrics to be used by MachineLearningAssemblyQC.
+The NormalizedDatabase class provides functions for interacting with the database file and compute species specific normalized assembly metrics to be used by MachineLearningAssemblyQC.
 
 ## PlatformIdentifier
 
