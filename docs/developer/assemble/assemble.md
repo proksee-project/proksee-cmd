@@ -65,7 +65,7 @@ The pipeline will terminate if there is a disagreement in the species estimation
 
 ### Evaluate Assembly
 
-Evaluates the assembly using QUAST. The pipeline uses a non-reference-based QUAST analysis, because of the difficulty of selecting a reference correctly and complication of needing to maintain either a database of references or the ability to download references on the fly. Several assembly metrics are collected, including N50, number of contigs, L50, and total assembly size.
+Evaluates the assembly using QUAST and an independent machine learning evaluation. For QUAST evaluation, the pipeline uses a non-reference-based QUAST analysis, because of the difficulty of selecting a reference correctly and complication of needing to maintain either a database of references or the ability to download references on the fly. Several assembly metrics are collected, including N50, number of contigs, L50, and total assembly size. For machine learning evaluation, the pipeline returns the prediction probability of the assembly resembling an NCBI Reference Sequence. The prediction probability is computed from a random forests machine learning model trained on curated NCBI assemblies with intra-species normalized assembly metrics including N50, number of contigs, L50, total assembly size and the overall gc content of the assembly. 
 
 ## Stage 3: Expert Assembly
 
@@ -83,7 +83,7 @@ Assembles the reads by executing the expert assembly strategy. Currently, this w
 
 ### Evaluate Assembly
 
-Evaluates the assembly using QUAST, in the same manner as previously done in the fast assembly stage. The QUAST analysis is done without a reference, because of the difficulties of regularly selecting a good reference and maintaining a high-quality reference database.
+Evaluates the assembly using QUAST and machine learning probabilistic evaluation, in the same manner as previously done in the fast assembly stage. The QUAST analysis is done without a reference, because of the difficulties of regularly selecting a good reference and maintaining a high-quality reference database.
 
 ### Compare Assemblies
 
