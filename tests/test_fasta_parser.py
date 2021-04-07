@@ -17,6 +17,8 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
+import shutil
+
 import pytest
 
 from proksee.parser.fasta_parser import split_multi_fasta_into_fasta
@@ -67,3 +69,22 @@ class TestFastaParser:
 
         with pytest.raises(FileNotFoundError):
             split_multi_fasta_into_fasta(missing_filename, output_directory)
+
+    def test_missing_output_directory(self):
+        """
+        Tests when the output directory is missing and needs to be created.
+        """
+
+        multi_contig_filename = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "small_single_contig.fasta")
+        output_directory = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "temp")
+
+        # Remove directory if it exists:
+        if os.path.isdir(output_directory):
+            shutil.rmtree(output_directory)
+
+        files_list = split_multi_fasta_into_fasta(multi_contig_filename, output_directory)
+
+        assert len(files_list) == 1
+        assert os.path.isfile(os.path.join(output_directory, "0.fasta"))
