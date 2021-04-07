@@ -39,7 +39,7 @@ The assemble pipeline consists of three major stages:
 ### Command
 
 ```bash
-proksee assemble -o /path/to/output/directory FORWARD REVERSE
+proksee assemble -o output/directory FORWARD REVERSE
 ```
 
 Where the argument provided after -o lets a user to specify a desired output directory. `FORWARD` and `REVERSE`  are fastq sequencing read files. If `REVERSE` is not specified, only single strand (`FORWARD`) is processed by the Proksee pipeline.  
@@ -48,6 +48,24 @@ Where the argument provided after -o lets a user to specify a desired output dir
 
 ```bash
 proksee assemble -o output forward_reads.fastq reverse_reads.fastq
+```
+
+## Evaluate
+
+The evaluate pipeline will evaluate the assembly quality of provided assembled contigs.
+
+### Command
+
+```bash
+proksee evaluate -o output/directory CONTIGS
+```
+
+Where the argument provided after -o lets a user to specify a desired output directory. `CONTIGS` are FASTA-format assembled contigs.
+
+### Example
+
+```bash
+proksee evaluate -o output assembly.fasta
 ```
 
 ## Contact
