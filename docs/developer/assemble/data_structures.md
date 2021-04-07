@@ -73,7 +73,7 @@ The ExpertSystem is primarily responsible for creating assembly strategies (Asse
 
 The MachineLearningAssemblyQC class loads a random forests machine learning model trained on curated NCBI assemblies. The machine learning model encapsulates feature information corresponding to species specific normalized assembly attributes (N50, number of contigs, L50, assembly length and the overall gc content) and label information corresponding to assembly inclusion or exclusion within the NCBI RefSeq database.
 
-The MachineLearningAssemblyQC class subsequently normalizes the assembly attributes generated from AssemblyQuality class and returns the machine learning probabilistic evaluation of the assembly quality.
+The MachineLearningAssemblyQC class subsequently processes the data of a new/input assembly, by normalizing the assembly attributes generated from AssemblyQuality class and returning the machine learning probabilistic evaluation of the assembly.
 
 ## NormalizedDatabase
 
