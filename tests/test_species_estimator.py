@@ -23,7 +23,7 @@ from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
 
 
-class TestSkesaAssembler:
+class TestSpeciesEstimator:
 
     def test_species_estimation(self):
         """
