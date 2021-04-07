@@ -28,6 +28,7 @@ Proksee can then be installed by running the setup script (when inside the Proks
 ```bash
 pip install .
 ```
+
 ## Assemble
 
 The assemble pipeline consists of three major stages:
@@ -35,6 +36,8 @@ The assemble pipeline consists of three major stages:
 - **Stage 1: Pre-Assembly**: Verifies inputs, estimates information about the reads, filters the reads, and prepares the reads for sequence assembly.
 - **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive approximate information about the assembly, such as quality metrics. This information will assist the expert assembly.
 - **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
+
+Please see the [documentation](docs/assemble.md) for more information about the assemble command.
 
 ### Command
 
