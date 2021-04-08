@@ -27,4 +27,4 @@ A heuristic evaluation is performed by comparing the assembly quality measuremen
 
 ### Machine Learning Evaluation
 
-A machine learning evaluation is performed by inputting the assembly statistics into a machine learning model. This model has been previously generated using the same data described in the heuristic evaluation. However, its methods are not the same. Please refer to the [machine learning documentation](../../assemble/assemble.md) under Evaluate Assembly for more information
+A machine learning evaluation is performed by inputting the assembly statistics into a machine learning model. This model has been previously generated using the same data described in the heuristic evaluation. However, its methods are not the same. Please refer to the [machine learning documentation](../assemble/assemble.md) under Evaluate Assembly for more information
