@@ -15,7 +15,7 @@ The evaluate command consists of the following steps:
 
 ### Estimate Species
 
-The species of the provided contigs is estimated if it is not also provided by the user. This is done using using MASH. Since MASH is not designed to be a classifier, we shouldn't say that the species is classified, but rather the species is estimated from k-mer information in the reads. Since we are operating on contigs instead of reads, we would expect to have a multiplicity of the species k-mers at approximately 1. We cannot  use a strict of filtering criteria for species estimation as we do for `proksee assemble`. It is therefore more likely that contamination may be reported as the species.
+The species of the provided contigs is estimated if it is not also provided by the user. This is done using using MASH. Since MASH is not designed to be a classifier, we shouldn't say that the species is classified, but rather the species is estimated from k-mer information. Since we are operating on contigs instead of reads, we would expect to have a multiplicity of the species k-mers at approximately 1. We cannot use a strict filtering criteria for species estimation as we do for `proksee assemble`. It is therefore more likely that contamination may be reported as the species.
 
 ### Measure Assembly Quality Statistics
 
