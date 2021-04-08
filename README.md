@@ -57,6 +57,8 @@ proksee assemble -o output forward_reads.fastq reverse_reads.fastq
 
 The evaluate pipeline will evaluate the assembly quality of provided assembled contigs.
 
+Please see the [documentation](docs/evaluate.md) for more information about the evaluate command.
+
 ### Command
 
 ```bash
