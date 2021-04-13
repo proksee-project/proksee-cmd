@@ -285,12 +285,12 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     expert_assembly_quality = assembly_measurer.measure_quality()
 
     # Machine learning evaluation (expert assembly)
-    evaluation = machine_learning_evaluator.evaluate(expert_assembly_quality)
+    machine_learning_evaluation = machine_learning_evaluator.evaluate(expert_assembly_quality)
     click.echo(evaluation.report)
 
     # Evaluate assembly quality
     heuristic_evaluator = HeuristicEvaluator(species, assembly_database)
-    evaluation = heuristic_evaluator.evaluate(expert_assembly_quality)
+    heuristic_evaluation = heuristic_evaluator.evaluate(expert_assembly_quality)
     click.echo(evaluation.report)
 
     # Compare fast and slow assemblies:
@@ -299,8 +299,12 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
 
     # Write CSV assembly statistics summary:
     assembly_statistics_writer = AssemblyStatisticsWriter(output_directory)
-    assembly_statistics_writer.write([fast_strategy.assembler.name, expert_strategy.assembler.name],
-                                     [fast_assembly_quality, expert_assembly_quality])
+    assembly_statistics_writer.write_csv([fast_strategy.assembler.name, expert_strategy.assembler.name],
+                                         [fast_assembly_quality, expert_assembly_quality])
+
+    # Write expert assembly information to JSON file:
+    assembly_statistics_writer.write_json(platform, species, read_quality, expert_assembly_quality,
+                                          heuristic_evaluation, machine_learning_evaluation)
 
     # Move final assembled contigs to the main level of the output directory and rename it.
     contigs_filename = assembler.get_contigs_filename()

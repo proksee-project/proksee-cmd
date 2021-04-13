@@ -106,9 +106,14 @@ class HeuristicEvaluator(AssemblyEvaluator):
         MAX_L50 = 500
         MAX_CONTIGS = 2000
 
+        MIN_LENGTH = 5000
+        # Not present in above criteria, but we must evaluate length.
+        # Length cannot be less than the N50 (5000).
+
         n50 = assembly_quality.n50
         num_contigs = assembly_quality.num_contigs
         l50 = assembly_quality.l50
+        length = assembly_quality.length
 
         total_success = True  # Whether or not all checks pass.
 
@@ -150,12 +155,26 @@ class HeuristicEvaluator(AssemblyEvaluator):
         l50_evaluation = Evaluation(success, report)
         total_success = total_success and success
 
+        if length < MIN_LENGTH:
+            success = False
+            report = "FAIL: The length is smaller than expected: {}\n".format(length)
+            report += "      The length lower bound is: {}\n".format(MIN_LENGTH)
+
+        else:
+            success = True
+            report = "PASS: The length is acceptable: {}\n".format(length)
+            report += "      The length lower bound is: {}\n".format(MIN_LENGTH)
+
+        length_evaluation = Evaluation(success, report)
+        total_success = total_success and success
+
         report = "\nWARNING: No assembly statistics available for the species!\n\n"
         report += n50_evaluation.report
         report += contigs_evaluation.report
         report += l50_evaluation.report
+        report += length_evaluation.report
 
-        assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, None,
+        assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
                                                  total_success, report)
 
         return assembly_evaluation

@@ -159,6 +159,7 @@ class TestHeuristicEvaluator:
         assert evaluation.n50_evaluation.success
         assert evaluation.l50_evaluation.success
         assert not evaluation.contigs_evaluation.success
+        assert evaluation.length_evaluation.success
 
         # N50 too small
         # num_contigs, n50, n75, l50, l75, gc_content, length
@@ -168,6 +169,7 @@ class TestHeuristicEvaluator:
         assert not evaluation.n50_evaluation.success
         assert evaluation.l50_evaluation.success
         assert evaluation.contigs_evaluation.success
+        assert evaluation.length_evaluation.success
 
         # L50 too large
         # num_contigs, n50, n75, l50, l75, gc_content, length
@@ -177,3 +179,14 @@ class TestHeuristicEvaluator:
         assert evaluation.n50_evaluation.success
         assert not evaluation.l50_evaluation.success
         assert evaluation.contigs_evaluation.success
+        assert evaluation.length_evaluation.success
+
+        # length too small
+        # num_contigs, n50, n75, l50, l75, gc_content, length
+        assembly_quality = AssemblyQuality(1000, 6000, 5500, 300, 350, 0.50, 100)
+        evaluation = evaluator.evaluate(assembly_quality)
+        assert not evaluation.success
+        assert evaluation.n50_evaluation.success
+        assert evaluation.l50_evaluation.success
+        assert evaluation.contigs_evaluation.success
+        assert not evaluation.length_evaluation.success

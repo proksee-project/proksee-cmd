@@ -47,6 +47,7 @@ class TestCmdAssemble:
         contigs_file = os.path.join(OUTPUT_DIR, "contigs.fasta")
         quast_file = os.path.join(OUTPUT_DIR, "quast", "report.txt")
         refseq_masher_file = os.path.join(OUTPUT_DIR, "refseq_masher.o")
+        json_file = os.path.join(OUTPUT_DIR, "assembly_info.json")
 
         # Remove previous files if they exist:
         if os.path.isfile(assembly_statistics_file):
@@ -61,6 +62,9 @@ class TestCmdAssemble:
         if os.path.isfile(refseq_masher_file):
             os.remove(refseq_masher_file)
 
+        if os.path.isfile(json_file):
+            os.remove(json_file)
+
         assemble(reads, OUTPUT_DIR, force, species_name=None, platform_name=None)
 
         # Check that expected files were created:
@@ -68,3 +72,4 @@ class TestCmdAssemble:
         assert os.path.isfile(contigs_file)
         assert os.path.isfile(quast_file)
         assert os.path.isfile(refseq_masher_file)
+        assert os.path.isfile(json_file)
