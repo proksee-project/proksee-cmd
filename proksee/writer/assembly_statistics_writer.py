@@ -95,6 +95,7 @@ class AssemblyStatisticsWriter:
         PARAMETERS
             platform (Platform (Enum)): the sequencing platform
             species (Species): the sequencing species
+            read_quality (ReadQuality): object encapsulating the quality measurements of the sequencing reads
             assembly_quality (AssemblyQuality): object encapsulating the quality measurements of the assembly
             heuristic_evaluation (AssemblyEvaluation): heuristic evaluation of the assembly
             machine_learning_evaluation (MachineLearningEvaluation): machine learning evaluation of the assembly
