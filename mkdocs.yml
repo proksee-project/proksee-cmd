@@ -1,0 +1,15 @@
+site_name: Proksee
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Assemble: assemble.md
+  - Evaluate: evaluate.md
+  - Developer:
+          - Overview: developer/overview.md
+          - Assemble: developer/assemble/assemble.md
+          - Evaluate: developer/evaluate/evaluate.md
+          - Data Structures: developer/assemble/data_structures.md
+
