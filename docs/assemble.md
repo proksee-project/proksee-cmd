@@ -12,7 +12,7 @@ Fast assembly involves quickly assembling the reads in an approximate way to obt
 
 ## Stage 3: Expert Assembly
 
-Expert assembly leverages the information obtained in the pre-assembly and fast assembly stages to produce a higher-quality assembly. This stage involves using the expert system to create an assembly strategy, assembling the reads, evaluating the assembly, and finally generating a report by comparing the expert assembly to the fast assembly. The pipeline may terminate assembly during the creation of the assembly strategy if the assembly statistics (N50, L50, etc.) for the fast assembly appear to deviate from what is expected for the assembled species. This deviation is currently defined as outside a 5th to 95h percentile range of RefSeq-included assemblies for that species.
+Expert assembly leverages the information obtained in the pre-assembly and fast assembly stages to produce a higher-quality assembly. This stage involves using the expert system to create an assembly strategy, assembling the reads, evaluating the assembly, and finally generating a report by comparing the expert assembly to the fast assembly. The pipeline may terminate assembly during the creation of the assembly strategy if the assembly statistics (N50, L50, etc.) for the fast assembly appear to deviate from what is expected for the assembled species. This deviation is currently defined as outside a 5th to 95th percentile range of RefSeq-included assemblies for that species.
 
 ## Basic Usage
 
