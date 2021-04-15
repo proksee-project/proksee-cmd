@@ -15,6 +15,7 @@ Proksee requires the following packages:
 - fastp
 - refseq_masher
 - skesa
+- spades
  
 This can be accomplished by installing dependencies into a conda environment, using the provided installation script as follows:
 
