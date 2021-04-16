@@ -25,7 +25,7 @@ The AssemblyDatabase class provides functions for interacting with the database 
 
 *assembly_evaluator.py, heuristic_evaluation.py, machine_learning_evaluator.py*
 
-An abstract class used to evaluate the quality of assemblies. Currently, the AssemblyEvaluator is implemented by HeuristicEvaluator, which uses the percentile assembly statistics in the AssemblyDatabase to make evaluations, and MachineLearningEvaluator, which uses a machine learning strategy to make evaluations. In either case, both evaluators return an Evaluation object, which is simply a report of their evaluation.
+An abstract class used to evaluate the quality of assemblies. Currently, the AssemblyEvaluator is implemented by HeuristicEvaluator, which uses the percentile assembly statistics in the AssemblyDatabase to make evaluations, and MachineLearningEvaluator, which returns a probabilistic prediction from a machine learning strategy to make evaluations. In either case, both evaluators return an Evaluation object, which is simply a report of their evaluation.
 
 ## AssemblyMeasurer
 
@@ -59,13 +59,29 @@ Identifies, filters and otherwise handles contamination in assembled contigs. In
 
 A simple, generic class representing an evaluation. It encapsulates two attributes: success (whether or not the subject was evaluated positively or negatively) and a report (a plain-language text report explaining the evaluation). This class functions as a way to return a boolean from a test / evaluation / check alongside an explanation of the result.
 
-Evaluation is extended by AssemblyEvaluation, which contains more specific attributes for sequence assembly statistic evaluations. AssemblyEvaluation (Evaluation) objects are returned by the AssemblyEvaluator, which is responsible for evaluating an assembly and reporting on the evaluation.
+Evaluation is extended by AssemblyEvaluation and MachineLearningEvaluation, which contain more specific attributes for sequence assembly statistic evaluations. AssemblyEvaluation (Evaluation) and MachineLearningEvaluation (Evaluation) objects are returned by the AssemblyEvaluator, which is responsible for evaluating an assembly and reporting on the evaluation.
 
 ## ExpertSystem
 
 *expert_system.py*
 
 The ExpertSystem is primarily responsible for creating assembly strategies (AssemblyStrategy objects) that will be used to guide the assembly process. The ExpertSystem uses data produced throughout the pipeline in order to make decisions about how best to perform sequence assembly.
+
+## MachineLearningAssemblyQC
+
+*machine_learning_assembly_qc.py*
+
+The MachineLearningAssemblyQC class loads a random forests machine learning model trained on curated NCBI assemblies. The machine learning model encapsulates feature information corresponding to species specific normalized assembly attributes (N50, number of contigs, L50, assembly length and the overall gc content) and label information corresponding to assembly inclusion or exclusion within the NCBI RefSeq database.
+
+The MachineLearningAssemblyQC class subsequently processes the data of a new/input assembly, by normalizing the assembly attributes generated from AssemblyQuality class and returning the machine learning probabilistic evaluation of the assembly.
+
+## NormalizedDatabase
+
+*machine_learning_assembly_qc.py*
+
+The NormalizedDatabase class loads a CSV file which serves as a database of species specific median (or median of log-transformed) values of different assembly attributes corresponding to N50, number of contigs, L50, assembly length and overall gc content.
+
+The NormalizedDatabase class provides functions for interacting with the database file and compute species specific normalized assembly metrics to be used by MachineLearningAssemblyQC.
 
 ## PlatformIdentifier
 

@@ -83,3 +83,21 @@ class TestSpadesAssembler:
 
         with pytest.raises(FileNotFoundError):
             SpadesAssembler(reads, OUTPUT_DIR)
+
+    def test_bad_file(self):
+        """
+        Tests that the assembler throws an exception when the file exists, but
+        is not appropriate for assembly.
+
+        This should create a SystemExit error, as the CalledProcess error is
+        handled by the assembler.
+        """
+
+        forward_filename = os.path.join(INPUT_DIR, "winnipeg1.jpg")
+        reverse_filename = None
+        reads = Reads(forward_filename, reverse_filename)
+
+        assembler = SpadesAssembler(reads, OUTPUT_DIR)
+
+        with pytest.raises(SystemExit):
+            assembler.assemble()

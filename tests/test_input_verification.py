@@ -17,7 +17,8 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
-from proksee.input_verification import is_gzipped, is_valid_fastq, has_valid_fastq_extension
+from proksee.input_verification import is_gzipped, is_valid_fastq, has_valid_fastq_extension, are_valid_fastq
+from proksee.reads import Reads
 
 
 class TestInputVerification:
@@ -52,6 +53,16 @@ class TestInputVerification:
         """
 
         fastq_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "genuine.fastq")
+        valid = is_valid_fastq(fastq_location)
+
+        assert valid
+
+    def test_is_valid_fastq_true_gzip(self):
+        """
+        Tests when the FASTQ file is valid when gzipped.
+        """
+
+        fastq_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "genuine.fastq.gz")
         valid = is_valid_fastq(fastq_location)
 
         assert valid
@@ -96,8 +107,57 @@ class TestInputVerification:
 
         assert not valid
 
-    def test_are_valid_fastq(self):
-        pass
+    def test_bad_fastq_third_line(self):
+        """
+        Tests when the third line of the FASTQ file is wrong (not a "+").
+        """
+
+        fastq_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "bad_format1.fastq")
+        valid = is_valid_fastq(fastq_location)
+
+        assert not valid
+
+    def test_bad_fastq_quality_encoding(self):
+        """
+        Tests when the encoding of the quality scores of the FASTQ file are wrong.
+        """
+
+        fastq_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "bad_format2.fastq")
+        valid = is_valid_fastq(fastq_location)
+
+        assert not valid
+
+    def test_bad_fastq_quality_length(self):
+        """
+        Tests when the length of the quality scores of the FASTQ file are wrong.
+        """
+
+        fastq_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "bad_format3.fastq")
+        valid = is_valid_fastq(fastq_location)
+
+        assert not valid
+
+    def test_reads_valid_fastq_true(self):
+        """
+        Tests when reads refer to valid FASTQ file(s).
+        """
+
+        fastq_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "genuine.fastq")
+        reads = Reads(fastq_location, None)
+        valid = are_valid_fastq(reads)
+
+        assert valid
+
+    def test_reads_valid_fastq_false(self):
+        """
+        Tests when reads refer to invalid FASTQ file(s).
+        """
+
+        fastq_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "simple_contig.fasta")
+        reads = Reads(fastq_location, None)
+        valid = are_valid_fastq(reads)
+
+        assert not valid
 
     def test_is_gzipped_true(self):
         """
