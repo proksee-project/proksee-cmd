@@ -24,12 +24,12 @@ from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
 
 
-def determine_species(input_filename, assembly_database, output_directory, species_name=None):
+def determine_species(input_filenames, assembly_database, output_directory, species_name=None):
     """
     Attempts to determine the species in the input (reads or contigs).
 
     ARGUMENTS:
-        input_filename (string): the input from which to determine the species from
+        input_filenames (List(string)): the inputs (filenames) from which to determine the species from
         assembly_database (AssemblyDatabase): the assembly database
         output_directory (string): the location  of the output directory -- for placing temporary output
         species_name (string): optional; the scientific name of the species
@@ -51,8 +51,7 @@ def determine_species(input_filename, assembly_database, output_directory, speci
     if species_list is None:
         click.echo("\nAttempting to identify the species from the input.")
 
-        input_file_locations = [input_filename]  # Needs to be a list.
-        species_estimator = SpeciesEstimator(input_file_locations, output_directory)
+        species_estimator = SpeciesEstimator(input_filenames, output_directory)
         species_list = species_estimator.estimate_all_species()
 
     return species_list
