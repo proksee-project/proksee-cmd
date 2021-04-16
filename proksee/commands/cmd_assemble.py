@@ -98,7 +98,7 @@ def report_species(species_list):
     if len(species_list) > 1:
         click.echo("\nWARNING: Additional high-confidence species were found in the input data:\n")
 
-        for species in species_list[1:]:
+        for species in species_list[1:min(5, len(species_list))]:
             click.echo(species)
 
     if species.name == "Unknown":  # A species could not be determined.
@@ -234,7 +234,8 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     assembly_database = AssemblyDatabase(DATABASE_PATH)
 
     # Estimate species
-    species_list = utilities.determine_species(filtered_reads, assembly_database, output_directory, species_name)
+    filtered_filenames = filtered_reads.get_file_locations()
+    species_list = utilities.determine_species(filtered_filenames, assembly_database, output_directory, species_name)
     species = species_list[0]
     report_species(species_list)
 

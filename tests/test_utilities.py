@@ -36,11 +36,11 @@ class TestUtilities:
         Tests when the species name is provided, and is present in the database.
         """
 
-        input_filename = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        input_filenames = [os.path.join(INPUT_DIR, "staph_mini.fastq")]
         database = AssemblyDatabase(DATABASE_PATH)
         species_name = "Staphylococcus aureus"
 
-        species_list = determine_species(input_filename, database, OUTPUT_DIR, species_name)
+        species_list = determine_species(input_filenames, database, OUTPUT_DIR, species_name)
         assert(species_list[0] == Species("Staphylococcus aureus", 1.0))
 
     def test_determine_species_provided_absent(self):
@@ -48,11 +48,11 @@ class TestUtilities:
         Tests when the species name is provided, but is not present in the database.
         """
 
-        input_filename = os.path.join(INPUT_DIR, "staph_mini.fastq")
+        input_filenames = [os.path.join(INPUT_DIR, "staph_mini.fastq")]
         database = AssemblyDatabase(DATABASE_PATH)
         species_name = "Staphyl aureus"
 
-        species_list = determine_species(input_filename, database, OUTPUT_DIR, species_name)
+        species_list = determine_species(input_filenames, database, OUTPUT_DIR, species_name)
 
         # Tries to find species when name missing
         assert(species_list[0] == Species("Staphylococcus aureus", 1.0))
