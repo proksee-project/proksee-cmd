@@ -68,7 +68,7 @@ def evaluate(contigs_filename, output_directory, species_name=None):
     assembly_database = AssemblyDatabase(DATABASE_PATH)
 
     # Estimate species
-    species_list = utilities.determine_species(contigs_filename, assembly_database, output_directory, species_name)
+    species_list = utilities.determine_species([contigs_filename], assembly_database, output_directory, species_name)
     species = species_list[0]
     click.echo("The identified species is: " + str(species.name) + "\n")
 
