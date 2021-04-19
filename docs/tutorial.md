@@ -71,14 +71,28 @@ You can assemble the reads we downloaded earlier with the following command:
 proksee assemble SRR9201324.fastq -o output/
 ```
 
-This will initiate an assembly of the SRR9201324 *Vibrio cholerae* reads and place all outputs in a directory called "output". After running Proksee Assemble, the following should be written to standard output:
+This will initiate an assembly of the SRR9201324 *Vibrio cholerae* reads and place all outputs in a directory called "output". After running Proksee Assemble, the following should be written to standard output. We will break up the output into sections and explain the output.
+
+**Read Formatting**
 
 ```
 The reads appear to be formatted correctly.
+```
 
+Proksee quickly checks to see if the reads appear to be correctly formatted.
+
+**Sequencing Platform Identification**
+
+```
 Attempting to identify the sequencing platform from the reads.
 Sequencing Platform: Unidentifiable
+```
 
+The software attempts to estimate the sequencing platform. However, as above, it is not always to uniquely identify the sequencing platform based on the FASTQ encoding and the platform is reported as "Unknown".
+
+**Species Estimation**
+
+```
 Attempting to identify the species from the input.
 SPECIES: Vibrio cholerae (p=1.00)
 
@@ -88,17 +102,47 @@ Vibrio albensis (p=1.00)
 Atlantibacter hermannii (p=1.00)
 Klebsiella michiganensis (p=1.00)
 Erwinia amylovora (p=1.00)
+```
 
+The species is estimated using MASH and the species with the most evidence is selected. There may be additional high-confidence species reported. In this case, the species selected is Vibrio cholerae, but there are several other estimations (Vibrio albensis, Atlantibacter hermannii, etc.) with high confidence. As species estimation is somewhat inexact and complicated, we do not immediately flag the reads as being problematic, but instead verify the species later in the pipeline.
+
+**Read Quality Check**
+
+```
 The read quality is acceptable.
+```
 
+The quality of the reads is evaluated using FASTP. If the quality is acceptable, then assembly will continue.
+
+**Fast Sequence Assembly**
+
+```
 Assembled reads using Skesa.
+```
 
+The reads are quickly assembled using Skesa.
+
+**Species Verification**
+
+```
 PASS: The evaluated contigs appear to agree with the species estimation.
       The estimated species is: Vibrio cholerae (p=1.00)
+```
 
+The largest contigs of the assembly each have their species estimated with MASH. If the species estimated from each of these contigs is in agreement with the species estimated previously, then the assembly continues. It is possible that some data sets with contamination will continue in the pipeline, but as confident and automatic species estimation prove challenging, it is difficult to automate processes to handle low levels of contamination.
+
+**Machine Learning Assembly Evaluation**
+
+```
 Evaluated the quality of the assembled contigs.
 The probability of the assembly being a good assembly is: 0.58.
+```
 
+The sequence assembly is estimating using our machine learning algorithm. Here we see that the probability of the assembly be "good" (i.e. similar to other RefSeq assemblies that we believe are good) is 58%.
+
+**Heuristic Assembly Evaluation**
+
+```
 WARNING: The N50 is somewhat smaller than expected: 88901
          The N50 lower bound is: 47306.5
 PASS: The number of contigs is comparable to similar assemblies: 104
@@ -107,12 +151,31 @@ WARNING: The L50 is somewhat larger than expected: 15
          The L50 upper bound is: 26.9
 WARNING: The assembly length is somewhat smaller than expected: 3939096
          The assembly length lower bound is: 3884870.0
+```
 
+The sequence assembly is the evaluated using a heuristic-based approach. The N50, number of contigs, L50, and assembly length are compared against the range of values for assemblies of that species and sequencing technology in our database of assemblies. The software provides a warning when the assembly measurement (N50, L50, etc.) are outside the 20-80 percentile range, and fail when the measurement is outside the 5-95 percentile range.
+
+**Expert Assembly**
+
+```
 Performing expert assembly.
 Assembled reads using SPAdes.
+```
+
+Using information collected in the previous steps, a strategy is determined for "expert" assembly. The hope is that we can use information gathered from a fast Skesa assembly to better inform a more thorough assembly process. In this case, SPAdes was selected to assembly the reads.
+
+**Machine Learning Assembly Evaluation**
+
+```
 Evaluated the quality of the assembled contigs.
 The probability of the assembly being a good assembly is: 0.89.
+```
 
+Proksee now evaluates the probability of the expert assembly being a good assembly (i.e. similar to assemblies in  our RefSeq-derived assembly database) and report that probability.
+
+**Heuristic Assembly Evaluation**
+
+```
 PASS: The N50 is comparable to similar assemblies: 108383
       The acceptable N50 range is: (47306.5, 375823.9)
 PASS: The number of contigs is comparable to similar assemblies: 89
@@ -121,7 +184,13 @@ PASS: The L50 is comparable to similar assemblies: 12
       The acceptable L50 range is: (4.0, 26.9)
 PASS: The assembly length is comparable to similar assemblies: 3970349
       The acceptable assembly length range is: (3884870.0, 4184063.4)
+```
 
+The expert assembly is then evaluated using a heuristic approach, by comparing the assembly measurements against the percentile ranges for assemblies of the same species and sequencing techonology in our database.
+
+**Changes in Assemblies**
+
+```
 Changes in assembly statistics:
 N50: 19482
 Number of Contigs: -15
@@ -132,3 +201,4 @@ Length: 31253
 Complete.
 ```
 
+Finally, the changes in assembly measurements (N50, L50, etc.) from the fast assembly and the expert assembly are reported. In this case, we can see changes that suggest an improvement in assembly quality.
