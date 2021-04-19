@@ -1,16 +1,18 @@
 # Tutorial
 
-The following is a set of simple tutorials to illustrate how to run Proksee on the command line and understand the outputs. Please ensure that you have already installed Proksee according the [installation instructions](installation.md).
+The following is a set of simple tutorials to illustrate how to run Proksee on a Linux command line and how to understand the outputs. Please ensure that you have already installed Proksee according the [installation instructions](installation.md).
 
 ## Assemble
 
+This tutorial will explain how to use Proksee Assemble.
+
 ### Data
 
-You will first need to obtain data to assemble. For this tutorial, we will be using *Vibrio cholerae* reads generated from an Illumina sequencing machine using a whole-genome sequencing strategy. The reads can be downloaded either by using the SRA Toolkit or downloading the reads directly from a web browser.
+You will first need to obtain sequencing data to assemble. For this tutorial, we will be using *Vibrio cholerae* reads generated from an Illumina sequencing machine using a whole-genome sequencing strategy. The reads can be downloaded either by using NCBI's SRA Toolkit or downloading the reads directly from a web browser.
 
 **Option 1: SRA Toolkit Download**
 
-You will need to follow the instructions on how to [install](https://github.com/ncbi/sra-tools/wiki) and [use](https://www.ncbi.nlm.nih.gov/sra/docs/sradownload/) the SRA Toolkit. We will be downloading sequencing run SRR9201324:
+You will need to follow NCBI's instructions on how to [install](https://github.com/ncbi/sra-tools/wiki/02.-Installing-SRA-Toolkit) and [use](https://www.ncbi.nlm.nih.gov/sra/docs/sradownload/) the SRA Toolkit. We will download sequencing run SRR9201324 and, for the sake of simplicity, concatinate the pair-end reads into a single file.
 
 ```
 fasterq-dump SRR9201324
@@ -42,7 +44,7 @@ Check that Proksee can be run:
 proksee assemble --help
 ```
 
-You should see a help message reported:
+If Proksee is installed correctly and the Conda environment activated correctly, you should see a help message reported:
 
 ```
 Usage: proksee assemble [OPTIONS] FORWARD [REVERSE]
@@ -73,7 +75,7 @@ proksee assemble SRR9201324.fastq -o output/
 
 This will initiate an assembly of the SRR9201324 *Vibrio cholerae* reads and place all outputs in a directory called "output". After running Proksee Assemble, the following should be written to standard output. We will break up the output into sections and explain the output.
 
-### Output
+### Standard Output
 
 **Read Formatting**
 
@@ -106,7 +108,7 @@ Klebsiella michiganensis (p=1.00)
 Erwinia amylovora (p=1.00)
 ```
 
-The species is estimated using MASH and the species with the most evidence is selected. There may be additional high-confidence species reported. In this case, the species selected is Vibrio cholerae, but there are several other estimations (Vibrio albensis, Atlantibacter hermannii, etc.) with high confidence. As species estimation is somewhat inexact and complicated, we do not immediately flag the reads as being problematic, but instead verify the species later in the pipeline.
+The species is estimated using MASH and the species with the most evidence is selected. There may be additional high-confidence species reported. In this case, the species selected is *Vibrio cholerae*, but there are several other estimations (*Vibrio albensis*, *Atlantibacter hermannii*, etc.) with high confidence. As species estimation is somewhat inexact and complicated, we do not immediately flag the reads as being problematic, but instead verify the species later in the pipeline.
 
 **Read Quality Check**
 
@@ -140,7 +142,7 @@ Evaluated the quality of the assembled contigs.
 The probability of the assembly being a good assembly is: 0.58.
 ```
 
-The sequence assembly is estimating using our machine learning algorithm. Here we see that the probability of the assembly be "good" (i.e. similar to other RefSeq assemblies that we believe are good) is 58%.
+The probability of the sequence assembly being "good" is estimating using our machine learning algorithm. Here we see that the probability of the assembly being "good" (i.e. similar to other RefSeq assemblies that we believe are good) is 58%.
 
 **Heuristic Assembly Evaluation**
 
@@ -155,7 +157,7 @@ WARNING: The assembly length is somewhat smaller than expected: 3939096
          The assembly length lower bound is: 3884870.0
 ```
 
-The sequence assembly is the evaluated using a heuristic-based approach. The N50, number of contigs, L50, and assembly length are compared against the range of values for assemblies of that species and sequencing technology in our database of assemblies. The software provides a warning when the assembly measurement (N50, L50, etc.) are outside the 20-80 percentile range, and fail when the measurement is outside the 5-95 percentile range.
+The sequence assembly is the evaluated using a heuristic-based approach. The N50, number of contigs, L50, and assembly length are compared against the range of values for assemblies of that species and sequencing technology in our database of assemblies. The software reports a warning when the assembly measurement (N50, L50, etc.) is outside the 20-80 percentile range, and a failure when the measurement is outside the 5-95 percentile range.
 
 **Expert Assembly**
 
@@ -164,7 +166,7 @@ Performing expert assembly.
 Assembled reads using SPAdes.
 ```
 
-Using information collected in the previous steps, a strategy is determined for "expert" assembly. The hope is that we can use information gathered from a fast Skesa assembly to better inform a more thorough assembly process. In this case, SPAdes was selected to assembly the reads.
+Using information collected in the previous steps, a strategy is determined for the "expert" assembly. The hope is that we can use information gathered from a fast Skesa assembly to better inform a more thorough assembly. In this case, SPAdes was selected to assembly the reads.
 
 **Machine Learning Assembly Evaluation**
 
@@ -188,7 +190,7 @@ PASS: The assembly length is comparable to similar assemblies: 3970349
       The acceptable assembly length range is: (3884870.0, 4184063.4)
 ```
 
-The expert assembly is then evaluated using a heuristic approach, by comparing the assembly measurements against the percentile ranges for assemblies of the same species and sequencing techonology in our database.
+The expert assembly is then evaluated using our heuristic approach, by comparing the assembly measurements against the percentile ranges for assemblies of the same species and sequencing techonology in our database.
 
 **Changes in Assemblies**
 
@@ -204,3 +206,5 @@ Complete.
 ```
 
 Finally, the changes in assembly measurements (N50, L50, etc.) from the fast assembly and the expert assembly are reported. In this case, we can see changes that suggest an improvement in assembly quality.
+
+### Output Files
