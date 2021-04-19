@@ -73,6 +73,8 @@ proksee assemble SRR9201324.fastq -o output/
 
 This will initiate an assembly of the SRR9201324 *Vibrio cholerae* reads and place all outputs in a directory called "output". After running Proksee Assemble, the following should be written to standard output. We will break up the output into sections and explain the output.
 
+### Output
+
 **Read Formatting**
 
 ```
