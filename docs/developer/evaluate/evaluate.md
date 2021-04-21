@@ -1,6 +1,7 @@
 # Proksee Evaluate Overview
 
-v1.0.0 2021-04-08
+v1.0.0  
+2021-04-08
 
 The evaluate command is responsible for evaluating sequence assemblies by comparing their assembly metrics to our database of assembly metrics for the same species. The command essentially implements only the evaluate stages of the full `proksee assemble` command, and it may be useful to reference that documentation for more information.
 

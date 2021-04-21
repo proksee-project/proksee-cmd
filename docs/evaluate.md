@@ -50,6 +50,6 @@ Shows a help message and exits.
 
 All output will be written to the specified output directory. The output directory will contain the following files:
 
-- assembly_statistics.csv: assembly statistics for the provided assembly
+- **assembly_statistics.csv**: assembly statistics for the provided assembly
 
 The output directory may also contain output from various other programs called during execution of the pipeline.

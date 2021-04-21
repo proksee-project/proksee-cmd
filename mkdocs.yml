@@ -8,7 +8,8 @@ nav:
   - Installation: installation.md
   - Assemble: assemble.md
   - Evaluate: evaluate.md
-  - Tutorial: tutorial.md
+  - Tutorials:
+          - Assemble: tutorials/assemble.md
   - Developer:
           - Overview: developer/overview.md
           - Assemble: developer/assemble/assemble.md

@@ -82,9 +82,8 @@ Shows a help message and exits.
 
 All output will be written to the specified output directory or, if unspecified, the current directory. The output directory will contain the following files:
 
-- assembly_statistics.csv: assembly statistics for the assemblies produced during pipeline
-- contigs.fasta: the final contigs generated from the expert assembly
-- fwd_filtered.fastq: the forward filtered reads
-- rev_filtered.fastq: the reverse filtered reads (if they exist)
+- **assembly_statistics.csv**: assembly statistics for the assemblies produced during pipeline
+- **contigs.fasta**: the final contigs generated from the expert assembly
+- **information.json**: a computer-readable, JSON-formatted file containing the information that was printed to standard output
 
 The output directory may also contain output from various other programs called during execution of the pipeline.
