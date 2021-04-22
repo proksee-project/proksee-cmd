@@ -84,6 +84,6 @@ All output will be written to the specified output directory or, if unspecified,
 
 - **assembly_statistics.csv**: assembly statistics for the assemblies produced during pipeline
 - **contigs.fasta**: the final contigs generated from the expert assembly
-- **information.json**: a computer-readable, JSON-formatted file containing the information that was printed to standard output
+- **assembly_info.json**: a computer-readable, JSON-formatted file containing the information that was printed to standard output
 
 The output directory may also contain output from various other programs called during execution of the pipeline.
