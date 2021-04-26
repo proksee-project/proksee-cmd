@@ -287,12 +287,12 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
 
     # Machine learning evaluation (expert assembly)
     machine_learning_evaluation = machine_learning_evaluator.evaluate(expert_assembly_quality)
-    click.echo(evaluation.report)
+    click.echo(machine_learning_evaluation.report)
 
     # Evaluate assembly quality
     heuristic_evaluator = HeuristicEvaluator(species, assembly_database)
     heuristic_evaluation = heuristic_evaluator.evaluate(expert_assembly_quality)
-    click.echo(evaluation.report)
+    click.echo(heuristic_evaluation.report)
 
     # Compare fast and slow assemblies:
     report = compare_assemblies(fast_assembly_quality, expert_assembly_quality)
