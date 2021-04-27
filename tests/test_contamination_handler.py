@@ -27,11 +27,13 @@ class TestContaminationHandler:
     def test_estimate_contamination(self):
 
         species = Species("Boletus subalpinus", 0.99999999290182)
-        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "contamination.fasta")
+        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "s_pseudointermedius.fasta")
         output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
         handler = ContaminationHandler(species, contigs_file, output_directory)
 
         evaluation = handler.estimate_contamination()
+
+        print(evaluation.report)
 
         assert not evaluation.success
 
@@ -39,16 +41,14 @@ class TestContaminationHandler:
         message += "FAIL: The evaluated contigs don't appear to agree with the species estimation.\n"
         message += "      The estimated species is: " + str(species) + "\n"
         message += "      The following species were estimated from the contigs:\n\n"
-        message += "      " + "Boletus subalpinus (p=1.00)" + "\n"
-        message += "      " + "Symphylella sp. YG-2006 (p=1.00)" + "\n"
-        message += "      " + "Leuconostoc mesenteroides (p=1.00)" + "\n"
+        message += "      " + "Staphylococcus pseudintermedius (p=1.00)" + "\n"
 
         assert(evaluation.report == message)
 
     def test_no_contamination(self):
 
-        species = Species("Boletus subalpinus", 0.99999999290182)
-        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "simple_contig.fasta")
+        species = Species("Staphylococcus pseudintermedius", 1.0)
+        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "s_pseudointermedius.fasta")
         output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
         handler = ContaminationHandler(species, contigs_file, output_directory)
 
@@ -59,5 +59,21 @@ class TestContaminationHandler:
         message = "\n"
         message += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
         message += "      The estimated species is: " + str(species) + "\n"
+
+        assert(evaluation.report == message)
+
+    def test_low_confidence_estimation(self):
+
+        species = Species("Staphylococcus pseudintermedius", 1.0)
+        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "simple_contig.fasta")
+        output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
+        handler = ContaminationHandler(species, contigs_file, output_directory)
+
+        evaluation = handler.estimate_contamination()
+        print(evaluation.report)
+
+        assert evaluation.success
+
+        message = "\nWARNING: Unable to confidently estimate the species from the assembled contigs.\n"
 
         assert(evaluation.report == message)

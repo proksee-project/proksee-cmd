@@ -48,11 +48,11 @@ class TestUtilities:
         Tests when the species name is provided, but is not present in the database.
         """
 
-        input_filenames = [os.path.join(INPUT_DIR, "staph_mini.fastq")]
+        input_filenames = [os.path.join(INPUT_DIR, "s_pseudointermedius.fasta")]
         database = AssemblyDatabase(DATABASE_PATH)
-        species_name = "Staphyl aureus"
+        species_name = "Staphylococcus pseudintermedius"
 
         species_list = determine_species(input_filenames, database, OUTPUT_DIR, species_name)
 
         # Tries to find species when name missing
-        assert(species_list[0] == Species("Staphylococcus aureus", 1.0))
+        assert(species_list[0] == Species("Staphylococcus pseudintermedius", 1.0))

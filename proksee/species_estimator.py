@@ -106,22 +106,22 @@ class SpeciesEstimator:
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
         if len(species) == 0:
-            species.append(Species("Unknown", 0.0))
+            species.append(Species(Species.UNKNOWN, 0.0))
 
         return species
 
     def estimate_all_species(self):
         """
-        Estimates all the species present in the input data.
+        Estimates all the species present in the input data, with only minimal filtering for noise.
 
         RETURNS
             species (List(Species)): a list of all estimated species, sorted in descending order of most complete
                 and highest covered; will contain an "Unknown" species if no species were found
         """
 
-        MIN_SHARED_FRACTION = 0
+        MIN_SHARED_FRACTION = 0.05
         MIN_IDENTITY = 0
-        MIN_MULTIPLICITY = 0
+        MIN_MULTIPLICITY = 1
 
         refseq_masher_filename = self.run_refseq_masher()
         estimations = parse_species_from_refseq_masher(refseq_masher_filename)
@@ -129,7 +129,7 @@ class SpeciesEstimator:
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
         if len(species) == 0:
-            species.append(Species("Unknown", 0.0))
+            species.append(Species(Species.UNKNOWN, 0.0))
 
         return species
 

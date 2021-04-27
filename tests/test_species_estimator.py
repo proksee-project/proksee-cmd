@@ -49,7 +49,7 @@ class TestSpeciesEstimator:
         """
 
         input_filename = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "data", "staph_mini.fastq")
+            os.path.abspath(__file__)), "data", "s_pseudointermedius.fasta")
         output_directory = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "temp")
 
@@ -58,10 +58,7 @@ class TestSpeciesEstimator:
 
         top_species = species_list[0]
 
-        assert top_species.name == "Staphylococcus aureus"
-        assert top_species.confidence == pytest.approx(1-6.548889999999999e-74, 0.0001)
+        print(top_species)
 
-        bottom_species = species_list[len(species_list) - 1]
-
-        assert bottom_species.name == "Paenibacillus sp. HGF7"
-        assert bottom_species.confidence == pytest.approx(1-0.00036287, 0.0001)
+        assert top_species.name == "Staphylococcus pseudintermedius"
+        assert top_species.confidence == pytest.approx(1, 0.0001)

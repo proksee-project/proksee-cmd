@@ -21,6 +21,7 @@ import os
 from proksee.evaluation import Evaluation
 from proksee.parser.fasta_parser import split_multi_fasta_into_fasta
 from proksee.species_estimator import SpeciesEstimator
+from proksee.species import Species
 
 
 class ContaminationHandler:
@@ -68,7 +69,7 @@ class ContaminationHandler:
         # descending order by contig size:
         fasta_files = split_multi_fasta_into_fasta(self.contigs_file, fasta_directory)
 
-        contig_species_estimations = []
+        contig_species = []
 
         # Iterate through the list of contig file locations in descending order:
         for i in range(min(len(fasta_files), MAX_CONTIGS_EVALUATED)):
@@ -76,28 +77,35 @@ class ContaminationHandler:
             species_estimator = SpeciesEstimator([fasta_files[i]], self.output_directory)
             species_list = species_estimator.estimate_all_species()
 
-            contig_species_estimations.append(species_list[0])  # Select the estimation with the most evidence
+            contig_species.append(species_list[0])  # Select the estimation with the most evidence
 
-        evaluation = self.evaluate_species_estimations(contig_species_estimations)
+        evaluation = self.evaluate_species(contig_species)
 
         return evaluation
 
-    def evaluate_species_estimations(self, estimations):
+    def evaluate_species(self, species_list):
         """
-        Evaluates the species estimations for contamination. That is, checks for disagreement with the major species
-        and any observed species.
+        Evaluates the species for contamination. That is, checks for disagreement with the major species
+        and any observed species in the passed list.
+
+        PARAMETERS
+            species_list (List (Species)): a list of species to compare against the major species
 
         RETURNS
             evaluation (Evaluation): an Evaluation of whether or not the data passes / succeeds a contamination "test";
                 contains an associated, plain-language report
         """
 
-        sorted_estimations = list(set(estimations))  # Convert to set and back to list to find only unique estimations
-        sorted_estimations.sort(key=lambda item: item.confidence, reverse=True)  # "item" is an Estimation
+        sorted_species = list(set(species_list))  # Convert to set and back to list to find only unique species
+        sorted_species.sort(key=lambda item: item.confidence, reverse=True)  # "item" is an Species
 
         report = "\n"
 
-        if len(sorted_estimations) == 1 and estimations[0] == self.species:
+        if len(sorted_species) == 1 and species_list[0].name == Species.UNKNOWN:
+            success = True
+            report += "WARNING: Unable to confidently estimate the species from the assembled contigs.\n"
+
+        elif len(sorted_species) == 1 and species_list[0] == self.species:
             success = True
             report += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
             report += "      The estimated species is: " + str(self.species) + "\n"
@@ -108,7 +116,7 @@ class ContaminationHandler:
             report += "      The estimated species is: " + str(self.species) + "\n"
             report += "      The following species were estimated from the contigs:\n\n"
 
-            for estimation in sorted_estimations:
-                report += "      " + str(estimation) + "\n"
+            for species in sorted_species:
+                report += "      " + str(species) + "\n"
 
         return Evaluation(success, report)
