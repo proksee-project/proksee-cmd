@@ -61,20 +61,36 @@ class ContaminationHandler:
         """
 
         FASTA_DIRECTORY = "fasta"
-        MAX_CONTIGS_EVALUATED = 5
+        CHUNKS = 5
 
         fasta_directory = os.path.join(self.output_directory, FASTA_DIRECTORY)
 
         # Split the multi-FASTA file into single-record FASTA files (contigs) and gather a list of file locations in
         # descending order by contig size:
         fasta_files = split_multi_fasta_into_fasta(self.contigs_file, fasta_directory)
+        num_contigs = len(fasta_files)
 
         contig_species = []
+        contig_filenames = []  # A list of (filename) lists
+
+        # Create the list of lists:
+        # Take minimum of CHUNKS and number of contigs, otherwise we get empty chunks.
+        for i in range(min(CHUNKS, num_contigs)):
+            contig_filenames.append([])
+
+        # Evenly distribute the FASTA filenames to the lists:
+        # (Reminder the FASTA filenames are in sorted order.)
+        for i in range(len(fasta_files)):
+
+            index = i % CHUNKS
+            contig_filenames[index].append(fasta_files[i])
+
+        print(len(contig_filenames))
 
         # Iterate through the list of contig file locations in descending order:
-        for i in range(min(len(fasta_files), MAX_CONTIGS_EVALUATED)):
+        for i in range(len(contig_filenames)):
 
-            species_estimator = SpeciesEstimator([fasta_files[i]], self.output_directory)
+            species_estimator = SpeciesEstimator(contig_filenames[i], self.output_directory)
             species_list = species_estimator.estimate_all_species()
 
             contig_species.append(species_list[0])  # Select the estimation with the most evidence

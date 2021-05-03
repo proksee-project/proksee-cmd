@@ -19,8 +19,16 @@ specific language governing permissions and limitations under the License.
 import os
 import subprocess
 
+from refseq_masher.mash.screen import mash_screen_output_to_dataframe
+from refseq_masher.taxonomy import merge_ncbi_taxonomy_info
+from refseq_masher.utils import order_output_columns
+from refseq_masher.writers import write_dataframe
+from refseq_masher.const import MASH_SCREEN_ORDERED_COLUMNS
+
 from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 from proksee.species import Species
+
+MASH_DATABASE = "/home/eric/miniconda3/envs/proksee/lib/python3.7/site-packages/refseq_masher/data/RefSeqSketches.msh"
 
 
 def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,
@@ -135,29 +143,46 @@ class SpeciesEstimator:
 
     def run_refseq_masher(self):
         """
-        Runs RefSeq Masher on the input data.
+        Runs RefSeq Masher on multiple contig files.
 
         POST
             If successful, RefSeq Masher will have executed on the input and the output will be written to the output
-            directory. If unsuccessful, the output file we be empty. It is necessary to check to see if the output file
-            contains any output.
+            directory. If unsuccessful, the output file will be empty. It is necessary to check to see if the otuput
+            file contains any output.
         """
 
-        output_filename = os.path.join(self.output_directory, "refseq_masher.o")
-        error_filename = os.path.join(self.output_directory, "refseq_masher.e")
+        mash_filename = os.path.join(self.output_directory, "mash.o")
+        mash_error_filename = os.path.join(self.output_directory, "mash.e")
 
-        output_file = open(output_filename, "w")
-        error_file = open(error_filename, "w")
+        refseq_masher_filename = os.path.join(self.output_directory, "refseq_masher.o")
+        REFSEQ_MASHER_TABS = "tab"  # Command line parameter for tabular output.
+        REFSEQ_MASHER_SAMPLE = "sample"  # RSM-specific dataframe entry.
+        REFSEQ_MASHER_SAMPLE_NAME = "contigs"  # Name given as RSM sample name (above).
 
-        # create the refseq_masher command
-        command = "refseq_masher contains -i 0 -v 1"
+        output_file = open(mash_filename, "w")
+        error_file = open(mash_error_filename, "w")
+
+        # create the mash command
+        command = "mash screen -i 0 -v 1 " + MASH_DATABASE
 
         for item in self.input_list:
             command += " " + str(item)
 
-        # run refseq_masher
+        # run mash and use RefSeq Masher to process output
         try:
             subprocess.check_call(command, shell=True, stdout=output_file, stderr=error_file)
+
+            with open(mash_filename) as f:
+                output = f.read()
+
+            dataframe = mash_screen_output_to_dataframe(output)
+
+            if dataframe is not None:
+                dataframe[REFSEQ_MASHER_SAMPLE] = REFSEQ_MASHER_SAMPLE_NAME
+
+                dataframe = merge_ncbi_taxonomy_info(dataframe)
+                dataframe = order_output_columns(dataframe, MASH_SCREEN_ORDERED_COLUMNS)
+                write_dataframe(dataframe, refseq_masher_filename, REFSEQ_MASHER_TABS)
 
         except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to insure there was output
@@ -166,4 +191,4 @@ class SpeciesEstimator:
             output_file.close()
             error_file.close()
 
-        return output_filename
+        return refseq_masher_filename
