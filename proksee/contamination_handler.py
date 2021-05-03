@@ -85,8 +85,6 @@ class ContaminationHandler:
             index = i % CHUNKS
             contig_filenames[index].append(fasta_files[i])
 
-        print(len(contig_filenames))
-
         # Iterate through the list of contig file locations in descending order:
         for i in range(len(contig_filenames)):
 
