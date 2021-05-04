@@ -175,6 +175,8 @@ class SpeciesEstimator:
             with open(mash_filename) as f:
                 output = f.read()
 
+                print(output)
+
             dataframe = mash_screen_output_to_dataframe(output)
 
             if dataframe is not None:
