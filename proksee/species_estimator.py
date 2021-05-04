@@ -28,7 +28,10 @@ from refseq_masher.const import MASH_SCREEN_ORDERED_COLUMNS
 from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
 from proksee.species import Species
 
-MASH_DATABASE = "/home/eric/miniconda3/envs/proksee/lib/python3.7/site-packages/refseq_masher/data/RefSeqSketches.msh"
+# Build path of RefSeq Masher database:
+import refseq_masher as rs_masher
+rs_masher_path = rs_masher.__path__[0]  # __path__ returns a list of strings
+MASH_DATABASE = os.path.join(rs_masher_path, "data", "RefSeqSketches.msh")
 
 
 def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,
@@ -175,8 +178,6 @@ class SpeciesEstimator:
             with open(mash_filename) as f:
                 output = f.read()
 
-                print(output)
-
             dataframe = mash_screen_output_to_dataframe(output)
 
             if dataframe is not None:
@@ -186,8 +187,7 @@ class SpeciesEstimator:
                 dataframe = order_output_columns(dataframe, MASH_SCREEN_ORDERED_COLUMNS)
                 write_dataframe(dataframe, refseq_masher_filename, REFSEQ_MASHER_TABS)
 
-        except subprocess.CalledProcessError as e:
-            print(e)
+        except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to insure there was output
 
         finally:
