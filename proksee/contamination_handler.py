@@ -79,7 +79,7 @@ class ContaminationHandler:
             contig_filenames.append([])
 
         # Evenly distribute the FASTA filenames to the lists:
-        # (Reminder the FASTA filenames are in sorted order.)
+        # (Reminder the FASTA filenames are sorted in descending order by contig length.)
         for i in range(len(fasta_files)):
 
             index = i % CHUNKS

@@ -146,7 +146,7 @@ class SpeciesEstimator:
 
     def run_refseq_masher(self):
         """
-        Runs RefSeq Masher on multiple contig files.
+        Runs RefSeq Masher on the input data.
 
         POST
             If successful, RefSeq Masher will have executed on the input and the output will be written to the output
