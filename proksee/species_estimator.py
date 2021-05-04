@@ -186,7 +186,8 @@ class SpeciesEstimator:
                 dataframe = order_output_columns(dataframe, MASH_SCREEN_ORDERED_COLUMNS)
                 write_dataframe(dataframe, refseq_masher_filename, REFSEQ_MASHER_TABS)
 
-        except subprocess.CalledProcessError:
+        except subprocess.CalledProcessError as e:
+            print(e)
             pass  # it will be the responsibility of the calling function to insure there was output
 
         finally:
