@@ -6,8 +6,9 @@ theme:
 nav:
   - Home: index.md
   - Installation: installation.md
-  - Assemble: assemble.md
-  - Evaluate: evaluate.md
+  - Tools:
+        - Assemble: tools/assemble.md
+        - Evaluate: tools/evaluate.md
   - Tutorials:
           - Assemble: tutorials/assemble.md
   - Developer:
