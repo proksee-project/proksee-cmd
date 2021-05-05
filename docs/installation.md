@@ -13,14 +13,13 @@ Proksee requires that the following software packages be installed:
 
 The simplest way to install these packages, and any other related dependencies, is by installing them into a conda environment, using the provided installation script as follows:
 
-
 ```bash
 conda env create -f environment.yml
 conda activate proksee
 ```
 
-Proksee can then be installed by running the setup script (when inside the Proksee directory):
+You can then confirm that Proksee is installed with the following command, which should show a help message:
 
 ```bash
-pip install .
+proksee --help
 ```
