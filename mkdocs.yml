@@ -1,0 +1,20 @@
+site_name: Proksee
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Tools:
+        - Assemble: tools/assemble.md
+        - Evaluate: tools/evaluate.md
+  - Tutorials:
+          - Assemble: tutorials/assemble.md
+  - Developer:
+          - Overview: developer/overview.md
+          - Assemble: developer/assemble/assemble.md
+          - Evaluate: developer/evaluate/evaluate.md
+          - Data Structures: developer/assemble/data_structures.md
+          - JSON File Output: developer/json.md
+

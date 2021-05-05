@@ -12,9 +12,14 @@ This is the initial public release of Proksee. This release focuses on Proksee A
 
 Proksee requires the following packages:
 
+- Python 3.7
+- Pip
 - fastp
-- refseq_masher
-- skesa
+- Refseq Masher
+- Skesa
+- Quast
+- Scipy
+- Spades
  
 This can be accomplished by installing dependencies into a conda environment, using the provided installation script as follows:
 
