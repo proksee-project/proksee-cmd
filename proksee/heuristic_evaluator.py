@@ -225,7 +225,8 @@ class HeuristicEvaluator(AssemblyEvaluator):
         high_warning = database.get_contigs_quantile(species.name, 0.80)
         high_fail = database.get_contigs_quantile(species.name, 0.95)
 
-        evaluation = evaluate_value("number of contigs", num_contigs, low_fail, low_warning, high_warning, high_fail)
+        evaluation = evaluate_value("number of contigs", num_contigs, low_fail, low_warning, high_warning, high_fail,
+                                    low_failure_enabled=False)
 
         return evaluation
 
@@ -249,7 +250,8 @@ class HeuristicEvaluator(AssemblyEvaluator):
         high_warning = database.get_l50_quantile(species.name, 0.80)
         high_fail = database.get_l50_quantile(species.name, 0.95)
 
-        evaluation = evaluate_value("L50", l50, low_fail, low_warning, high_warning, high_fail)
+        evaluation = evaluate_value("L50", l50, low_fail, low_warning, high_warning, high_fail,
+                                    low_failure_enabled=False)
 
         return evaluation
 
