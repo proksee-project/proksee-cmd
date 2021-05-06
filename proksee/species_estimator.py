@@ -153,14 +153,8 @@ class SpeciesEstimator:
             file contains any output.
         """
 
-        mash_filename = os.path.join(self.output_directory, "mash.o")
-        mash_error_filename = os.path.join(self.output_directory, "mash.e")
-
         REFSEQ_MASHER_SAMPLE = "sample"  # RSM-specific dataframe entry.
         REFSEQ_MASHER_SAMPLE_NAME = "contigs"  # Name given as RSM sample name (above).
-
-        output_file = open(mash_filename, "w")
-        error_file = open(mash_error_filename, "w")
 
         # create the mash command
         command = "mash screen -i 0 -v 1 " + MASH_DATABASE
@@ -170,12 +164,8 @@ class SpeciesEstimator:
 
         # run mash and use RefSeq Masher to process output
         try:
-            subprocess.check_call(command, shell=True, stdout=output_file, stderr=error_file)
-
-            with open(mash_filename) as f:
-                output = f.read()
-
-            dataframe = mash_screen_output_to_dataframe(output)
+            completed_process = subprocess.run(command, capture_output=True, shell=True, encoding="utf8")
+            dataframe = mash_screen_output_to_dataframe(completed_process.stdout)
 
             if dataframe is not None:
                 dataframe[REFSEQ_MASHER_SAMPLE] = REFSEQ_MASHER_SAMPLE_NAME
@@ -185,9 +175,5 @@ class SpeciesEstimator:
 
         except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to insure there was output
-
-        finally:
-            output_file.close()
-            error_file.close()
 
         return dataframe
