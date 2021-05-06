@@ -43,6 +43,14 @@ class TestHeuristicEvaluator:
         expected_report += "      The measurement lower bound is: 5\n"
         assert evaluation.report == expected_report
 
+        # fail (but warning) -- too low, low failure disabled
+        evaluation = evaluate_value("measurement", 2, low_fail, low_warning, high_warning, high_fail,
+                                    low_failure_enabled=False)
+        assert evaluation.success
+        expected_report = "WARNING: The measurement is smaller than expected: 2\n"
+        expected_report += "         The measurement lower bound is: 5\n"
+        assert evaluation.report == expected_report
+
         # fail -- too low, on threshold
         evaluation = evaluate_value("measurement", 5, low_fail, low_warning, high_warning, high_fail)
         assert not evaluation.success
@@ -53,14 +61,14 @@ class TestHeuristicEvaluator:
         # low warning -- above low fail threshold
         evaluation = evaluate_value("measurement", 6, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
-        expected_report = "WARNING: The measurement is somewhat smaller than expected: 6\n"
+        expected_report = "WARNING: The measurement is smaller than expected: 6\n"
         expected_report += "         The measurement lower bound is: 5\n"
         assert evaluation.report == expected_report
 
         # low warning -- on low warning threshold
         evaluation = evaluate_value("measurement", 10, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
-        expected_report = "WARNING: The measurement is somewhat smaller than expected: 10\n"
+        expected_report = "WARNING: The measurement is smaller than expected: 10\n"
         expected_report += "         The measurement lower bound is: 5\n"
         assert evaluation.report == expected_report
 
@@ -88,14 +96,14 @@ class TestHeuristicEvaluator:
         # high warning -- on threshold
         evaluation = evaluate_value("measurement", 20, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
-        expected_report = "WARNING: The measurement is somewhat larger than expected: 20\n"
+        expected_report = "WARNING: The measurement is larger than expected: 20\n"
         expected_report += "         The measurement upper bound is: 25\n"
         assert evaluation.report == expected_report
 
         # high warning -- near high fail threshold
         evaluation = evaluate_value("measurement", 24, low_fail, low_warning, high_warning, high_fail)
         assert evaluation.success
-        expected_report = "WARNING: The measurement is somewhat larger than expected: 24\n"
+        expected_report = "WARNING: The measurement is larger than expected: 24\n"
         expected_report += "         The measurement upper bound is: 25\n"
         assert evaluation.report == expected_report
 
@@ -111,6 +119,14 @@ class TestHeuristicEvaluator:
         assert not evaluation.success
         expected_report = "FAIL: The measurement is larger than expected: 30\n"
         expected_report += "      The measurement upper bound is: 25\n"
+        assert evaluation.report == expected_report
+
+        # high fail (warning) -- high failure, but high failure disabled
+        evaluation = evaluate_value("measurement", 30, low_fail, low_warning, high_warning, high_fail,
+                                    high_failure_enabled=False)
+        assert evaluation.success
+        expected_report = "WARNING: The measurement is larger than expected: 30\n"
+        expected_report += "         The measurement upper bound is: 25\n"
         assert evaluation.report == expected_report
 
     def test_compare_assemblies(self):

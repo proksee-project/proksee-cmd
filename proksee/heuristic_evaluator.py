@@ -199,7 +199,8 @@ class HeuristicEvaluator(AssemblyEvaluator):
         high_warning = database.get_n50_quantile(species.name, 0.80)
         high_fail = database.get_n50_quantile(species.name, 0.95)
 
-        evaluation = evaluate_value("N50", n50, low_fail, low_warning, high_warning, high_fail)
+        evaluation = evaluate_value("N50", n50, low_fail, low_warning, high_warning, high_fail,
+                                    high_failure_enabled=False)
 
         return evaluation
 
@@ -278,17 +279,22 @@ class HeuristicEvaluator(AssemblyEvaluator):
         return evaluation
 
 
-def evaluate_value(measurement, value, low_fail, low_warning, high_warning, high_fail):
+def evaluate_value(measurement, value, low_bound, low_warning, high_warning, high_bound, low_failure_enabled=True,
+                   high_failure_enabled=True):
     """
     Evaluates a generic value for a measurement and reports whether or not it is within acceptable bounds.
 
     PARAMETERS
         measurement (str): plain-language name of the measurement (ex: "N50")
         value (comparable): the value to evaluate
-        low_fail (comparable): the lower bound of failure
+        low_bound (comparable): the lower bound of failure
         low_warning (comparable): the lower bound for warning
         high_warning (comparable): the higher bound for warning
-        high_fail (comparable): the higher bound of failure
+        high_bound (comparable): the higher bound of failure
+        low_failure_enabled (boolean): whether or not a value being less than low_bound is a failure
+            (otherwise it will be a warning)
+        high_failure_enabled (boolean): whether or not a value being less than high_bound is a failure
+            (otherwise it will be a warning)
 
     RETURNS
         evaluation (Evaluation): an evaluation of the measurement against the passed thresholds
@@ -297,35 +303,49 @@ def evaluate_value(measurement, value, low_fail, low_warning, high_warning, high
     report = ""
     success = False
 
-    # (-infinity, low_fail] -> low failure
-    if value <= low_fail:
-        success = False
-        report += "FAIL: The {} is smaller than expected: {}\n".format(measurement, value)
-        report += "      The {} lower bound is: {}\n".format(measurement, low_fail)
+    # (-infinity, low_bound] -> low failure
+    if value <= low_bound:
 
-    # (low_fail, low_warning] -> low warning
+        if low_failure_enabled:
+            success = False
+            report += "FAIL: The {} is smaller than expected: {}\n".format(measurement, value)
+            report += "      The {} lower bound is: {}\n".format(measurement, low_bound)
+
+        else:
+            success = True
+            report += "WARNING: The {} is smaller than expected: {}\n".format(measurement, value)
+            report += "         The {} lower bound is: {}\n".format(measurement, low_bound)
+
+    # (low_bound, low_warning] -> low warning
     elif value <= low_warning:
         success = True
-        report += "WARNING: The {} is somewhat smaller than expected: {}\n".format(measurement, value)
-        report += "         The {} lower bound is: {}\n".format(measurement, low_fail)
+        report += "WARNING: The {} is smaller than expected: {}\n".format(measurement, value)
+        report += "         The {} lower bound is: {}\n".format(measurement, low_bound)
 
     # (low_warning, high_warning) -> acceptable, no warning
     elif value < high_warning:
         success = True
         report += "PASS: The {} is comparable to similar assemblies: {}\n".format(measurement, value)
-        report += "      The acceptable {} range is: ({}, {})\n".format(measurement, low_fail, high_fail)
+        report += "      The acceptable {} range is: ({}, {})\n".format(measurement, low_bound, high_bound)
 
-    # [high_warning, high_fail) -> high warning
-    elif value < high_fail:
+    # [high_warning, high_bound) -> high warning
+    elif value < high_bound:
         success = True
-        report += "WARNING: The {} is somewhat larger than expected: {}\n".format(measurement, value)
-        report += "         The {} upper bound is: {}\n".format(measurement, high_fail)
+        report += "WARNING: The {} is larger than expected: {}\n".format(measurement, value)
+        report += "         The {} upper bound is: {}\n".format(measurement, high_bound)
 
-    # [high_fail, +infinity) -> high failure
-    elif value >= high_fail:
-        success = False
-        report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
-        report += "      The {} upper bound is: {}\n".format(measurement, high_fail)
+    # [high_bound, +infinity) -> high failure
+    elif value >= high_bound:
+
+        if high_failure_enabled:
+            success = False
+            report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
+            report += "      The {} upper bound is: {}\n".format(measurement, high_bound)
+
+        else:
+            success = True
+            report += "WARNING: The {} is larger than expected: {}\n".format(measurement, value)
+            report += "         The {} upper bound is: {}\n".format(measurement, high_bound)
 
     evaluation = Evaluation(success, report)
 
