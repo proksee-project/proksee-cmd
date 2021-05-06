@@ -40,17 +40,12 @@ class TestCmdEvaluate:
 
         # Files being tracked:
         quast_file = os.path.join(OUTPUT_DIR, "quast", "report.txt")
-        refseq_masher_file = os.path.join(OUTPUT_DIR, "refseq_masher.o")
 
         # Remove previous files if they exist:
         if os.path.isfile(quast_file):
             os.remove(quast_file)
 
-        if os.path.isfile(refseq_masher_file):
-            os.remove(refseq_masher_file)
-
         evaluate(contigs_filename, OUTPUT_DIR, species_name=None)
 
         # Check that expected files were created:
         assert os.path.isfile(quast_file)
-        assert os.path.isfile(refseq_masher_file)

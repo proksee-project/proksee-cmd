@@ -22,9 +22,9 @@ from proksee.species import Species
 from proksee.species_estimation import Estimation
 
 
-def parse_species_from_refseq_masher(refseq_masher_file):
+def parse_estimations_from_file(refseq_masher_file):
     """
-    This functions parses the output file of RefSeq Masher's "contains" command. The input file should contain the full
+    This function parses the output file of RefSeq Masher's "contains" command. The input file should contain the full
     output from this command. This parser returns Estimations, with only minimal reduction of the data.
 
     This function expects the RefSeq Masher file to be sorted by identity in descending order. Only one Estimation
@@ -51,7 +51,7 @@ def parse_species_from_refseq_masher(refseq_masher_file):
     if not os.path.exists(refseq_masher_file):
         raise FileNotFoundError("File not found: " + refseq_masher_file)
 
-    # Make sure that the contains data:
+    # Make sure that the file contains data:
     if os.path.getsize(refseq_masher_file) > 0:
 
         with open(refseq_masher_file) as file:
@@ -90,5 +90,52 @@ def parse_species_from_refseq_masher(refseq_masher_file):
 
                 if estimation not in estimations:
                     estimations.append(estimation)
+
+    return estimations
+
+
+def parse_estimations_from_dataframe(dataframe):
+    """
+    This function parses the dataframe output from the RefSeq Masher (RSM) "contains" command, after RSM as has
+    merged NCBI taxonomy info and ordered the output columns. This parser returns Estimations, with only minimal
+    reduction of the data.
+
+    This function expects the RefSeq Masher dataframe to be sorted by identity in descending order. Only one
+    Estimation from each species (the first observed, with the highest identity) is maintained.
+
+    PARAMETERS:
+
+        dataframe (pandas.DataFrame): the dataframe output from 'refseq_masher contains' (NCBI merged and sorted)
+
+    RETURNS:
+
+        estimations (List(Estimation)): a list of Estimation objects sorted from highest identity to lowest
+    """
+
+    IDENTITY = "identity"
+    SHARED_HASHES = "shared_hashes"
+    MEDIAN_MULTIPLICITY = "median_multiplicity"
+    PVALUE = "pvalue"
+    FULL_TAXONOMY = "full_taxonomy"
+    TAXONOMIC_SPECIES = "taxonomic_species"
+
+    estimations = []
+
+    for index, row in dataframe.iterrows():
+
+        name = row[TAXONOMIC_SPECIES]
+        confidence = 1 - float(row[PVALUE])  # inverse because pvalue relates to prob of accidental match
+
+        identity = float(row[IDENTITY])
+        shared_hashes_tokens = row[SHARED_HASHES].split("/")
+        shared_hashes = float(shared_hashes_tokens[0]) / float(shared_hashes_tokens[1])
+        median_multiplicity = int(row[MEDIAN_MULTIPLICITY])
+        full_taxonomy = str(row[FULL_TAXONOMY])
+
+        species = Species(name, confidence)
+        estimation = Estimation(species, identity, shared_hashes, median_multiplicity, full_taxonomy)
+
+        if estimation not in estimations:
+            estimations.append(estimation)
 
     return estimations

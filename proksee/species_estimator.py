@@ -22,10 +22,9 @@ import subprocess
 from refseq_masher.mash.screen import mash_screen_output_to_dataframe
 from refseq_masher.taxonomy import merge_ncbi_taxonomy_info
 from refseq_masher.utils import order_output_columns
-from refseq_masher.writers import write_dataframe
 from refseq_masher.const import MASH_SCREEN_ORDERED_COLUMNS
 
-from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
+from proksee.parser.refseq_masher_parser import parse_estimations_from_dataframe
 from proksee.species import Species
 
 # Build path of RefSeq Masher database:
@@ -111,8 +110,8 @@ class SpeciesEstimator:
         MIN_IDENTITY = 0.90
         MIN_MULTIPLICITY = 5
 
-        refseq_masher_filename = self.run_refseq_masher()
-        estimations = parse_species_from_refseq_masher(refseq_masher_filename)
+        dataframe = self.run_refseq_masher()
+        estimations = parse_estimations_from_dataframe(dataframe)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
@@ -134,8 +133,8 @@ class SpeciesEstimator:
         MIN_IDENTITY = 0
         MIN_MULTIPLICITY = 1
 
-        refseq_masher_filename = self.run_refseq_masher()
-        estimations = parse_species_from_refseq_masher(refseq_masher_filename)
+        dataframe = self.run_refseq_masher()
+        estimations = parse_estimations_from_dataframe(dataframe)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
@@ -157,8 +156,6 @@ class SpeciesEstimator:
         mash_filename = os.path.join(self.output_directory, "mash.o")
         mash_error_filename = os.path.join(self.output_directory, "mash.e")
 
-        refseq_masher_filename = os.path.join(self.output_directory, "refseq_masher.o")
-        REFSEQ_MASHER_TABS = "tab"  # Command line parameter for tabular output.
         REFSEQ_MASHER_SAMPLE = "sample"  # RSM-specific dataframe entry.
         REFSEQ_MASHER_SAMPLE_NAME = "contigs"  # Name given as RSM sample name (above).
 
@@ -185,7 +182,6 @@ class SpeciesEstimator:
 
                 dataframe = merge_ncbi_taxonomy_info(dataframe)
                 dataframe = order_output_columns(dataframe, MASH_SCREEN_ORDERED_COLUMNS)
-                write_dataframe(dataframe, refseq_masher_filename, REFSEQ_MASHER_TABS)
 
         except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to insure there was output
@@ -194,4 +190,4 @@ class SpeciesEstimator:
             output_file.close()
             error_file.close()
 
-        return refseq_masher_filename
+        return dataframe

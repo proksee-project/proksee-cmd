@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 import os
 import pytest
 
-from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
+from proksee.parser.refseq_masher_parser import parse_estimations_from_file
 from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
 
 
@@ -33,7 +33,7 @@ class TestSpeciesEstimator:
         valid_masher_filename = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "rs_masher_no_subspecies_column.tab")
 
-        estimations = parse_species_from_refseq_masher(valid_masher_filename)
+        estimations = parse_estimations_from_file(valid_masher_filename)
         species_list = estimate_species_from_estimations(estimations, 0.9, 0.9, 5, ignore_viruses=True)
 
         assert len(species_list) == 1

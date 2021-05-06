@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 import os
 import pytest
 
-from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
+from proksee.parser.refseq_masher_parser import parse_estimations_from_file
 
 
 class TestRefSeqMasherParser:
@@ -32,7 +32,7 @@ class TestRefSeqMasherParser:
         valid_masher_filename = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "rs_masher_no_subspecies_column.tab")
 
-        estimations = parse_species_from_refseq_masher(valid_masher_filename)
+        estimations = parse_estimations_from_file(valid_masher_filename)
 
         estimation = estimations[0]
 
@@ -92,7 +92,7 @@ class TestRefSeqMasherParser:
         valid_masher_filename = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "rs_masher_subspecies_column.tab")
 
-        estimations = parse_species_from_refseq_masher(valid_masher_filename)
+        estimations = parse_estimations_from_file(valid_masher_filename)
 
         estimation = estimations[0]
 
@@ -113,4 +113,4 @@ class TestRefSeqMasherParser:
             os.path.abspath(__file__)), "data", "missing.file")
 
         with pytest.raises(FileNotFoundError):
-            parse_species_from_refseq_masher(missing_filename)
+            parse_estimations_from_file(missing_filename)
