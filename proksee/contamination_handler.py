@@ -52,8 +52,8 @@ class ContaminationHandler:
 
     def estimate_contamination(self):
         """
-        Estimates species contamination in the contigs by examining the five largest contigs and looking for
-        disagreement between the species provided and the species estimated for each contig.
+        Estimates species contamination in the contigs organizing the contigs into five groups and looking for
+        disagreement between the species provided and the species estimated for each contig group.
 
         RETURNS
             evaluation (Evaluation): an Evaluation of whether or not the data passes / succeeds a contamination "test";
@@ -82,7 +82,7 @@ class ContaminationHandler:
         # (Reminder the FASTA filenames are sorted in descending order by contig length.)
         for i in range(len(fasta_files)):
 
-            index = i % CHUNKS
+            index = i % CHUNKS  # Modulus division to "rotate" the index.
             contig_filenames[index].append(fasta_files[i])
 
         # Iterate through the list of contig file locations in descending order:
