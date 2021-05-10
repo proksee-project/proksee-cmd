@@ -31,11 +31,9 @@ def parse_estimations_from_file(refseq_masher_file):
     from each species (the first observed, with the highest identity) is maintained.
 
     PARAMETERS:
-
         refseq_masher_file (str): the file location of the output from 'refseq_masher contains'
 
     RETURNS:
-
         estimations (List(Estimation)): a list of Estimation objects sorted from highest identity to lowest
     """
 
@@ -104,11 +102,9 @@ def parse_estimations_from_dataframe(dataframe):
     Estimation from each species (the first observed, with the highest identity) is maintained.
 
     PARAMETERS:
-
         dataframe (pandas.DataFrame): the dataframe output from 'refseq_masher contains' (NCBI merged and sorted)
 
     RETURNS:
-
         estimations (List(Estimation)): a list of Estimation objects sorted from highest identity to lowest
     """
 
