@@ -146,7 +146,7 @@ class SpeciesEstimator:
     def run_refseq_masher(self):
         """
         Runs RefSeq Masher on the input data.
-        
+
         RETURNS
             dataframe (RefSeqMasher Pandas.DataFrame): a RefSeq Masher styled dataframe containing the results of
                 running Mash, combined with NCBI taxonomic information; see parser.refseq_masher_parser for more
