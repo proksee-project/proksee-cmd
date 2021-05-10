@@ -26,6 +26,8 @@ class Species:
         confidence (float): the confidence of the species assignment, between 0 and 1
     """
 
+    UNKNOWN = "Unknown"  # The name to use when the species is unknown.
+
     def __init__(self, name, confidence):
         """
         Initializes the species.

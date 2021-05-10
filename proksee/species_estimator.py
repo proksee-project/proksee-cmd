@@ -19,8 +19,18 @@ specific language governing permissions and limitations under the License.
 import os
 import subprocess
 
-from proksee.parser.refseq_masher_parser import parse_species_from_refseq_masher
+from refseq_masher.mash.screen import mash_screen_output_to_dataframe
+from refseq_masher.taxonomy import merge_ncbi_taxonomy_info
+from refseq_masher.utils import order_output_columns
+from refseq_masher.const import MASH_SCREEN_ORDERED_COLUMNS
+
+from proksee.parser.refseq_masher_parser import parse_estimations_from_dataframe
 from proksee.species import Species
+
+# Build path of RefSeq Masher database:
+import refseq_masher as rs_masher
+rs_masher_path = rs_masher.__path__[0]  # __path__ returns a list of strings
+MASH_DATABASE = os.path.join(rs_masher_path, "data", "RefSeqSketches.msh")
 
 
 def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,
@@ -100,36 +110,36 @@ class SpeciesEstimator:
         MIN_IDENTITY = 0.90
         MIN_MULTIPLICITY = 5
 
-        refseq_masher_filename = self.run_refseq_masher()
-        estimations = parse_species_from_refseq_masher(refseq_masher_filename)
+        dataframe = self.run_refseq_masher()
+        estimations = parse_estimations_from_dataframe(dataframe)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
         if len(species) == 0:
-            species.append(Species("Unknown", 0.0))
+            species.append(Species(Species.UNKNOWN, 0.0))
 
         return species
 
     def estimate_all_species(self):
         """
-        Estimates all the species present in the input data.
+        Estimates all the species present in the input data, with only minimal filtering for noise.
 
         RETURNS
             species (List(Species)): a list of all estimated species, sorted in descending order of most complete
                 and highest covered; will contain an "Unknown" species if no species were found
         """
 
-        MIN_SHARED_FRACTION = 0
+        MIN_SHARED_FRACTION = 0.05
         MIN_IDENTITY = 0
-        MIN_MULTIPLICITY = 0
+        MIN_MULTIPLICITY = 1
 
-        refseq_masher_filename = self.run_refseq_masher()
-        estimations = parse_species_from_refseq_masher(refseq_masher_filename)
+        dataframe = self.run_refseq_masher()
+        estimations = parse_estimations_from_dataframe(dataframe)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
         if len(species) == 0:
-            species.append(Species("Unknown", 0.0))
+            species.append(Species(Species.UNKNOWN, 0.0))
 
         return species
 
@@ -137,33 +147,36 @@ class SpeciesEstimator:
         """
         Runs RefSeq Masher on the input data.
 
+        RETURNS
+            dataframe (RefSeqMasher Pandas.DataFrame): a RefSeq Masher styled dataframe containing the results of
+                running Mash, combined with NCBI taxonomic information; see parser.refseq_masher_parser for more
+                information about the dataframe format
+
         POST
-            If successful, RefSeq Masher will have executed on the input and the output will be written to the output
-            directory. If unsuccessful, the output file we be empty. It is necessary to check to see if the output file
-            contains any output.
+            If successful, RefSeq Masher will have executed on the input and temporary files may be written to file.
         """
 
-        output_filename = os.path.join(self.output_directory, "refseq_masher.o")
-        error_filename = os.path.join(self.output_directory, "refseq_masher.e")
+        REFSEQ_MASHER_SAMPLE = "sample"  # RSM-specific dataframe entry.
+        REFSEQ_MASHER_SAMPLE_NAME = "contigs"  # Name given as RSM sample name (above).
 
-        output_file = open(output_filename, "w")
-        error_file = open(error_filename, "w")
-
-        # create the refseq_masher command
-        command = "refseq_masher contains -i 0 -v 1"
+        # create the mash command
+        command = "mash screen -i 0 -v 1 " + MASH_DATABASE
 
         for item in self.input_list:
             command += " " + str(item)
 
-        # run refseq_masher
+        # run mash and use RefSeq Masher to process output
         try:
-            subprocess.check_call(command, shell=True, stdout=output_file, stderr=error_file)
+            completed_process = subprocess.run(command, capture_output=True, shell=True, encoding="utf8")
+            dataframe = mash_screen_output_to_dataframe(completed_process.stdout)
+
+            if dataframe is not None:
+                dataframe[REFSEQ_MASHER_SAMPLE] = REFSEQ_MASHER_SAMPLE_NAME
+
+                dataframe = merge_ncbi_taxonomy_info(dataframe)
+                dataframe = order_output_columns(dataframe, MASH_SCREEN_ORDERED_COLUMNS)
 
         except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to insure there was output
 
-        finally:
-            output_file.close()
-            error_file.close()
-
-        return output_filename
+        return dataframe
