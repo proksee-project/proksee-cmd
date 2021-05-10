@@ -146,11 +146,14 @@ class SpeciesEstimator:
     def run_refseq_masher(self):
         """
         Runs RefSeq Masher on the input data.
+        
+        RETURNS
+            dataframe (RefSeqMasher Pandas.DataFrame): a RefSeq Masher styled dataframe containing the results of
+                running Mash, combined with NCBI taxonomic information; see parser.refseq_masher_parser for more
+                information about the dataframe format
 
         POST
-            If successful, RefSeq Masher will have executed on the input and the output will be written to the output
-            directory. If unsuccessful, the output file will be empty. It is necessary to check to see if the otuput
-            file contains any output.
+            If successful, RefSeq Masher will have executed on the input and temporary files may be written to file.
         """
 
         REFSEQ_MASHER_SAMPLE = "sample"  # RSM-specific dataframe entry.
