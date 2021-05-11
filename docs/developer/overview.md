@@ -5,7 +5,7 @@ v1.0.0
 
 Proksee is a Python 3 software project that provides a computational pipeline for performing sequence assembly, annotation, and visualization of microbial genomes. It is intented to be used by researchers who will have expertise in microbial genomics, but not necessarily bioinformatics or computational biology.
 
-Proksee is implemented using object orientation priciples. It is comprised of multiple commands that that can be run individually or together in a larger computational pipeline. The complete Proksee pipeline would involve sequence assembly using `proksee assemble` and then sequence annotation using `proksee annotate`. These assembled and annotated genomes would then be displayed using a Proksee visualization tool.
+Proksee is implemented using object orientation priciples. It is comprised of multiple commands that that can be run individually or together in a larger computational pipeline. The complete Proksee pipeline would involve sequence assembly using `proksee assemble` and then sequence annotation and visualization using [Proksee's web interface](https://beta.proksee.ca/).
 
 ## File Organization
 
@@ -30,7 +30,6 @@ In addition, the following are notable files:
 
 Proksee is comprised of the following commands:
 
-- annotate
 - assemble
 - evaluate
 
@@ -38,7 +37,6 @@ These commands are implemented using the [Click Python package](https://click.pa
 
 Commands are invoked on the command line by entering the name of the program, proksee, followed by the name of the command being invoked. For example:
 
-- `proksee annotate`
 - `proksee assemble`
 - `proksee evaluate`
 

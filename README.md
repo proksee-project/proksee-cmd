@@ -1,6 +1,6 @@
 # Proksee
 
-Proksee is a suite of command line tools for performing assembly, annotation and visualization of microbial genomes.
+Proksee is a suite of command line tools for performing assembly and evaluation of microbial genomes.
 
 ## Release
 
