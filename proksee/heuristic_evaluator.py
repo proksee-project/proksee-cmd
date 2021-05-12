@@ -197,10 +197,8 @@ class HeuristicEvaluator(AssemblyEvaluator):
         low_fail = database.get_n50_quantile(species.name, 0.05)
         low_warning = database.get_n50_quantile(species.name, 0.20)
         high_warning = database.get_n50_quantile(species.name, 0.80)
-        high_fail = database.get_n50_quantile(species.name, 0.95)
 
-        evaluation = evaluate_value("N50", n50, low_fail, low_warning, high_warning, high_fail,
-                                    high_failure_enabled=False)
+        evaluation = evaluate_value("N50", n50, low_warning, high_warning, low_fail=low_fail, high_fail=None)
 
         return evaluation
 
@@ -220,13 +218,12 @@ class HeuristicEvaluator(AssemblyEvaluator):
         species = self.species
 
         num_contigs = assembly_quality.num_contigs
-        low_fail = database.get_contigs_quantile(species.name, 0.05)
         low_warning = database.get_contigs_quantile(species.name, 0.20)
         high_warning = database.get_contigs_quantile(species.name, 0.80)
         high_fail = database.get_contigs_quantile(species.name, 0.95)
 
-        evaluation = evaluate_value("number of contigs", num_contigs, low_fail, low_warning, high_warning, high_fail,
-                                    low_failure_enabled=False)
+        evaluation = evaluate_value("number of contigs", num_contigs, low_warning, high_warning,
+                                    low_fail=None, high_fail=high_fail)
 
         return evaluation
 
@@ -245,13 +242,11 @@ class HeuristicEvaluator(AssemblyEvaluator):
         species = self.species
 
         l50 = assembly_quality.l50
-        low_fail = database.get_l50_quantile(species.name, 0.05)
         low_warning = database.get_l50_quantile(species.name, 0.20)
         high_warning = database.get_l50_quantile(species.name, 0.80)
         high_fail = database.get_l50_quantile(species.name, 0.95)
 
-        evaluation = evaluate_value("L50", l50, low_fail, low_warning, high_warning, high_fail,
-                                    low_failure_enabled=False)
+        evaluation = evaluate_value("L50", l50, low_warning, high_warning, low_fail=None, high_fail=high_fail)
 
         return evaluation
 
@@ -276,27 +271,22 @@ class HeuristicEvaluator(AssemblyEvaluator):
         high_warning = database.get_length_quantile(species.name, 0.80)
         high_fail = database.get_length_quantile(species.name, 0.95)
 
-        evaluation = evaluate_value("assembly length", length, low_fail, low_warning, high_warning, high_fail)
+        evaluation = evaluate_value("assembly length", length, low_warning, high_warning, low_fail, high_fail)
 
         return evaluation
 
 
-def evaluate_value(measurement, value, low_bound, low_warning, high_warning, high_bound, low_failure_enabled=True,
-                   high_failure_enabled=True):
+def evaluate_value(measurement, value, low_warning, high_warning, low_fail=None, high_fail=None):
     """
     Evaluates a generic value for a measurement and reports whether or not it is within acceptable bounds.
 
     PARAMETERS
         measurement (str): plain-language name of the measurement (ex: "N50")
         value (comparable): the value to evaluate
-        low_bound (comparable): the lower bound of failure
         low_warning (comparable): the lower bound for warning
         high_warning (comparable): the higher bound for warning
-        high_bound (comparable): the higher bound of failure
-        low_failure_enabled (boolean): whether or not a value being less than low_bound is a failure
-            (otherwise it will be a warning)
-        high_failure_enabled (boolean): whether or not a value being less than high_bound is a failure
-            (otherwise it will be a warning)
+        low_fail (comparable): optional; the lower bound of failure
+        high_fail (comparable): optional; the higher bound of failure
 
     RETURNS
         evaluation (Evaluation): an evaluation of the measurement against the passed thresholds
@@ -305,49 +295,35 @@ def evaluate_value(measurement, value, low_bound, low_warning, high_warning, hig
     report = ""
     success = False
 
-    # (-infinity, low_bound] -> low failure
-    if value <= low_bound:
+    # (-infinity, low_fail] -> low failure
+    if low_fail and value <= low_fail:
+        success = False
+        report += "FAIL: The {} is smaller than expected: {}\n".format(measurement, value)
+        report += "      The {} lower bound is: {}\n".format(measurement, low_fail)
 
-        if low_failure_enabled:
-            success = False
-            report += "FAIL: The {} is smaller than expected: {}\n".format(measurement, value)
-            report += "      The {} lower bound is: {}\n".format(measurement, low_bound)
-
-        else:
-            success = True
-            report += "WARNING: The {} is smaller than expected: {}\n".format(measurement, value)
-            report += "         The {} lower bound is: {}\n".format(measurement, low_bound)
-
-    # (low_bound, low_warning] -> low warning
+    # (low_fail, low_warning] -> low warning
     elif value <= low_warning:
         success = True
         report += "WARNING: The {} is smaller than expected: {}\n".format(measurement, value)
-        report += "         The {} lower bound is: {}\n".format(measurement, low_bound)
+        report += "         The {} lower warning bound is: {}\n".format(measurement, low_warning)
 
-    # (low_warning, high_warning) -> acceptable, no warning
-    elif value < high_warning:
-        success = True
-        report += "PASS: The {} is comparable to similar assemblies: {}\n".format(measurement, value)
-        report += "      The acceptable {} range is: ({}, {})\n".format(measurement, low_bound, high_bound)
+    # [high_fail, +infinity) -> high failure
+    elif high_fail and value >= high_fail:
+        success = False
+        report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
+        report += "      The {} upper bound is: {}\n".format(measurement, high_fail)
 
-    # [high_warning, high_bound) -> high warning
-    elif value < high_bound:
+    # [high_warning, high_fail) -> high warning
+    elif value >= high_warning:
         success = True
         report += "WARNING: The {} is larger than expected: {}\n".format(measurement, value)
-        report += "         The {} upper bound is: {}\n".format(measurement, high_bound)
+        report += "         The {} upper warning bound is: {}\n".format(measurement, high_warning)
 
-    # [high_bound, +infinity) -> high failure
-    elif value >= high_bound:
-
-        if high_failure_enabled:
-            success = False
-            report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
-            report += "      The {} upper bound is: {}\n".format(measurement, high_bound)
-
-        else:
-            success = True
-            report += "WARNING: The {} is larger than expected: {}\n".format(measurement, value)
-            report += "         The {} upper bound is: {}\n".format(measurement, high_bound)
+    # (low_warning, high_warning) -> acceptable, no warning
+    else:
+        success = True
+        report += "PASS: The {} is comparable to similar assemblies: {}\n".format(measurement, value)
+        report += "      The preferred {} range is: ({}, {})\n".format(measurement, low_warning, high_warning)
 
     evaluation = Evaluation(success, report)
 
