@@ -102,7 +102,12 @@ class ExpertSystem:
             evaluation = evaluator.evaluate(assembly_quality)
 
             assembler = SpadesAssembler(self.reads, self.output_directory)
-            proceed = evaluation.success  # proceed if evaluation was successful
+
+            # Proceed if length evaluation was successful.
+            # This is because the heuristic assemblies (which this strategy is based upon), usually do not perform
+            # as well as the expert assemblies and will often fail evaluation because of it. This strategy attempts
+            # to allow the pipeline to continue as long as the assembly length appears normal.
+            proceed = evaluation.length_evaluation.success
             strategy = AssemblyStrategy(proceed, assembler, evaluation.report)
 
         else:

@@ -111,6 +111,7 @@ class TestExpertSystem:
         database = AssemblyDatabase(DATABASE_PATH)
 
         strategy = system.create_expert_assembly_strategy(assembly_quality, database)
+        print(strategy.report)
 
         assert not strategy.proceed
 
@@ -133,6 +134,7 @@ class TestExpertSystem:
         database = AssemblyDatabase(DATABASE_PATH)
 
         strategy = system.create_expert_assembly_strategy(assembly_quality, database)
+        print(strategy.report)
 
         assert not strategy.proceed
 
