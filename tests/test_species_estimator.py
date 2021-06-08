@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 import os
 import pytest
 
-from proksee.parser.refseq_masher_parser import parse_estimations_from_file
+from proksee.parser.mash_parser import parse_estimations_from_mash
 from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
 
 
@@ -30,18 +30,20 @@ class TestSpeciesEstimator:
         Tests the estimation of species from estimations (objects).
         """
 
-        valid_masher_filename = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "data", "rs_masher_no_subspecies_column.tab")
+        valid_mash_filename = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "mash_ecoli.o")
+        print(valid_mash_filename)
 
-        estimations = parse_estimations_from_file(valid_masher_filename)
+        estimations = parse_estimations_from_mash(valid_mash_filename)
+        print(len(estimations))
         species_list = estimate_species_from_estimations(estimations, 0.9, 0.9, 5, ignore_viruses=True)
 
         assert len(species_list) == 1
 
         species = species_list[0]
 
-        assert species.name == "Listeria monocytogenes"
-        assert species.confidence == 1
+        assert species.name == "Escherichia coli"
+        assert species.confidence >= 0.99
 
     def test_all_species_estimation(self):
         """

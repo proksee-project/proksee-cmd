@@ -28,7 +28,7 @@ class Species:
 
     UNKNOWN = "Unknown"  # The name to use when the species is unknown.
 
-    def __init__(self, name, confidence):
+    def __init__(self, name, confidence, superkingdom="-"):
         """
         Initializes the species.
 
@@ -39,6 +39,7 @@ class Species:
 
         self.name = name
         self.confidence = confidence
+        self.superkingdom = superkingdom
 
     def __str__(self):
         """
