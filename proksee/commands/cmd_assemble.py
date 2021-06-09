@@ -244,7 +244,7 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     # Estimate species
     filtered_filenames = filtered_reads.get_file_locations()
     species_list = utilities.determine_species(filtered_filenames, assembly_database, output_directory,
-                                               id_mapping_filename, species_name)
+                                               mash_database_filename, id_mapping_filename, species_name)
     species = species_list[0]
     report_species(species_list)
 

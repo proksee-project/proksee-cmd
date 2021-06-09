@@ -56,6 +56,6 @@ def determine_species(input_filenames, assembly_database, output_directory, mash
 
         species_estimator = SpeciesEstimator(input_filenames, output_directory, mash_database_filename,
                                              id_mapping_filename)
-        species_list = species_estimator.estimate_all_species()
+        species_list = species_estimator.estimate_major_species()
 
     return species_list
