@@ -28,6 +28,9 @@ OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                              "refseq_short.csv")
 
+TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
+TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
+
 
 class TestUtilities:
 
@@ -36,23 +39,27 @@ class TestUtilities:
         Tests when the species name is provided, and is present in the database.
         """
 
-        input_filenames = [os.path.join(INPUT_DIR, "staph_mini.fastq")]
+        input_filenames = [os.path.join(INPUT_DIR, "ecoli_mini.fasta")]
         database = AssemblyDatabase(DATABASE_PATH)
-        species_name = "Staphylococcus aureus"
+        species_name = "Escherichia coli"
 
-        species_list = determine_species(input_filenames, database, OUTPUT_DIR, species_name)
-        assert(species_list[0] == Species("Staphylococcus aureus", 1.0))
+        species_list = determine_species(input_filenames, database, OUTPUT_DIR,
+                                         TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME, species_name)
+        assert(species_list[0] == Species("Escherichia coli", 1.0))
 
     def test_determine_species_provided_absent(self):
         """
         Tests when the species name is provided, but is not present in the database.
         """
 
-        input_filenames = [os.path.join(INPUT_DIR, "s_pseudointermedius.fasta")]
+        input_filenames = [os.path.join(INPUT_DIR, "ecoli_mini.fasta")]
         database = AssemblyDatabase(DATABASE_PATH)
-        species_name = "Staphylococcus pseudintermedius"
+        species_name = "TYPO! Escherichia coli"
 
-        species_list = determine_species(input_filenames, database, OUTPUT_DIR, species_name)
+        species_list = determine_species(input_filenames, database, OUTPUT_DIR,
+                                         TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME, species_name)
+
+        print(species_list)
 
         # Tries to find species when name missing
-        assert(species_list[0] == Species("Staphylococcus pseudintermedius", 1.0))
+        assert(species_list[0] == Species("Escherichia coli", 1.0))

@@ -18,18 +18,24 @@ specific language governing permissions and limitations under the License.
 
 import os
 
+from pathlib import Path
+
 from proksee.contamination_handler import ContaminationHandler
 from proksee.species import Species
+
+TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
+TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
 
 
 class TestContaminationHandler:
 
     def test_estimate_contamination(self):
 
-        species = Species("Boletus subalpinus", 0.99999999290182)
-        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "s_pseudointermedius.fasta")
+        species = Species("Boletus subalpinus", 1.0)
+        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
         output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
-        handler = ContaminationHandler(species, contigs_file, output_directory)
+        handler = ContaminationHandler(species, contigs_file, output_directory,
+                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
 
         evaluation = handler.estimate_contamination()
 
@@ -41,16 +47,17 @@ class TestContaminationHandler:
         message += "FAIL: The evaluated contigs don't appear to agree with the species estimation.\n"
         message += "      The estimated species is: " + str(species) + "\n"
         message += "      The following species were estimated from the contigs:\n\n"
-        message += "      " + "Staphylococcus pseudintermedius (p=1.00)" + "\n"
+        message += "      " + "Escherichia coli (p=1.00)" + "\n"
 
         assert(evaluation.report == message)
 
     def test_no_contamination(self):
 
-        species = Species("Staphylococcus pseudintermedius", 1.0)
-        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "s_pseudointermedius.fasta")
+        species = Species("Escherichia coli", 1.0)
+        contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
         output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
-        handler = ContaminationHandler(species, contigs_file, output_directory)
+        handler = ContaminationHandler(species, contigs_file, output_directory,
+                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
 
         evaluation = handler.estimate_contamination()
 
@@ -67,7 +74,8 @@ class TestContaminationHandler:
         species = Species("Staphylococcus pseudintermedius", 1.0)
         contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "simple_contig.fasta")
         output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
-        handler = ContaminationHandler(species, contigs_file, output_directory)
+        handler = ContaminationHandler(species, contigs_file, output_directory,
+                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
 
         evaluation = handler.estimate_contamination()
         print(evaluation.report)

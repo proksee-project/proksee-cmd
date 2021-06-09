@@ -18,12 +18,9 @@ specific language governing permissions and limitations under the License.
 
 import os
 import subprocess
-from pathlib import Path
 
-from proksee.parser.mash_parser import parse_estimations_from_mash
+from proksee.parser.mash_parser import MashParser
 from proksee.species import Species
-
-MASH_DATABASE = os.path.join(Path(__file__).parent.parent.absolute(), "database", "refseq.genomes.k21s1000.msh")
 
 
 def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,
@@ -50,10 +47,6 @@ def estimate_species_from_estimations(estimations, min_shared_fraction, min_iden
 
     for estimation in estimations:
 
-        print(estimation.species.name)
-        print(estimation.identity)
-        print(estimation.shared_hashes)
-
         superkingdom = estimation.species.superkingdom
 
         if ignore_viruses and superkingdom.startswith("Virus"):
@@ -78,19 +71,25 @@ class SpeciesEstimator:
     ATTRIBUTES
         input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
         output_directory (str): the directory to use for output
+        mash_database_filename (str): the filename of the Mash database
+        id_mapping_filename (str): filename of the NCBI ID to taxonomy mapping file
     """
 
-    def __init__(self, input_list, output_directory):
+    def __init__(self, input_list, output_directory, mash_database_filename, id_mapping_filename):
         """
         Initializes the species estimator.
 
         PARAMETERS
             input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
             output_directory (str): the directory to use for program output
+            mash_database_filename (str): the filename of the Mash database
+            id_mapping_filename (str): filename of the NCBI ID to taxonomy mapping file
         """
 
         self.input_list = [i for i in input_list if i]  # remove all "None" inputs
         self.output_directory = output_directory
+        self.mash_database_filename = mash_database_filename
+        self.id_mapping_filename = id_mapping_filename
 
     def estimate_major_species(self):
         """
@@ -108,7 +107,8 @@ class SpeciesEstimator:
         MIN_MULTIPLICITY = 5
 
         mash_filename = self.run_mash()
-        estimations = parse_estimations_from_mash(mash_filename)
+        mash_parser = MashParser(self.id_mapping_filename)
+        estimations = mash_parser.parse_estimations(mash_filename)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
@@ -126,13 +126,13 @@ class SpeciesEstimator:
                 and highest covered; will contain an "Unknown" species if no species were found
         """
 
-        MIN_SHARED_FRACTION = 0.04
+        MIN_SHARED_FRACTION = 0.015
         MIN_IDENTITY = 0
         MIN_MULTIPLICITY = 1
 
         mash_filename = self.run_mash()
-        print(mash_filename)
-        estimations = parse_estimations_from_mash(mash_filename)
+        mash_parser = MashParser(self.id_mapping_filename)
+        estimations = mash_parser.parse_estimations(mash_filename)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
@@ -156,14 +156,12 @@ class SpeciesEstimator:
         OUTPUT_FILENAME = os.path.join(self.output_directory, "mash.o")
 
         # create the mash command
-        command = "mash screen -i 0 -v 1 " + MASH_DATABASE
+        command = "mash screen -i 0 -v 1 " + self.mash_database_filename
 
         for item in self.input_list:
             command += " " + str(item)
 
         command += " | sort -gr > " + OUTPUT_FILENAME
-
-        print(command)
 
         # run mash
         try:
