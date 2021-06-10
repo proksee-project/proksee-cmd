@@ -102,7 +102,7 @@ class SpeciesEstimator:
                 and highest covered; will contain an "Unknown" species if no major species was found
         """
 
-        MIN_SHARED_FRACTION = 0.90
+        MIN_SHARED_FRACTION = 0.80
         MIN_IDENTITY = 0.90
         MIN_MULTIPLICITY = 5
 
