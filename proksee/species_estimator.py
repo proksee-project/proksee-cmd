@@ -48,8 +48,12 @@ def estimate_species_from_estimations(estimations, min_shared_fraction, min_iden
     for estimation in estimations:
 
         superkingdom = estimation.species.superkingdom
+        full_lineage = estimation.species.full_lineage
 
         if ignore_viruses and superkingdom.startswith("Virus"):
+            continue
+
+        if "Unspecified" in full_lineage:
             continue
 
         shared_hashes = estimation.shared_hashes

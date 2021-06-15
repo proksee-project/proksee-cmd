@@ -142,6 +142,7 @@ def load_mapping_file(mapping_filename):
     SCIENTIFIC_NAME = 2
     SPECIES_NAME = 3
     SUPERKINGDOM = 10
+    FULL_LINEAGE = 11
 
     MISSING = "-"
 
@@ -162,7 +163,8 @@ def load_mapping_file(mapping_filename):
                 species_name = tokens[SCIENTIFIC_NAME]
 
             superkingdom = tokens[SUPERKINGDOM]
-            species = Species(species_name, 0.0, superkingdom=superkingdom)
+            full_lineage = tokens[FULL_LINEAGE]
+            species = Species(species_name, 0.0, superkingdom=superkingdom, full_lineage=full_lineage)
 
             mapping[id] = species
 

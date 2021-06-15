@@ -122,15 +122,30 @@ class ContaminationHandler:
 
         report = "\n"
 
-        if len(sorted_species) == 1 and species_list[0].name == Species.UNKNOWN:
+        # Species couldn't be estimated from reads:
+        if self.species.name == Species.UNKNOWN:
+            success = True
+            report += "WARNING: Unable to determine contamination as a species could not be estimated from the reads.\n"
+
+            # Some species were estimation from the contigs:
+            if len(sorted_species) > 0:
+                report += "         The following species were estimated from the contigs:\n\n"
+
+                for species in sorted_species:
+                    report += "         " + str(species) + "\n"
+
+        # Species was estimated from reads, but couldn't be estimated from contigs:
+        elif len(sorted_species) == 1 and species_list[0].name == Species.UNKNOWN:
             success = True
             report += "WARNING: Unable to confidently estimate the species from the assembled contigs.\n"
 
+        # Species was estimated from reads, and estimation from contigs matches:
         elif len(sorted_species) == 1 and species_list[0] == self.species:
             success = True
             report += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
             report += "      The estimated species is: " + str(self.species) + "\n"
 
+        # Species was estimated from reads, but at least one estimation does not match:
         else:
             success = False
             report += "FAIL: The evaluated contigs don't appear to agree with the species estimation.\n"
