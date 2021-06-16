@@ -62,8 +62,6 @@ class TestUtilities:
         species_list = determine_species(input_filenames, database, OUTPUT_DIR,
                                          TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME, species_name)
 
-        print(species_list)
-
         # Tries to find species when name missing:
         # The problem here, is it will find "Unknown", because the test data file isn't large enough
         # to accurately determine the species.
