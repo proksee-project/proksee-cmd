@@ -69,6 +69,8 @@ class MashParser:
 
                 for line in file:
 
+                    print(line)
+
                     tokens = line.strip().split("\t")
 
                     # ignore empty lines
