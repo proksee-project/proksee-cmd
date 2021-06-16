@@ -15,7 +15,6 @@ Proksee requires the following packages:
 - Python 3.7
 - Pip
 - fastp
-- Refseq Masher
 - Skesa
 - Quast
 - Scipy

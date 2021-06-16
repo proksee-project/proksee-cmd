@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 
 class Estimation:
     """
-    This class represents a RefSeq Masher "estimation" of a species found in the input data.
+    This class represents a modified Mash "estimation" of a species found in the input data.
 
     ATTRIBUTES
         species (Species): the Species object representing the species

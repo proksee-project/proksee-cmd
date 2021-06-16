@@ -7,7 +7,6 @@ dependencies:
 - python=3.7
 - fastp
 - skesa
-- refseq_masher==0.1.2
 - quast
 - scipy
 - spades
