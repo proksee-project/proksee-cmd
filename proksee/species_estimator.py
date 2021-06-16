@@ -137,11 +137,15 @@ class SpeciesEstimator:
         MIN_IDENTITY = 0
         MIN_MULTIPLICITY = 1
 
+        print("estimating all species")
+
         mash_filename = self.run_mash()
+        print(mash_filename)
         mash_parser = MashParser(self.id_mapping_filename)
         estimations = mash_parser.parse_estimations(mash_filename)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+        print(species)
 
         if len(species) == 0:
             species.append(Species(Species.UNKNOWN, 0.0))
