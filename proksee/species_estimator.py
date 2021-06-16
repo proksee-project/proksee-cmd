@@ -48,7 +48,7 @@ def estimate_species_from_estimations(estimations, min_shared_fraction, min_iden
     for estimation in estimations:
 
         print(estimation.species)
-        print(estimation.full_lineage)
+        print(estimation.species.full_lineage)
 
         superkingdom = estimation.species.superkingdom
         full_lineage = estimation.species.full_lineage
