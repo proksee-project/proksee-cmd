@@ -16,6 +16,7 @@ Proksee requires the following packages:
 - Pip
 - fastp
 - Skesa
+- Mash
 - Quast
 - Scipy
 - Spades
