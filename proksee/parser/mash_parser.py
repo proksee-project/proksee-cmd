@@ -60,6 +60,8 @@ class MashParser:
         if not os.path.exists(mash_filename):
             raise FileNotFoundError("File not found: " + mash_filename)
 
+        print(os.path.getsize(mash_filename))
+
         # Make sure that the file contains data:
         if os.path.getsize(mash_filename) > 0:
 

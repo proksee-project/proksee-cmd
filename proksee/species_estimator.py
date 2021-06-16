@@ -173,6 +173,7 @@ class SpeciesEstimator:
             command += " " + str(item)
 
         command += " | sort -gr > " + OUTPUT_FILENAME
+        print(command)
 
         # run mash
         try:
