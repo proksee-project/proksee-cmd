@@ -17,19 +17,28 @@ specific language governing permissions and limitations under the License.
 """
 
 import os
+import copy
 
 from proksee.species import Species
 from proksee.species_estimation import Estimation
 
 
 class MashParser:
+    """
+    This class represents a parser capable of taking the output from Mash and producing species Estimations.
+
+    ATTRIBUTES
+        taxonomy_mapping_filename (str): the filename of the file that maps NCBI accession IDs to taxonomic
+            information, for every ID present in the Mash sketch file used to create the Mash output that
+            will be parsed by this class.
+    """
 
     def __init__(self, taxonomy_mapping_filename):
         """
         Initializes the Mash Parser.
 
         PARAMETERS:
-            taxonomy_mapping_filename: filename of the ID to taxonomy mapping file
+            taxonomy_mapping_filename: filename of the NCBI ID-to-taxonomy mapping file
         """
 
         self.taxonomy_mapping_filename = taxonomy_mapping_filename
@@ -85,7 +94,10 @@ class MashParser:
                     id = parse_ID_from_query_comment(query_comment)
                     id = id.split(".")[0]  # Removes the version number
 
-                    species = mapping[id]
+                    species = copy.deepcopy(mapping[id])
+                    # Deep copy because we don't want all references pointing to the same object
+                    # when such objects might have the same species, but different confidences.
+
                     species.confidence = confidence  # Confidence must be updated
                     estimation = Estimation(species, identity, shared_hashes, median_multiplicity)
 

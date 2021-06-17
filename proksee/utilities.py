@@ -33,8 +33,8 @@ def determine_species(input_filenames, assembly_database, output_directory, mash
         input_filenames (List(string)): the inputs (filenames) from which to determine the species from
         assembly_database (AssemblyDatabase): the assembly database
         output_directory (string): the location of the output directory for placing temporary output
-        mash_database_filename (string): the filename of the Mash sketch (database)
-        id_mapping_filename (string): the filename of the NCBI ID to taxonomy mapping file
+        mash_database_filename (string): the filename of the Mash sketch (database) file
+        id_mapping_filename (string): the filename of the NCBI ID-to-taxonomy mapping file
         species_name (string): optional; the scientific name of the species
 
     RETURNS:

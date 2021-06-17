@@ -35,7 +35,7 @@ class ContaminationHandler:
         output_directory (str): the directory location to write single-record FASTA files; this will probably be a
             subdirectory of the program output directory
         mash_database_filename (str): the filename of the Mash sketch (database)
-        id_mapping_filename (str): filename of the NCBI ID to taxonomy mapping file
+        id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
     """
 
     def __init__(self, species, contigs_file, output_directory, mash_database_filename, id_mapping_filename):
@@ -47,7 +47,7 @@ class ContaminationHandler:
             contigs_file (str): the file location of assembled contigs to check for contamination
             output_directory (str): the output directory for the program
             mash_database_filename (str): the filename of the Mash sketch (database)
-            id_mapping_filename (str): filename of the NCBI ID to taxonomy mapping file
+            id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
         """
 
         self.species = species

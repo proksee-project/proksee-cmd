@@ -62,7 +62,7 @@ def evaluate(contigs_filename, output_directory, species_name=None,
         output_directory (string): the location to place all program output and temporary files
         species_name (string): optional; the name of the species being assembled
         mash_database_filename (string): optional; the name of the Mash database
-        id_mapping_filename (string) optional; the name of the NCBI ID to taxonomy mapping database file
+        id_mapping_filename (string) optional; the name of the NCBI ID-to-taxonomy mapping (table) file
 
     POST:
         The contigs with passed filename will be evaluated and the results will be written to standard output.

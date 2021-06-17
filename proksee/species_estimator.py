@@ -53,7 +53,7 @@ def estimate_species_from_estimations(estimations, min_shared_fraction, min_iden
         if ignore_viruses and superkingdom.startswith("Virus"):
             continue
 
-        if "unspecified" in full_lineage or "Unspecified" in full_lineage:
+        if "unspecified" in full_lineage.lower():
             continue
 
         shared_hashes = estimation.shared_hashes
@@ -76,7 +76,7 @@ class SpeciesEstimator:
         input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
         output_directory (str): the directory to use for output
         mash_database_filename (str): the filename of the Mash database
-        id_mapping_filename (str): filename of the NCBI ID to taxonomy mapping file
+        id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
     """
 
     def __init__(self, input_list, output_directory, mash_database_filename, id_mapping_filename):
@@ -87,7 +87,7 @@ class SpeciesEstimator:
             input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
             output_directory (str): the directory to use for program output
             mash_database_filename (str): the filename of the Mash database
-            id_mapping_filename (str): filename of the NCBI ID to taxonomy mapping file
+            id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
         """
 
         self.input_list = [i for i in input_list if i]  # remove all "None" inputs
