@@ -34,7 +34,7 @@ DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database"
 MASH_DATABASE = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq.genomes.k21s1000.msh")
 ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                                   "mash_id_mapping.tab")
+                                   "mash_id_mapping.tab.gz")
 
 
 @click.command('evaluate',

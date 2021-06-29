@@ -18,6 +18,7 @@ specific language governing permissions and limitations under the License.
 
 import os
 import copy
+import gzip
 
 from proksee.species import Species
 from proksee.species_estimation import Estimation
@@ -160,7 +161,7 @@ def load_mapping_file(mapping_filename):
 
     mapping = {}
 
-    with open(mapping_filename) as mapping_file:
+    with open_mapping_file(mapping_filename) as mapping_file:
 
         for line in mapping_file:
 
@@ -181,3 +182,27 @@ def load_mapping_file(mapping_filename):
             mapping[id] = species
 
     return mapping
+
+
+def open_mapping_file(mapping_filename):
+    """
+    Opens the NCBI ID-to-taxonomy mapping file for file reading and returns an open File object. This function will
+    automatically handle gzipped files appropriately.
+
+    PARAMETERS:
+        mapping_filename (str): the filename of the mapping file
+
+    RETURNS:
+        mapping_file (File): the mapping file open and ready for reading
+    """
+
+    gzip_extensions = ("gz", "gzip")
+    is_gzip = mapping_filename.lower().endswith(gzip_extensions)  # Case insensitive matching
+
+    if is_gzip:
+        mapping_file = gzip.open(mapping_filename, 'rt')
+
+    else:
+        mapping_file = open(mapping_filename, 'rt')
+
+    return mapping_file
