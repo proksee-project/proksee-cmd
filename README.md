@@ -34,6 +34,12 @@ Proksee can then be installed by running the setup script (when inside the Proks
 pip install .
 ```
 
+Finally, download and install the Mash sketch database required by Proksee by running:
+
+```bash
+bash install_databases.sh
+```
+
 ## Assemble
 
 The assemble pipeline consists of three major stages:
