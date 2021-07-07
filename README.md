@@ -28,16 +28,16 @@ conda env create -f environment.yml
 conda activate proksee
 ```
 
+Next, download the Mash sketch database required by Proksee by running:
+
+```bash
+bash download_databases.sh
+```
+
 Proksee can then be installed by running the setup script (when inside the Proksee directory):
 
 ```bash
 pip install .
-```
-
-Finally, download and install the Mash sketch database required by Proksee by running:
-
-```bash
-bash install_databases.sh
 ```
 
 ## Assemble
