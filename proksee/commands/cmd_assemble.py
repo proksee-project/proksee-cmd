@@ -219,6 +219,11 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
         could not continue will be written to standard output.
     """
 
+    # Check Mash database is installed:
+    if not os.path.isfile(MASH_DATABASE):
+        print ("Please run 'proksee updatedb' to install the databases!")
+        return
+
     # Make output directory:
     if not os.path.isdir(output_directory):
         os.mkdir(output_directory)
