@@ -48,6 +48,12 @@ ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "dat
                               dir_okay=True, writable=True))
 @click.pass_context
 def cli(ctx, contigs, output, species):
+
+    # Check Mash database is installed:
+    if not os.path.isfile(MASH_DATABASE):
+        print("Please run 'proksee updatedb' to install the databases!")
+        return
+
     evaluate(contigs, output, species)
 
 
@@ -67,11 +73,6 @@ def evaluate(contigs_filename, output_directory, species_name=None,
     POST:
         The contigs with passed filename will be evaluated and the results will be written to standard output.
     """
-
-    # Check Mash database is installed:
-    if not os.path.isfile(MASH_DATABASE):
-        print ("Please run 'proksee updatedb' to install the databases!")
-        return
 
     # Make output directory:
     if not os.path.isdir(output_directory):

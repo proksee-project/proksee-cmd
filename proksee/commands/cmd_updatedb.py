@@ -31,6 +31,7 @@ MASH_DATABASE = os.path.join(Path(__file__).parent.parent.absolute(), "database"
                              "refseq.genomes.k21s1000.msh")
 MASH_DATABASE_URL = "https://gembox.cbcb.umd.edu/mash/refseq.genomes.k21s1000.msh"
 
+
 @click.command('updatedb',
                short_help='Attempts to update the databases used by Proksee.')
 @click.pass_context
@@ -57,12 +58,11 @@ def update(mash_database_filename=MASH_DATABASE):
     except (urllib.error.HTTPError, urllib.error.URLError,
             urllib.error.ContentTooShortError):
         raise urllib.error.URLError("Could not get header for Mash sketch " +
-                "file file from {}.".format(MASH_DATABASE_URL))
+                                    "file file from {}.".format(MASH_DATABASE_URL))
 
     except TimeoutError:
-        raise TimeoutError("Could not fetch header for Mash sketch " + 
-                "file from {} before timeout.".format(MASH_DATABASE_URL))
-
+        raise TimeoutError("Could not fetch header for Mash sketch " +
+                           "file from {} before timeout.".format(MASH_DATABASE_URL))
 
     if not os.path.isfile(mash_database_filename) or \
             file_size != os.path.getsize(MASH_DATABASE):

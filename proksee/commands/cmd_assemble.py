@@ -195,6 +195,12 @@ def determine_platform(reads, platform_name=None):
               help="The sequencing platform used to generate the reads. 'Illumina', 'Ion Torrent', or 'Pac Bio'.")
 @click.pass_context
 def cli(ctx, forward, reverse, output, force, species, platform):
+
+    # Check Mash database is installed:
+    if not os.path.isfile(MASH_DATABASE):
+        print("Please run 'proksee updatedb' to install the databases!")
+        return
+
     reads = Reads(forward, reverse)
     assemble(reads, output, force, species, platform)
 
@@ -218,11 +224,6 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
         The passed reads will be assembled in the output directory if successful, or a message explaning why assembly
         could not continue will be written to standard output.
     """
-
-    # Check Mash database is installed:
-    if not os.path.isfile(MASH_DATABASE):
-        print ("Please run 'proksee updatedb' to install the databases!")
-        return
 
     # Make output directory:
     if not os.path.isdir(output_directory):
