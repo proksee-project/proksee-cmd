@@ -20,6 +20,7 @@ Proksee requires the following packages:
 - Quast
 - Scipy
 - Spades
+- wget
  
 This can be accomplished by installing dependencies into a conda environment, using the provided installation script as follows:
 
