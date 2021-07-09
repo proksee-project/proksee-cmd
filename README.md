@@ -37,7 +37,7 @@ pip install .
 Finally, download and install the Mash sketch database required by Proksee by running:
 
 ```bash
-bash install_databases.sh
+proksee updatedb
 ```
 
 ## Assemble
