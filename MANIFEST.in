@@ -1,1 +1,2 @@
 include proksee/database/*
+exclude *.msh
