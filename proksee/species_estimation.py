@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 
 class Estimation:
     """
-    This class represents a RefSeq Masher "estimation" of a species found in the input data.
+    This class represents a modified Mash "estimation" of a species found in the input data.
 
     ATTRIBUTES
         species (Species): the Species object representing the species
@@ -27,10 +27,9 @@ class Estimation:
             input data (estimated from the fraction of shared k-mers)
         shared_hashes (float): what fraction of the k-mer hashes were shared
         median_multiplicity (int): an estimation of coverage in the input data
-        full_taxonomy (string): a full string name of the taxonomy
     """
 
-    def __init__(self, species, identity, shared_hashes, median_multiplicity, full_taxonomy):
+    def __init__(self, species, identity, shared_hashes, median_multiplicity):
         """
         Initializes the Estimation.
 
@@ -40,14 +39,12 @@ class Estimation:
                 the input data (estimated from the fraction of shared k-mers)
             shared_hashes (float): what fraction of the k-mer hashes were shared
             median_multiplicity (int): an estimation of coverage in the input data
-            full_taxonomy (string): a full string name of the taxonomy
         """
 
         self.species = species
         self.identity = float(identity)
         self.shared_hashes = float(shared_hashes)
         self.median_multiplicity = int(median_multiplicity)
-        self.full_taxonomy = str(full_taxonomy)
 
     def __eq__(self, other):
         """

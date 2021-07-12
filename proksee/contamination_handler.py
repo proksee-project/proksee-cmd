@@ -34,9 +34,11 @@ class ContaminationHandler:
         contigs_file (str): the file location of assembled contigs to check for contamination
         output_directory (str): the directory location to write single-record FASTA files; this will probably be a
             subdirectory of the program output directory
+        mash_database_filename (str): the filename of the Mash sketch (database)
+        id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
     """
 
-    def __init__(self, species, contigs_file, output_directory):
+    def __init__(self, species, contigs_file, output_directory, mash_database_filename, id_mapping_filename):
         """
         Initializes the contamination handler.
 
@@ -44,11 +46,15 @@ class ContaminationHandler:
             species (Species): the species that is believed to be the major (i.e. correct, non-contaminate) species
             contigs_file (str): the file location of assembled contigs to check for contamination
             output_directory (str): the output directory for the program
+            mash_database_filename (str): the filename of the Mash sketch (database)
+            id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
         """
 
         self.species = species
         self.contigs_file = contigs_file
         self.output_directory = output_directory
+        self.mash_database_filename = mash_database_filename
+        self.id_mapping_filename = id_mapping_filename
 
     def estimate_contamination(self):
         """
@@ -88,7 +94,8 @@ class ContaminationHandler:
         # Iterate through the list of contig file locations in descending order:
         for i in range(len(contig_filenames)):
 
-            species_estimator = SpeciesEstimator(contig_filenames[i], self.output_directory)
+            species_estimator = SpeciesEstimator(contig_filenames[i], self.output_directory,
+                                                 self.mash_database_filename, self.id_mapping_filename)
             species_list = species_estimator.estimate_all_species()
 
             contig_species.append(species_list[0])  # Select the estimation with the most evidence
@@ -115,15 +122,30 @@ class ContaminationHandler:
 
         report = "\n"
 
-        if len(sorted_species) == 1 and species_list[0].name == Species.UNKNOWN:
+        # Species couldn't be estimated from reads:
+        if self.species.name == Species.UNKNOWN:
+            success = True
+            report += "WARNING: Unable to determine contamination as a species could not be estimated from the reads.\n"
+
+            # Some species were estimation from the contigs:
+            if len(sorted_species) > 0:
+                report += "         The following species were estimated from the contigs:\n\n"
+
+                for species in sorted_species:
+                    report += "         " + str(species) + "\n"
+
+        # Species was estimated from reads, but couldn't be estimated from contigs:
+        elif len(sorted_species) == 1 and species_list[0].name == Species.UNKNOWN:
             success = True
             report += "WARNING: Unable to confidently estimate the species from the assembled contigs.\n"
 
+        # Species was estimated from reads, and estimation from contigs matches:
         elif len(sorted_species) == 1 and species_list[0] == self.species:
             success = True
             report += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
             report += "      The estimated species is: " + str(self.species) + "\n"
 
+        # Species was estimated from reads, but at least one estimation does not match:
         else:
             success = False
             report += "FAIL: The evaluated contigs don't appear to agree with the species estimation.\n"

@@ -24,14 +24,17 @@ from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
 
 
-def determine_species(input_filenames, assembly_database, output_directory, species_name=None):
+def determine_species(input_filenames, assembly_database, output_directory, mash_database_filename,
+                      id_mapping_filename, species_name=None):
     """
     Attempts to determine the species in the input (reads or contigs).
 
     ARGUMENTS:
         input_filenames (List(string)): the inputs (filenames) from which to determine the species from
         assembly_database (AssemblyDatabase): the assembly database
-        output_directory (string): the location  of the output directory -- for placing temporary output
+        output_directory (string): the location of the output directory for placing temporary output
+        mash_database_filename (string): the filename of the Mash sketch (database) file
+        id_mapping_filename (string): the filename of the NCBI ID-to-taxonomy mapping file
         species_name (string): optional; the scientific name of the species
 
     RETURNS:
@@ -51,7 +54,8 @@ def determine_species(input_filenames, assembly_database, output_directory, spec
     if species_list is None:
         click.echo("\nAttempting to identify the species from the input.")
 
-        species_estimator = SpeciesEstimator(input_filenames, output_directory)
-        species_list = species_estimator.estimate_all_species()
+        species_estimator = SpeciesEstimator(input_filenames, output_directory, mash_database_filename,
+                                             id_mapping_filename)
+        species_list = species_estimator.estimate_major_species()
 
     return species_list

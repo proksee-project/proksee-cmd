@@ -15,11 +15,12 @@ Proksee requires the following packages:
 - Python 3.7
 - Pip
 - fastp
-- Refseq Masher
 - Skesa
+- Mash
 - Quast
 - Scipy
 - Spades
+- wget
  
 This can be accomplished by installing dependencies into a conda environment, using the provided installation script as follows:
 
@@ -32,6 +33,12 @@ Proksee can then be installed by running the setup script (when inside the Proks
 
 ```bash
 pip install .
+```
+
+Finally, download and install the Mash sketch database required by Proksee by running:
+
+```bash
+proksee updatedb
 ```
 
 ## Assemble

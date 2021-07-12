@@ -42,6 +42,10 @@ from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
+MASH_DATABASE = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                             "refseq.genomes.k21s1000.msh")
+ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                   "mash_id_mapping.tab.gz")
 
 
 def report_valid_fastq(valid):
@@ -191,11 +195,19 @@ def determine_platform(reads, platform_name=None):
               help="The sequencing platform used to generate the reads. 'Illumina', 'Ion Torrent', or 'Pac Bio'.")
 @click.pass_context
 def cli(ctx, forward, reverse, output, force, species, platform):
+
+    # Check Mash database is installed:
+    if not os.path.isfile(MASH_DATABASE):
+        print("Please run 'proksee updatedb' to install the databases!")
+        return
+
     reads = Reads(forward, reverse)
     assemble(reads, output, force, species, platform)
 
 
-def assemble(reads, output_directory, force, species_name=None, platform_name=None):
+def assemble(reads, output_directory, force, species_name=None, platform_name=None,
+             mash_database_filename=MASH_DATABASE,
+             id_mapping_filename=ID_MAPPING_FILENAME):
     """
     The main control flow of the program that assembles reads.
 
@@ -205,6 +217,8 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
         force (bool): whether or not to force the assembly to continue, even when it's evaluated as being poor
         species_name (string): optional; the name of the species being assembled
         platform_name (string): optional; the name of the sequencing platform that generated the reads
+        mash_database_filename (string): optional; the name of the Mash database
+        id_mapping_filename (string) optional; the name of the NCBI ID to taxonomy mapping database file
 
     POST:
         The passed reads will be assembled in the output directory if successful, or a message explaning why assembly
@@ -235,7 +249,8 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
 
     # Estimate species
     filtered_filenames = filtered_reads.get_file_locations()
-    species_list = utilities.determine_species(filtered_filenames, assembly_database, output_directory, species_name)
+    species_list = utilities.determine_species(filtered_filenames, assembly_database, output_directory,
+                                               mash_database_filename, id_mapping_filename, species_name)
     species = species_list[0]
     report_species(species_list)
 
@@ -253,7 +268,8 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     click.echo(output)
 
     # Check for contamination at the contig level:
-    contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_directory)
+    contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_directory,
+                                                 mash_database_filename, id_mapping_filename)
     evaluation = contamination_handler.estimate_contamination()
     report_contamination(evaluation)
 

@@ -7,10 +7,11 @@ dependencies:
 - python=3.7
 - fastp
 - skesa
-- refseq_masher==0.1.2
+- mash
 - quast
 - scipy
 - spades
+- wget
 - pip
 - pip:
   - .

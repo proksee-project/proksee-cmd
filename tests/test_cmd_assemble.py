@@ -26,6 +26,9 @@ from proksee.commands.cmd_assemble import assemble
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
 
+TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
+TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
+
 
 class TestCmdAssemble:
 
@@ -61,7 +64,9 @@ class TestCmdAssemble:
         if os.path.isfile(json_file):
             os.remove(json_file)
 
-        assemble(reads, OUTPUT_DIR, force, species_name=None, platform_name=None)
+        assemble(reads, OUTPUT_DIR, force, species_name=None, platform_name=None,
+                 mash_database_filename=TEST_MASH_DB_FILENAME,
+                 id_mapping_filename=TEST_ID_MAPPING_FILENAME)
 
         # Check that expected files were created:
         assert os.path.isfile(assembly_statistics_file)

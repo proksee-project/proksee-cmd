@@ -1,1 +1,2 @@
-include proksee/database/database.csv
+include proksee/database/*
+exclude *.msh

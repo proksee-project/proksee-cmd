@@ -19,18 +19,8 @@ specific language governing permissions and limitations under the License.
 import os
 import subprocess
 
-from refseq_masher.mash.screen import mash_screen_output_to_dataframe
-from refseq_masher.taxonomy import merge_ncbi_taxonomy_info
-from refseq_masher.utils import order_output_columns
-from refseq_masher.const import MASH_SCREEN_ORDERED_COLUMNS
-
-from proksee.parser.refseq_masher_parser import parse_estimations_from_dataframe
+from proksee.parser.mash_parser import MashParser
 from proksee.species import Species
-
-# Build path of RefSeq Masher database:
-import refseq_masher as rs_masher
-rs_masher_path = rs_masher.__path__[0]  # __path__ returns a list of strings
-MASH_DATABASE = os.path.join(rs_masher_path, "data", "RefSeqSketches.msh")
 
 
 def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,
@@ -57,9 +47,13 @@ def estimate_species_from_estimations(estimations, min_shared_fraction, min_iden
 
     for estimation in estimations:
 
-        full_taxonomy = str(estimation.full_taxonomy)
+        superkingdom = estimation.species.superkingdom
+        full_lineage = estimation.species.full_lineage
 
-        if ignore_viruses and full_taxonomy.startswith("Viruses"):
+        if ignore_viruses and superkingdom.startswith("Virus"):
+            continue
+
+        if "unspecified" in full_lineage.lower():
             continue
 
         shared_hashes = estimation.shared_hashes
@@ -81,19 +75,25 @@ class SpeciesEstimator:
     ATTRIBUTES
         input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
         output_directory (str): the directory to use for output
+        mash_database_filename (str): the filename of the Mash database
+        id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
     """
 
-    def __init__(self, input_list, output_directory):
+    def __init__(self, input_list, output_directory, mash_database_filename, id_mapping_filename):
         """
         Initializes the species estimator.
 
         PARAMETERS
             input_list (List(str)): a list of input files; this will likely be one or two FASTQ file locations
             output_directory (str): the directory to use for program output
+            mash_database_filename (str): the filename of the Mash database
+            id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
         """
 
         self.input_list = [i for i in input_list if i]  # remove all "None" inputs
         self.output_directory = output_directory
+        self.mash_database_filename = mash_database_filename
+        self.id_mapping_filename = id_mapping_filename
 
     def estimate_major_species(self):
         """
@@ -106,12 +106,13 @@ class SpeciesEstimator:
                 and highest covered; will contain an "Unknown" species if no major species was found
         """
 
-        MIN_SHARED_FRACTION = 0.90
+        MIN_SHARED_FRACTION = 0.80
         MIN_IDENTITY = 0.90
         MIN_MULTIPLICITY = 5
 
-        dataframe = self.run_refseq_masher()
-        estimations = parse_estimations_from_dataframe(dataframe)
+        mash_filename = self.run_mash()
+        mash_parser = MashParser(self.id_mapping_filename)
+        estimations = mash_parser.parse_estimations(mash_filename)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
@@ -129,12 +130,13 @@ class SpeciesEstimator:
                 and highest covered; will contain an "Unknown" species if no species were found
         """
 
-        MIN_SHARED_FRACTION = 0.05
+        MIN_SHARED_FRACTION = 0.015
         MIN_IDENTITY = 0
         MIN_MULTIPLICITY = 1
 
-        dataframe = self.run_refseq_masher()
-        estimations = parse_estimations_from_dataframe(dataframe)
+        mash_filename = self.run_mash()
+        mash_parser = MashParser(self.id_mapping_filename)
+        estimations = mash_parser.parse_estimations(mash_filename)
 
         species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
 
@@ -143,40 +145,33 @@ class SpeciesEstimator:
 
         return species
 
-    def run_refseq_masher(self):
+    def run_mash(self):
         """
-        Runs RefSeq Masher on the input data.
+        Runs Mash on the input data.
 
-        RETURNS
-            dataframe (RefSeqMasher Pandas.DataFrame): a RefSeq Masher styled dataframe containing the results of
-                running Mash, combined with NCBI taxonomic information; see parser.refseq_masher_parser for more
-                information about the dataframe format
+        RETURN
+            mash_filename: the name of the Mash output file
 
         POST
-            If successful, RefSeq Masher will have executed on the input and temporary files may be written to file.
+            If successful, Mash will have executed on the input and an output file named "mash.output" to be parsed
+            will be written to file.
         """
 
-        REFSEQ_MASHER_SAMPLE = "sample"  # RSM-specific dataframe entry.
-        REFSEQ_MASHER_SAMPLE_NAME = "contigs"  # Name given as RSM sample name (above).
+        OUTPUT_FILENAME = os.path.join(self.output_directory, "mash.o")
 
         # create the mash command
-        command = "mash screen -i 0 -v 1 " + MASH_DATABASE
+        command = "mash screen -i 0 -v 1 " + self.mash_database_filename
 
         for item in self.input_list:
             command += " " + str(item)
 
-        # run mash and use RefSeq Masher to process output
+        command += " | sort -gr > " + OUTPUT_FILENAME
+
+        # run mash
         try:
-            completed_process = subprocess.run(command, capture_output=True, shell=True, encoding="utf8")
-            dataframe = mash_screen_output_to_dataframe(completed_process.stdout)
-
-            if dataframe is not None:
-                dataframe[REFSEQ_MASHER_SAMPLE] = REFSEQ_MASHER_SAMPLE_NAME
-
-                dataframe = merge_ncbi_taxonomy_info(dataframe)
-                dataframe = order_output_columns(dataframe, MASH_SCREEN_ORDERED_COLUMNS)
+            subprocess.run(command, capture_output=True, shell=True, encoding="utf8")
 
         except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to insure there was output
 
-        return dataframe
+        return OUTPUT_FILENAME

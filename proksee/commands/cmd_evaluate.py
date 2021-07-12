@@ -31,6 +31,10 @@ from proksee.machine_learning_evaluator import MachineLearningEvaluator
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
+MASH_DATABASE = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                             "refseq.genomes.k21s1000.msh")
+ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "database",
+                                   "mash_id_mapping.tab.gz")
 
 
 @click.command('evaluate',
@@ -44,10 +48,18 @@ DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database"
                               dir_okay=True, writable=True))
 @click.pass_context
 def cli(ctx, contigs, output, species):
+
+    # Check Mash database is installed:
+    if not os.path.isfile(MASH_DATABASE):
+        print("Please run 'proksee updatedb' to install the databases!")
+        return
+
     evaluate(contigs, output, species)
 
 
-def evaluate(contigs_filename, output_directory, species_name=None):
+def evaluate(contigs_filename, output_directory, species_name=None,
+             mash_database_filename=MASH_DATABASE,
+             id_mapping_filename=ID_MAPPING_FILENAME):
     """
     The main control flow of the program that evaluates the assembly.
 
@@ -55,6 +67,8 @@ def evaluate(contigs_filename, output_directory, species_name=None):
         contigs_filename (string): the filename of the contigs to evaluate
         output_directory (string): the location to place all program output and temporary files
         species_name (string): optional; the name of the species being assembled
+        mash_database_filename (string): optional; the name of the Mash database
+        id_mapping_filename (string) optional; the name of the NCBI ID-to-taxonomy mapping (table) file
 
     POST:
         The contigs with passed filename will be evaluated and the results will be written to standard output.
@@ -68,7 +82,8 @@ def evaluate(contigs_filename, output_directory, species_name=None):
     assembly_database = AssemblyDatabase(DATABASE_PATH)
 
     # Estimate species
-    species_list = utilities.determine_species([contigs_filename], assembly_database, output_directory, species_name)
+    species_list = utilities.determine_species([contigs_filename], assembly_database, output_directory,
+                                               mash_database_filename, id_mapping_filename, species_name)
     species = species_list[0]
     click.echo("The identified species is: " + str(species.name) + "\n")
 

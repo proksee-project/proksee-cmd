@@ -19,8 +19,13 @@ specific language governing permissions and limitations under the License.
 import os
 import pytest
 
-from proksee.parser.refseq_masher_parser import parse_estimations_from_file
+from pathlib import Path
+
+from proksee.parser.mash_parser import MashParser
 from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
+
+TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
+TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
 
 
 class TestSpeciesEstimator:
@@ -30,18 +35,19 @@ class TestSpeciesEstimator:
         Tests the estimation of species from estimations (objects).
         """
 
-        valid_masher_filename = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "data", "rs_masher_no_subspecies_column.tab")
+        valid_mash_filename = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "mash_ecoli.o")
 
-        estimations = parse_estimations_from_file(valid_masher_filename)
+        mash_parser = MashParser(TEST_ID_MAPPING_FILENAME)
+        estimations = mash_parser.parse_estimations(valid_mash_filename)
         species_list = estimate_species_from_estimations(estimations, 0.9, 0.9, 5, ignore_viruses=True)
 
         assert len(species_list) == 1
 
         species = species_list[0]
 
-        assert species.name == "Listeria monocytogenes"
-        assert species.confidence == 1
+        assert species.name == "Escherichia coli"
+        assert species.confidence >= 0.99
 
     def test_all_species_estimation(self):
         """
@@ -49,16 +55,15 @@ class TestSpeciesEstimator:
         """
 
         input_filename = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "data", "s_pseudointermedius.fasta")
+            os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
         output_directory = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "temp")
 
-        estimator = SpeciesEstimator([input_filename], output_directory)
+        estimator = SpeciesEstimator([input_filename], output_directory,
+                                     TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
         species_list = estimator.estimate_all_species()
 
         top_species = species_list[0]
 
-        print(top_species)
-
-        assert top_species.name == "Staphylococcus pseudintermedius"
+        assert top_species.name == "Escherichia coli"
         assert top_species.confidence == pytest.approx(1, 0.0001)

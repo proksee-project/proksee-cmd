@@ -117,7 +117,7 @@ Represents a biological species. The name attribute should exactly match the sci
 
 *species_estimation.py*
 
-Encapsulates a single "estimation" of a species. In particular, it is designed to encapsulate an estimation from RefSeq Masher into a single object that can be passed and operated on more easily.
+Encapsulates a single "estimation" of a species. In particular, it is designed to encapsulate an estimation from Mash into a single object that can be passed and operated on more easily.
 
 ## SpeciesEstimator
 

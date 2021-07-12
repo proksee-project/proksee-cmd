@@ -26,19 +26,24 @@ class Species:
         confidence (float): the confidence of the species assignment, between 0 and 1
     """
 
-    UNKNOWN = "Unknown"  # The name to use when the species is unknown.
+    UNKNOWN = "Unknown"
 
-    def __init__(self, name, confidence):
+    def __init__(self, name, confidence, superkingdom=UNKNOWN, full_lineage=UNKNOWN):
         """
         Initializes the species.
 
         PARAMETERS
             name (str): the name of the species.
             confidence (float): the confidence of the species assignment, between 0 and 1
+            superkingdom (str): the name of the taxonomic superkingdom
+            full_lineage (str): the NCBI-formatted full lineage, from highest ranking to lowest,
+                separated by ";" characters
         """
 
         self.name = name
         self.confidence = confidence
+        self.superkingdom = superkingdom
+        self.full_lineage = full_lineage
 
     def __str__(self):
         """

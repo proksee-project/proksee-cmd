@@ -170,7 +170,7 @@ Klebsiella michiganensis (p=1.00)
 Erwinia amylovora (p=1.00)
 ```
 
-The species is estimated using [RefSeq Masher](https://github.com/phac-nml/refseq_masher) and the species with the most evidence is selected. There may be additional high-confidence species reported. In this case, the species selected is *Vibrio cholerae*, but there are several other estimations (*Vibrio albensis*, *Atlantibacter hermannii*, etc.) with high confidence. As species estimation is somewhat inexact and complicated, we do not immediately flag the reads as being problematic, but instead verify the species again after contigs are assembled.
+The species is estimated using [Mash](https://github.com/marbl/Mash) and the species with the most evidence is selected. There may be additional high-confidence species reported. In this case, the species selected is *Vibrio cholerae*, but there are several other estimations (*Vibrio albensis*, *Atlantibacter hermannii*, etc.) with high confidence. As species estimation is somewhat inexact and complicated, we do not immediately flag the reads as being problematic, but instead verify the species again after contigs are assembled.
 
 **Read Quality Check**
 
@@ -283,5 +283,5 @@ All output will be written to the specified output directory ("output" in our ca
 - **contigs.fasta**: the final contigs generated from the expert assembly
 - **assembly_info.json**: a computer-readable, JSON-formatted file containing the information that was printed to standard output
 
-The output directory may also contain output from various other programs called during execution of the pipeline, such as RefSeq Masher, Quast, and fastp.
+The output directory may also contain output from various other programs called during execution of the pipeline, such as Quast and fastp.
 
