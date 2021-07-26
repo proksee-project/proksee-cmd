@@ -32,8 +32,8 @@ class TestMachineLearningEvaluator:
 
         # Evaluating very bad assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(788, 4029, 4000, 195, 600, 0.66, 2475580)
-        species = Species("Actinobacteria bacterium", 1.0)
+        assembly_quality = AssemblyQuality(2806, 3039, 4000, 522, 600, 0.573, 5208476)
+        species = Species("Klebsiella pneumoniae", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
         evaluation = evaluator.evaluate(assembly_quality)
@@ -43,14 +43,14 @@ class TestMachineLearningEvaluator:
 
         # Evaluating fairly bad assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(42, 133891, 4000, 6, 600, 0.383, 1986343)
+        assembly_quality = AssemblyQuality(545295, 108384, 100000, 6, 8, 0.387, 2117857)
         species = Species("Streptococcus pyogenes", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert not evaluation.success
-        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.09.")
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.24.")
 
         # Evaluating fairly good assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
@@ -61,18 +61,18 @@ class TestMachineLearningEvaluator:
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert evaluation.success
-        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.54.")
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.64.")
 
         # Evaluating very good assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(19, 481968, 4000, 3, 600, 0.379, 2877876)
+        assembly_quality = AssemblyQuality(36, 359164, 359200, 3, 4, 0.378, 3094380)
         species = Species("Listeria monocytogenes", 1.0)
 
         evaluator = MachineLearningEvaluator(species)
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert evaluation.success
-        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.92.")
+        assert(evaluation.report == "The probability of the assembly being a good assembly is: 0.96.")
 
     def test_missing_genomic_attributes(self):
         """
