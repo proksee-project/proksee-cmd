@@ -25,8 +25,8 @@ import warnings
 import math
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
-DATABASE_FILENAME = "species_median_log_metrics.txt"
-MACHINE_LEARNING_MODEL_FILENAME = "random_forest_n50_numcontigs_l50_length_gccontent.joblib"
+DATABASE_FILENAME = "species_normalization_factor_database.txt"
+MACHINE_LEARNING_MODEL_FILENAME = "species_assemblyQC_randomforest.joblib.gz"
 
 
 class NormalizedDatabase():
