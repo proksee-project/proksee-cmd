@@ -2,6 +2,7 @@ import sys
 import os
 import click
 
+from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 
 CONTEXT_SETTINGS = dict(auto_envvar_prefix='PROKSEE')
 
@@ -50,7 +51,10 @@ class ProkseeCLI(click.MultiCommand):
     None,
     "--ver",
     "--version",
-    message=('proksee, version %(version)s'))
+    message=('Proksee'
+             + '\n  Software Version: %(version)s'
+             + '\n  Model Version: {}'.format(MODEL_VERSION)
+             + '\n  Normal Form Database Version: {}'.format(NORM_DATABASE_VERSION)))
 @click.command(cls=ProkseeCLI, context_settings=CONTEXT_SETTINGS)
 @click.option("-v", "--verbose", is_flag=True, help="Enables verbose mode.")
 @pass_context
