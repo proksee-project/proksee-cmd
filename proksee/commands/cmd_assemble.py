@@ -225,6 +225,8 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
         could not continue will be written to standard output.
     """
 
+    click.echo(utilities.build_version_message() + "\n")
+
     # Make output directory:
     if not os.path.isdir(output_directory):
         os.mkdir(output_directory)

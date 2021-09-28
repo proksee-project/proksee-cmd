@@ -74,6 +74,8 @@ def evaluate(contigs_filename, output_directory, species_name=None,
         The contigs with passed filename will be evaluated and the results will be written to standard output.
     """
 
+    click.echo(utilities.build_version_message())
+
     # Make output directory:
     if not os.path.isdir(output_directory):
         os.mkdir(output_directory)
