@@ -1,5 +1,5 @@
 """
-Copyright Government of Canada 2020
+Copyright Government of Canada 2020-2021
 
 Written by:
 
@@ -22,6 +22,8 @@ import csv
 import json
 import os
 
+from proksee import __version__ as version
+from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 
 class AssemblyStatisticsWriter:
     """
@@ -110,6 +112,12 @@ class AssemblyStatisticsWriter:
         output_filename = os.path.join(self.output_directory, "assembly_info.json")
 
         data = {}
+
+        data['Version'] = {
+            "Software": version,
+            "Model": MODEL_VERSION,
+            "Database": NORM_DATABASE_VERSION
+        }
 
         data['Technology'] = str(platform.value)
         data['Species'] = species.name
