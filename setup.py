@@ -5,7 +5,7 @@ dependencies = ['click']
 
 setup(
     name='proksee',
-    version="0.1",
+    version="1.0.0-alpha",
     url='https://github.com/proksee-project/proksee-cmd.git',
     license='Apache License, Version 2.0',
     description='Proksee Cmd Line Tools',

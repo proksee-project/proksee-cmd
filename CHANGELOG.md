@@ -1,6 +1,7 @@
 # Change Log
-All notable changes to proksee will be documented in this file. 
-## 0.1.0
-2020-08-28
-Initial pre-release version of proksee command line tools
 
+All notable changes to Proksee will be documented in this file. 
+
+v1.0.0-alpha
+
+This is the initial public release of Proksee. This release focuses on Proksee Assemble, the sequence assembly component of Proksee.
