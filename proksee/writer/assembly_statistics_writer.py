@@ -25,6 +25,7 @@ import os
 from proksee import __version__ as version
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 
+
 class AssemblyStatisticsWriter:
     """
     A class for writing assembly statistics to file.
