@@ -1,11 +1,12 @@
 from setuptools import find_packages, setup
+from proksee import __version__
 
 dependencies = ['click']
 
 
 setup(
     name='proksee',
-    version="0.1",
+    version=__version__,
     url='https://github.com/proksee-project/proksee-cmd.git',
     license='Apache License, Version 2.0',
     description='Proksee Cmd Line Tools',

@@ -4,7 +4,7 @@ Proksee is a suite of command line tools for performing genome [assembly](tools/
 
 ## Release
 
-v1.0.0
+v1.0.0-alpha
 
 This is the initial public release of Proksee. This release focuses on Proksee Assemble, the sequence assembly component of Proksee.
 

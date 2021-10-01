@@ -20,6 +20,9 @@ specific language governing permissions and limitations under the License.
 
 import click
 
+from proksee import __version__ as version
+from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
+
 from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
 
@@ -59,3 +62,19 @@ def determine_species(input_filenames, assembly_database, output_directory, mash
         species_list = species_estimator.estimate_major_species()
 
     return species_list
+
+
+def build_version_message():
+    """
+    Builds a message containing the version numbers of the software and databases.
+
+    RETURNS:
+        message (String): a message containing the version numbers of the software and databases.
+    """
+
+    message = ('Proksee Version'
+               + '\n  Software: {}'.format(version)
+               + '\n  Model: {}'.format(MODEL_VERSION)
+               + '\n  Database: {}'.format(NORM_DATABASE_VERSION))
+
+    return message

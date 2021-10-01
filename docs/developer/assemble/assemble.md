@@ -1,6 +1,6 @@
 # Proksee Assemble Overview
 
-v1.0.0  
+v1.0.0-alpha  
 2021-02-04
 
 The assemble command is responsible for assembling sequencing reads into contigs. It uses an expert system to guide decision-making through the various stages of assembly.
