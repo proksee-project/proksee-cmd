@@ -1,0 +1,807 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
+    
+    
+      
+        <title>Assemble - Proksee</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.15aa0b43.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.75751829.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#assemble-tutorial" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../.." title="Proksee" class="md-header-nav__button md-logo" aria-label="Proksee">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Proksee
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Assemble
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Proksee" class="md-nav__button md-logo" aria-label="Proksee">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Proksee
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../../installation/" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    
+    <label class="md-nav__link" for="nav-3">
+      Tools
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Tools" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        Tools
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../tools/assemble/" class="md-nav__link">
+      Assemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../tools/evaluate/" class="md-nav__link">
+      Evaluate
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  
+
+
+  
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+    
+    <label class="md-nav__link" for="nav-4">
+      Tutorials
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Tutorials
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Assemble
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Assemble
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data" class="md-nav__link">
+    Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-proksee" class="md-nav__link">
+    Running Proksee
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#standard-output" class="md-nav__link">
+    Standard Output
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-files" class="md-nav__link">
+    Output Files
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" >
+    
+    <label class="md-nav__link" for="nav-5">
+      Developer
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Developer" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        <span class="md-nav__icon md-icon"></span>
+        Developer
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../developer/overview/" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../developer/assemble/assemble/" class="md-nav__link">
+      Assemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../developer/evaluate/evaluate/" class="md-nav__link">
+      Evaluate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../developer/assemble/data_structures/" class="md-nav__link">
+      Data Structures
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../developer/json/" class="md-nav__link">
+      JSON File Output
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#data" class="md-nav__link">
+    Data
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    Setup
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-proksee" class="md-nav__link">
+    Running Proksee
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#standard-output" class="md-nav__link">
+    Standard Output
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-files" class="md-nav__link">
+    Output Files
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="assemble-tutorial">Assemble Tutorial</h1>
+<p>The following is a set of simple tutorials to illustrate how to run Proksee Assemble on a Linux command line and how to understand the outputs. Please ensure that you have already installed Proksee according the <a href="../../installation/">installation instructions</a>.</p>
+<h2 id="data">Data</h2>
+<p>You will first need to obtain sequencing data to assemble. For this tutorial, we will be using <em>Vibrio cholerae</em> reads generated from an Illumina sequencing machine using a whole-genome sequencing strategy. The reads can be downloaded either by using NCBI's SRA Toolkit or downloading the reads directly from a web browser.</p>
+<p><strong>Option 1: SRA Toolkit Download</strong></p>
+<p>You will need to follow NCBI's instructions on how to <a href="https://github.com/ncbi/sra-tools/wiki/02.-Installing-SRA-Toolkit">install</a> and <a href="https://www.ncbi.nlm.nih.gov/sra/docs/sradownload/">use</a> the SRA Toolkit. We will download sequencing run SRR9201324 and, for the sake of simplicity, concatinate the pair-end reads into a single file.</p>
+<pre><code>fasterq-dump SRR9201324
+cat SRR9201324_1.fastq SRR9201324_2.fastq &gt; SRR9201324.fastq
+</code></pre>
+<p>The output file should be named "SRR9201324.fastq".</p>
+<p><strong>Option 2: Web Browser Download</strong></p>
+<p>You can download the reads directly from <a href="https://trace.ncbi.nlm.nih.gov/Traces/sra/?cmd=dload&amp;run_list=SRR9201324&amp;format=fastq">this link</a>. You will then need to extract and possibly rename the files:</p>
+<pre><code>gzip -d sra_data.fastq.qz
+mv sra_data.fastq SRR9201324.fastq
+</code></pre>
+<h2 id="setup">Setup</h2>
+<p>Activate the Proksee conda environment:</p>
+<pre><code>conda activate proksee
+</code></pre>
+<p>Check that Proksee can be run:</p>
+<pre><code>proksee assemble --help
+</code></pre>
+<p>If Proksee is installed correctly and the Conda environment activated correctly, you should see a help message reported:</p>
+<pre><code>Usage: proksee assemble [OPTIONS] FORWARD [REVERSE]
+
+Options:
+  -o, --output DIRECTORY  [required]
+  --force                 This will force the assembler to proceed when the
+                          assembly appears to be poor.
+
+  -s, --species TEXT      The species to assemble. This will override species
+                          estimation. Must be spelled correctly.
+
+  -p, --platform TEXT     The sequencing platform used to generate the reads.
+                          'Illumina', 'Ion Torrent', or 'Pac Bio'.
+
+  --help                  Show this message and exit.
+</code></pre>
+<p>If you see this output, then it is likely that Proksee is installed correctly and ready to be run.</p>
+<h2 id="running-proksee">Running Proksee</h2>
+<p>You can assemble the reads we downloaded earlier with the following command:</p>
+<pre><code>proksee assemble SRR9201324.fastq -o output/
+</code></pre>
+<p>This will initiate an assembly of the SRR9201324 <em>Vibrio cholerae</em> reads and place all outputs in a directory called "output".</p>
+<h2 id="standard-output">Standard Output</h2>
+<p>After running Proksee Assemble, output will be written to standard output and to the output directory. If you wish to see the full output, please expand the collapsed section below. The output will be explained part by part further below.</p>
+<details>
+  <summary>Full Output</summary>
+
+
+<pre><code>The reads appear to be formatted correctly.
+
+Attempting to identify the sequencing platform from the reads.
+Sequencing Platform: Unidentifiable
+
+Attempting to identify the species from the input.
+SPECIES: Vibrio cholerae (p=1.00)
+
+WARNING: Additional high-confidence species were found in the input data:
+
+Vibrio albensis (p=1.00)
+Atlantibacter hermannii (p=1.00)
+Klebsiella michiganensis (p=1.00)
+Erwinia amylovora (p=1.00)
+
+The read quality is acceptable.
+
+Assembled reads using Skesa.
+
+PASS: The evaluated contigs appear to agree with the species estimation.
+      The estimated species is: Vibrio cholerae (p=1.00)
+
+Evaluated the quality of the assembled contigs.
+The probability of the assembly being a good assembly is: 0.58.
+
+WARNING: The N50 is somewhat smaller than expected: 88901
+         The N50 lower bound is: 47306.5
+PASS: The number of contigs is comparable to similar assemblies: 104
+      The acceptable number of contigs range is: (50.1, 265.9)
+WARNING: The L50 is somewhat larger than expected: 15
+         The L50 upper bound is: 26.9
+WARNING: The assembly length is somewhat smaller than expected: 3939096
+         The assembly length lower bound is: 3884870.0
+
+Performing expert assembly.
+Assembled reads using SPAdes.
+Evaluated the quality of the assembled contigs.
+The probability of the assembly being a good assembly is: 0.89.
+
+PASS: The N50 is comparable to similar assemblies: 108383
+      The acceptable N50 range is: (47306.5, 375823.9)
+PASS: The number of contigs is comparable to similar assemblies: 89
+      The acceptable number of contigs range is: (50.1, 265.9)
+PASS: The L50 is comparable to similar assemblies: 12
+      The acceptable L50 range is: (4.0, 26.9)
+PASS: The assembly length is comparable to similar assemblies: 3970349
+      The acceptable assembly length range is: (3884870.0, 4184063.4)
+
+Changes in assembly statistics:
+N50: 19482
+Number of Contigs: -15
+L50: -3
+Length: 31253
+
+
+Complete.
+</code></pre>
+
+
+</details>
+
+<p><strong>Read Formatting</strong></p>
+<pre><code>The reads appear to be formatted correctly.
+</code></pre>
+<p>Proksee quickly checks to see if the reads appear to be correctly formatted. In our example, the reads appear to be formatted correctly.</p>
+<p><strong>Sequencing Platform Identification</strong></p>
+<pre><code>Attempting to identify the sequencing platform from the reads.
+Sequencing Platform: Unidentifiable
+</code></pre>
+<p>The software attempts to estimate the sequencing platform. However, as above, it is not always to uniquely identify the sequencing platform based on the FASTQ encoding and the platform is reported as "Unknown".</p>
+<p><strong>Species Estimation</strong></p>
+<pre><code>Attempting to identify the species from the input.
+SPECIES: Vibrio cholerae (p=1.00)
+
+WARNING: Additional high-confidence species were found in the input data:
+
+Vibrio albensis (p=1.00)
+Atlantibacter hermannii (p=1.00)
+Klebsiella michiganensis (p=1.00)
+Erwinia amylovora (p=1.00)
+</code></pre>
+<p>The species is estimated using <a href="https://github.com/marbl/Mash">Mash</a> and the species with the most evidence is selected. There may be additional high-confidence species reported. In this case, the species selected is <em>Vibrio cholerae</em>, but there are several other estimations (<em>Vibrio albensis</em>, <em>Atlantibacter hermannii</em>, etc.) with high confidence. As species estimation is somewhat inexact and complicated, we do not immediately flag the reads as being problematic, but instead verify the species again after contigs are assembled.</p>
+<p><strong>Read Quality Check</strong></p>
+<pre><code>The read quality is acceptable.
+</code></pre>
+<p>The quality of the reads is evaluated using FASTP. If the quality is acceptable, then assembly will continue. In our example, the read quality appears to be acceptable.</p>
+<p><strong>Fast Sequence Assembly</strong></p>
+<pre><code>Assembled reads using Skesa.
+</code></pre>
+<p>The reads are quickly assembled using Skesa.</p>
+<p><strong>Species Verification</strong></p>
+<pre><code>PASS: The evaluated contigs appear to agree with the species estimation.
+      The estimated species is: Vibrio cholerae (p=1.00)
+</code></pre>
+<p>A few of the largest contigs of the assembly each have their species estimated with RefSeq Masher. If the species estimated from each of these contigs is in agreement with the species estimated previously, then the assembly continues. It is possible that some data sets with contamination will continue in the pipeline, but as confident and automatic species estimation prove challenging, it is difficult to automate processes to handle low levels of contamination.</p>
+<p>In the example above, since we previously estimated the species from the reads to be <em>Vibrio cholerae</em> and this agrees with the species estimated from each of the largest contigs (individually), then we proceed with sequence assembly.</p>
+<p><strong>Machine Learning Assembly Evaluation</strong></p>
+<pre><code>Evaluated the quality of the assembled contigs.
+The probability of the assembly being a good assembly is: 0.58.
+</code></pre>
+<p>The probability of the sequence assembly being "good" is estimating using our machine learning algorithm. Here we see that the probability of the assembly being "good" (i.e. similar to other RefSeq assemblies that we believe are good) is 58%.</p>
+<p><strong>Heuristic Assembly Evaluation</strong></p>
+<pre><code>WARNING: The N50 is somewhat smaller than expected: 88901
+         The N50 lower bound is: 47306.5
+PASS: The number of contigs is comparable to similar assemblies: 104
+      The acceptable number of contigs range is: (50.1, 265.9)
+WARNING: The L50 is somewhat larger than expected: 15
+         The L50 upper bound is: 26.9
+WARNING: The assembly length is somewhat smaller than expected: 3939096
+         The assembly length lower bound is: 3884870.0
+</code></pre>
+<p>The sequence assembly is the evaluated using a heuristic-based approach. The N50, number of contigs, L50, and assembly length are compared against the range of values for assemblies of that species and sequencing technology in our database of assemblies. The software reports a warning when the assembly measurement (N50, L50, etc.) is outside the 20-80 percentile range, and a failure when the measurement is outside the 5-95 percentile range.</p>
+<p>In this case, we see that the number of contigs (104) seems comparable, but the N50 (88901), L50 (15), and assembly length (3,939,096) deviate somewhat from what is expect. However, their deviation is not too extreme, so warnings are issued and the assembly continues.</p>
+<p><strong>Expert Assembly</strong></p>
+<pre><code>Performing expert assembly.
+Assembled reads using SPAdes.
+</code></pre>
+<p>Using information collected in the previous steps, a strategy is determined for the "expert" assembly. The hope is that we can use information gathered from a fast Skesa assembly to better inform a more thorough assembly. In this case, SPAdes was selected to assembly the reads.</p>
+<p><strong>Machine Learning Assembly Evaluation</strong></p>
+<pre><code>Evaluated the quality of the assembled contigs.
+The probability of the assembly being a good assembly is: 0.89.
+</code></pre>
+<p>Proksee now evaluates the probability of the expert assembly being a good assembly (i.e. similar to assemblies in our RefSeq-derived assembly database) and reports that probability. There is an 89% probability that our expert assembly is similar to our RefSeq-derived assembly database.</p>
+<p><strong>Heuristic Assembly Evaluation</strong></p>
+<pre><code>PASS: The N50 is comparable to similar assemblies: 108383
+      The acceptable N50 range is: (47306.5, 375823.9)
+PASS: The number of contigs is comparable to similar assemblies: 89
+      The acceptable number of contigs range is: (50.1, 265.9)
+PASS: The L50 is comparable to similar assemblies: 12
+      The acceptable L50 range is: (4.0, 26.9)
+PASS: The assembly length is comparable to similar assemblies: 3970349
+      The acceptable assembly length range is: (3884870.0, 4184063.4)
+</code></pre>
+<p>The expert assembly is then evaluated using our heuristic approach, by comparing the assembly measurements against the percentile ranges for assemblies of the same species and sequencing techonology in our database.</p>
+<p>In our example, all of the assemble measurements derived from the expert assembly appear normal, with respect to our database.</p>
+<p><strong>Changes in Assemblies</strong></p>
+<pre><code>Changes in assembly statistics:
+N50: 19482
+Number of Contigs: -15
+L50: -3
+Length: 31253
+
+
+Complete.
+</code></pre>
+<p>Finally, the changes in assembly measurements (N50, L50, etc.) between the fast assembly and the expert assembly are reported. In this case, we can see changes that suggest an improvement in assembly quality.</p>
+<h2 id="output-files">Output Files</h2>
+<p>All output will be written to the specified output directory ("output" in our case). The output directory will contain the following files:</p>
+<ul>
+<li><strong>assembly_statistics.csv</strong>: assembly statistics for the assemblies produced during pipeline</li>
+<li><strong>contigs.fasta</strong>: the final contigs generated from the expert assembly</li>
+<li><strong>assembly_info.json</strong>: a computer-readable, JSON-formatted file containing the information that was printed to standard output</li>
+</ul>
+<p>The output directory may also contain output from various other programs called during execution of the pipeline, such as Quast and fastp.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../../tools/evaluate/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Evaluate
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../../developer/overview/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Overview
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.8c7e0a7e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

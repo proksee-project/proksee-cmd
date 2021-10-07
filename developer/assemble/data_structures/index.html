@@ -1,0 +1,849 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
+    
+    
+      
+        <title>Data Structures - Proksee</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.15aa0b43.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.75751829.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#proksee-assemble-data-structures" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../../.." title="Proksee" class="md-header-nav__button md-logo" aria-label="Proksee">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Proksee
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Data Structures
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Proksee" class="md-nav__button md-logo" aria-label="Proksee">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Proksee
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../../../installation/" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    
+    <label class="md-nav__link" for="nav-3">
+      Tools
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Tools" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        Tools
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../../tools/assemble/" class="md-nav__link">
+      Assemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../../tools/evaluate/" class="md-nav__link">
+      Evaluate
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+    
+    <label class="md-nav__link" for="nav-4">
+      Tutorials
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Tutorials
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../../tutorials/assemble/" class="md-nav__link">
+      Assemble
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  
+
+
+  
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
+    
+    <label class="md-nav__link" for="nav-5">
+      Developer
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Developer" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        <span class="md-nav__icon md-icon"></span>
+        Developer
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../overview/" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../assemble/" class="md-nav__link">
+      Assemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../evaluate/evaluate/" class="md-nav__link">
+      Evaluate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Data Structures
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Data Structures
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#assembler" class="md-nav__link">
+    Assembler
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblydatabase" class="md-nav__link">
+    AssemblyDatabase
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblyevaluator" class="md-nav__link">
+    AssemblyEvaluator
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblymeasurer" class="md-nav__link">
+    AssemblyMeasurer
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblyquality" class="md-nav__link">
+    AssemblyQuality
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblystrategy" class="md-nav__link">
+    AssemblyStrategy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contaminationhandler" class="md-nav__link">
+    ContaminationHandler
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluation" class="md-nav__link">
+    Evaluation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expertsystem" class="md-nav__link">
+    ExpertSystem
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#machinelearningassemblyqc" class="md-nav__link">
+    MachineLearningAssemblyQC
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalizeddatabase" class="md-nav__link">
+    NormalizedDatabase
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platformidentifier" class="md-nav__link">
+    PlatformIdentifier
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#readfilterer" class="md-nav__link">
+    ReadFilterer
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#readquality" class="md-nav__link">
+    ReadQuality
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reads" class="md-nav__link">
+    Reads
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#species" class="md-nav__link">
+    Species
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#speciesestimation" class="md-nav__link">
+    SpeciesEstimation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#speciesestimator" class="md-nav__link">
+    SpeciesEstimator
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../json/" class="md-nav__link">
+      JSON File Output
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#assembler" class="md-nav__link">
+    Assembler
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblydatabase" class="md-nav__link">
+    AssemblyDatabase
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblyevaluator" class="md-nav__link">
+    AssemblyEvaluator
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblymeasurer" class="md-nav__link">
+    AssemblyMeasurer
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblyquality" class="md-nav__link">
+    AssemblyQuality
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#assemblystrategy" class="md-nav__link">
+    AssemblyStrategy
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contaminationhandler" class="md-nav__link">
+    ContaminationHandler
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evaluation" class="md-nav__link">
+    Evaluation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expertsystem" class="md-nav__link">
+    ExpertSystem
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#machinelearningassemblyqc" class="md-nav__link">
+    MachineLearningAssemblyQC
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#normalizeddatabase" class="md-nav__link">
+    NormalizedDatabase
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#platformidentifier" class="md-nav__link">
+    PlatformIdentifier
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#readfilterer" class="md-nav__link">
+    ReadFilterer
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#readquality" class="md-nav__link">
+    ReadQuality
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reads" class="md-nav__link">
+    Reads
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#species" class="md-nav__link">
+    Species
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#speciesestimation" class="md-nav__link">
+    SpeciesEstimation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#speciesestimator" class="md-nav__link">
+    SpeciesEstimator
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="proksee-assemble-data-structures">Proksee Assemble Data Structures</h1>
+<p>v1.0.0-alpha<br />
+2021-02-04</p>
+<p>The following is a high-level overview of some of the data structures used in the pipeline.</p>
+<h2 id="assembler">Assembler</h2>
+<p><em>assembler.py, skesa_assembler.py, spades_assembler.py</em></p>
+<p>The Assembler class is an abstract base class and, importantly, is returned as part of the AssemblyStrategy object. Functions that use the Assembler class don't need to worry about the specific assembler implemented, but rather can just invoke the .assemble() method. This should allow for easier incorporation of other assemblers in the future.</p>
+<p>The Assembler class is currently implemented by the SpadesAssembler and SkesaAssembler classes.</p>
+<h2 id="assemblydatabase">AssemblyDatabase</h2>
+<p><em>assembly_database.py</em></p>
+<p>The AssemblyDatabase class serves as an object wrapper for the assembly database file. The assembly database contains statistics about assembly metrics for many different species. For example, the database contains percentile information for the N50, L50, number of contigs, and assembly length for assemblies of each species in the database. This allows us to compare an assembly produced by our pipeline with previously-derived assembly statistics.</p>
+<p>The AssemblyDatabase class provides functions for interacting with the database file without the caller needing to worry about the specific implementation. Currently, the class loads a CSV file where assembly metrics are organized by species.</p>
+<h2 id="assemblyevaluator">AssemblyEvaluator</h2>
+<p><em>assembly_evaluator.py, heuristic_evaluation.py, machine_learning_evaluator.py</em></p>
+<p>An abstract class used to evaluate the quality of assemblies. Currently, the AssemblyEvaluator is implemented by HeuristicEvaluator, which uses the percentile assembly statistics in the AssemblyDatabase to make evaluations, and MachineLearningEvaluator, which returns a probabilistic prediction from a machine learning strategy to make evaluations. In either case, both evaluators return an Evaluation object, which is simply a report of their evaluation.</p>
+<h2 id="assemblymeasurer">AssemblyMeasurer</h2>
+<p><em>assembly_measurer.py</em></p>
+<p>Measures varies assemble characteristics (ex: N50, L50, number of contigs, length) using QUAST. This class produced AssemblyQuality objects.</p>
+<h2 id="assemblyquality">AssemblyQuality</h2>
+<p><em>assembly_quality.py</em></p>
+<p>The AssemblyQuality object encapsulates many assembly measurements (ex: N50, L50, number of contigs, assembly length) about a single assembly into an object in order to facilitate passing information around to other functions. The fast and expert assemblies generated by our pipeline will each have a corresponding AssemblyQuality object that will each be compared to the AssemblyDatabase to see how they compare to previously-completed assembles.</p>
+<p>This object is generated by the AssemblyMeasurer class.</p>
+<h2 id="assemblystrategy">AssemblyStrategy</h2>
+<p><em>assembly_strategy.py</em></p>
+<p>The AssemblyStrategy object represents a strategy to follow in order to produce an assembly. This includes whether or not to proceed with the assembly at all, a plain-language report about the strategy, and the assembler to use for assembly. The AssemblyStrategy object will contain a preconfigured Assembler object that can be used to execute the assembly.</p>
+<h2 id="contaminationhandler">ContaminationHandler</h2>
+<p><em>contamination_handler.py</em></p>
+<p>Identifies, filters and otherwise handles contamination in assembled contigs. In particular, this class is responsible for estimating contamination in the contigs, using MASH, and checking to see that the species estimated in individual contigs agrees with the species estimated for the entire read data set. As contamination handling is very difficult and resource intensive, this heuristic approach should help catch some of the worse cases of contamination in the assembled contig data. However, this class is currently not equiped to detect minor or medium levels of contamination.</p>
+<h2 id="evaluation">Evaluation</h2>
+<p><em>evaluation.py, assembly_evaluation.py</em></p>
+<p>A simple, generic class representing an evaluation. It encapsulates two attributes: success (whether or not the subject was evaluated positively or negatively) and a report (a plain-language text report explaining the evaluation). This class functions as a way to return a boolean from a test / evaluation / check alongside an explanation of the result.</p>
+<p>Evaluation is extended by AssemblyEvaluation and MachineLearningEvaluation, which contain more specific attributes for sequence assembly statistic evaluations. AssemblyEvaluation (Evaluation) and MachineLearningEvaluation (Evaluation) objects are returned by the AssemblyEvaluator, which is responsible for evaluating an assembly and reporting on the evaluation.</p>
+<h2 id="expertsystem">ExpertSystem</h2>
+<p><em>expert_system.py</em></p>
+<p>The ExpertSystem is primarily responsible for creating assembly strategies (AssemblyStrategy objects) that will be used to guide the assembly process. The ExpertSystem uses data produced throughout the pipeline in order to make decisions about how best to perform sequence assembly.</p>
+<h2 id="machinelearningassemblyqc">MachineLearningAssemblyQC</h2>
+<p><em>machine_learning_assembly_qc.py</em></p>
+<p>The MachineLearningAssemblyQC class loads a random forests machine learning model trained on curated NCBI assemblies. The machine learning model encapsulates feature information corresponding to species specific normalized assembly attributes (N50, number of contigs, L50, assembly length and the overall gc content) and label information corresponding to assembly inclusion or exclusion within the NCBI RefSeq database.</p>
+<p>The MachineLearningAssemblyQC class subsequently processes the data of a new/input assembly, by normalizing the assembly attributes generated from AssemblyQuality class and returning the machine learning probabilistic evaluation of the assembly.</p>
+<h2 id="normalizeddatabase">NormalizedDatabase</h2>
+<p><em>machine_learning_assembly_qc.py</em></p>
+<p>The NormalizedDatabase class loads a CSV file which serves as a database of species specific median (or median of log-transformed) values of different assembly attributes corresponding to N50, number of contigs, L50, assembly length and overall gc content.</p>
+<p>The NormalizedDatabase class provides functions for interacting with the database file and compute species specific normalized assembly metrics to be used by MachineLearningAssemblyQC.</p>
+<h2 id="platformidentifier">PlatformIdentifier</h2>
+<p><em>platform_identify.py</em></p>
+<p>The PlatformIdentifier class attempts to identify the sequencing platform that was used to sequence the reads. This is accomplished by looking at the FASTQ file encoding and seeing if any of the information can be used to uniquely identify a sequencing platform. However, this process is not always successful and sometimes the platform will be determined to be "Unidentifiable".</p>
+<h2 id="readfilterer">ReadFilterer</h2>
+<p><em>read_filterer.py</em></p>
+<p>Filters the reads using FASTP. The ReadFilterer object encapsulates information about the input reads and the several output files created by running FASTP.</p>
+<h2 id="readquality">ReadQuality</h2>
+<p><em>read_quality.py</em></p>
+<p>The ReadQuality object encapsulates information about the quality of reads. It includes measures such as the number of reads, the rate of Q30 or higher bases, and the GC-content.</p>
+<h2 id="reads">Reads</h2>
+<p><em>reads.py</em></p>
+<p>Encapsulates sequencing reads into a single object. This simplifies the need to pass forward and, optionally, reverse reads and accommodates a future possibility of having more than two read files.</p>
+<h2 id="species">Species</h2>
+<p><em>species.py</em></p>
+<p>Represents a biological species. The name attribute should exactly match the scientific name for the species (including capitalization). The confidence attribute relates to the confidence of the species assignment, which may be derived from species estimation tools, such as MASH.</p>
+<h2 id="speciesestimation">SpeciesEstimation</h2>
+<p><em>species_estimation.py</em></p>
+<p>Encapsulates a single "estimation" of a species. In particular, it is designed to encapsulate an estimation from Mash into a single object that can be passed and operated on more easily.</p>
+<h2 id="speciesestimator">SpeciesEstimator</h2>
+<p><em>species_estimator.py</em></p>
+<p>The SpeciesEstimator represents a tool used to estimate species from either sequencing reads or contigs. It is not designed to be a species classifier, but rather simply estimate the species, based on the information on hand (in particular, the RefSeq Masher database).</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../../evaluate/evaluate/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Evaluate
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../../json/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                JSON File Output
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.8c7e0a7e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>

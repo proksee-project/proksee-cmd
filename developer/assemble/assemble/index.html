@@ -1,0 +1,856 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="shortcut icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.4">
+    
+    
+      
+        <title>Assemble - Proksee</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.15aa0b43.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.75751829.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#proksee-assemble-overview" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="../../.." title="Proksee" class="md-header-nav__button md-logo" aria-label="Proksee">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Proksee
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Assemble
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Proksee" class="md-nav__button md-logo" aria-label="Proksee">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Proksee
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../../../installation/" class="md-nav__link">
+      Installation
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    
+    <label class="md-nav__link" for="nav-3">
+      Tools
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Tools" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        Tools
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../../tools/assemble/" class="md-nav__link">
+      Assemble
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../../tools/evaluate/" class="md-nav__link">
+      Evaluate
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
+    
+    <label class="md-nav__link" for="nav-4">
+      Tutorials
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        <span class="md-nav__icon md-icon"></span>
+        Tutorials
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../../tutorials/assemble/" class="md-nav__link">
+      Assemble
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  
+
+
+  
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5" checked>
+    
+    <label class="md-nav__link" for="nav-5">
+      Developer
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Developer" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        <span class="md-nav__icon md-icon"></span>
+        Developer
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../overview/" class="md-nav__link">
+      Overview
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Assemble
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Assemble
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline" class="md-nav__link">
+    Pipeline
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-1-pre-assembly" class="md-nav__link">
+    Stage 1: Pre-Assembly
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 1: Pre-Assembly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validate-inputs" class="md-nav__link">
+    Validate Inputs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identify-sequencing-platform" class="md-nav__link">
+    Identify Sequencing Platform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter-reads" class="md-nav__link">
+    Filter Reads
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#determine-read-quality" class="md-nav__link">
+    Determine Read Quality
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimate-species" class="md-nav__link">
+    Estimate Species
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-2-fast-assembly" class="md-nav__link">
+    Stage 2: Fast Assembly
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 2: Fast Assembly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-strategy" class="md-nav__link">
+    Create Strategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assemble" class="md-nav__link">
+    Assemble
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluate-contamination" class="md-nav__link">
+    Evaluate Contamination
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluate-assembly" class="md-nav__link">
+    Evaluate Assembly
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-3-expert-assembly" class="md-nav__link">
+    Stage 3: Expert Assembly
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 3: Expert Assembly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-strategy_1" class="md-nav__link">
+    Create Strategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assemble_1" class="md-nav__link">
+    Assemble
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluate-assembly_1" class="md-nav__link">
+    Evaluate Assembly
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-assemblies" class="md-nav__link">
+    Compare Assemblies
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../evaluate/evaluate/" class="md-nav__link">
+      Evaluate
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../data_structures/" class="md-nav__link">
+      Data Structures
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../../json/" class="md-nav__link">
+      JSON File Output
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pipeline" class="md-nav__link">
+    Pipeline
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-1-pre-assembly" class="md-nav__link">
+    Stage 1: Pre-Assembly
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 1: Pre-Assembly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#validate-inputs" class="md-nav__link">
+    Validate Inputs
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identify-sequencing-platform" class="md-nav__link">
+    Identify Sequencing Platform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filter-reads" class="md-nav__link">
+    Filter Reads
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#determine-read-quality" class="md-nav__link">
+    Determine Read Quality
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estimate-species" class="md-nav__link">
+    Estimate Species
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-2-fast-assembly" class="md-nav__link">
+    Stage 2: Fast Assembly
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 2: Fast Assembly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-strategy" class="md-nav__link">
+    Create Strategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assemble" class="md-nav__link">
+    Assemble
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluate-contamination" class="md-nav__link">
+    Evaluate Contamination
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluate-assembly" class="md-nav__link">
+    Evaluate Assembly
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stage-3-expert-assembly" class="md-nav__link">
+    Stage 3: Expert Assembly
+  </a>
+  
+    <nav class="md-nav" aria-label="Stage 3: Expert Assembly">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-strategy_1" class="md-nav__link">
+    Create Strategy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#assemble_1" class="md-nav__link">
+    Assemble
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluate-assembly_1" class="md-nav__link">
+    Evaluate Assembly
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-assemblies" class="md-nav__link">
+    Compare Assemblies
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="proksee-assemble-overview">Proksee Assemble Overview</h1>
+<p>v1.0.0-alpha<br />
+2021-02-04</p>
+<p>The assemble command is responsible for assembling sequencing reads into contigs. It uses an expert system to guide decision-making through the various stages of assembly.</p>
+<h2 id="pipeline">Pipeline</h2>
+<p><img alt="overview" src="../../images/overview.png" /></p>
+<p>The assemble pipeline consists of three major stages:</p>
+<ul>
+<li><strong>Stage 1: Pre-Assembly</strong>: Attempts to estimate information about the reads and prepares the reads for sequence assembly.</li>
+<li><strong>Stage 2: Fast Assembly</strong>: Assembles the quickly in order to produce a draft assemble that will help inform the expert assembly.</li>
+<li><strong>Stage 3: Expert Assembly</strong>: Assembles the reads in an expert manner using information gathered during the previous stages.</li>
+</ul>
+<h2 id="stage-1-pre-assembly">Stage 1: Pre-Assembly</h2>
+<p><img alt="pre-assembly" src="../../images/pre_assembly.png" /></p>
+<p>The pre-assembly stage is responsible for estimating information about the reads, including the species and sequencing technology, and preparing the reads for sequence assembly.</p>
+<h3 id="validate-inputs">Validate Inputs</h3>
+<p>The forward and reverse read inputs are validated in order to ensure that they are in FASTQ format. The pipeline will terminate if the inputs appear to be formatted incorrectly.</p>
+<h3 id="identify-sequencing-platform">Identify Sequencing Platform</h3>
+<p>The sequencing platform is estimated by looking at the encoding of the FASTQ-formatted input reads. If there is not enough information to estimate the sequencing platform, then the platform will be unidentifiable, but assembly will continue. This stage is skipped if the user provides the sequencing platform as a command-line argument.</p>
+<h3 id="filter-reads">Filter Reads</h3>
+<p>The reads are filtered in order to remove low-quality sequencing content and improve the assembly. FASTP is used to filter the reads.</p>
+<h3 id="determine-read-quality">Determine Read Quality</h3>
+<p>The read quality is determined from the filtered reads by parsing the output of FASTP in the previous step. Since FASTP provides some quality metrics of the reads after filtering, this information is parsed into the pipeline and used in later steps.</p>
+<h3 id="estimate-species">Estimate Species</h3>
+<p>Attempts to estimate the species using MASH. Since MASH is not designed to be a classifier, we shouldn't say that the species is <em>classified</em>, but rather the species is <em>estimated</em> from  <em>k</em>-mer information in the reads. MASH output can be messy on real-world data and will often report multiple species present. High thresholds are therefore used in order to only report species that are very likely to be present. As a consequence of this approach, we cannot confidently make claims about low levels of contamination in the reads and thus ignore such contamination.</p>
+<h2 id="stage-2-fast-assembly">Stage 2: Fast Assembly</h2>
+<p><img alt="fast assembly" src="../../images/fast_assembly.png" /></p>
+<p>The fast assembly stage assembles the reads hastily in order to gather some approximate structural information that can be seen after assembling reads into contigs. It should provide the pipeline with more accurate information about which major species are present, approximately how large the assembly will be, and if there is any major contamination present.</p>
+<h3 id="create-strategy">Create Strategy</h3>
+<p>Creates a fast assembly strategy using the information gathered during the pre-assembly stage. The sequencing platform, estimated species, and read quality are provided to the expert system, which creates a fast assembly strategy using this information.</p>
+<p>It is possible that the expert system will decide that the best course of action is to terminate the pipeline because the provided information suggests no good assembly can be produced. This might happen if the read quality after filtering remains too low, or if there are too many major species present in the reads, suggesting major contamination.</p>
+<h3 id="assemble">Assemble</h3>
+<p>Assembles the reads by executing the fast assembly strategy. Currently, this will always involve using the SKESA assembler. However, it is possible to expand to other assemblers in the future.</p>
+<h3 id="evaluate-contamination">Evaluate Contamination</h3>
+<p>Evaluates possible contamination in the assembled reads. This is achieved using MASH to ensure that the five largest assembled contigs are estimated to have the same major species as the initial species estimation in the pre-assembly stage. The choice of five contigs is arbitrary, but as MASH requires a complete "restart" for every contig indeptendently evaluated, the number of contigs checked greatly increases the time required to complete this stage. The evaluation contamination step will not identify minor or medium levels of contamination, but should identify some major levels of species contamination in the contigs.</p>
+<p>The pipeline will terminate if there is a disagreement in the species estimations.</p>
+<h3 id="evaluate-assembly">Evaluate Assembly</h3>
+<p>Evaluates the assembly using QUAST and an independent machine learning algorithm. For QUAST evaluation, the pipeline uses a non-reference-based QUAST analysis, because of the difficulty of selecting a reference correctly and complication of needing to maintain either a database of references or the ability to download references on the fly. Several assembly metrics are collected, including N50, number of contigs, L50, and total assembly size. For machine learning evaluation, the pipeline returns the prediction probability of the assembly resembling the quality of RefSeq-included NCBI Reference Sequences. The prediction probability is computed from a random forests machine learning model trained on curated NCBI assemblies with intra-species normalized assembly metrics including N50, number of contigs, L50, total assembly size and the overall gc content. The probability ranges between 0 and 1, with 1 being the highest probability of an assembly resembling a RefSeq-included NCBI Reference Sequence.</p>
+<h2 id="stage-3-expert-assembly">Stage 3: Expert Assembly</h2>
+<p><img alt="expert assembly" src="../../images/expert_assembly.png" /></p>
+<p>The expert assembly stage uses information collected in the pre-assembly and fast assembly stages to create an expert strategy for assembling the reads. The assembly generated in this stage should be of higher quality than the assembly created in the fast assembly stage.</p>
+<h3 id="create-strategy_1">Create Strategy</h3>
+<p>Creates a strategy using the expert system by analyzing the assembly metrics of the fast assembly (N50, L50, number of contigs, assembly length). The fast assembly metrics are compared against the sequence assembly database to see if the assembly metrics agree with what would be expect for the species. If these assembly metrics are in major disagreement with what would be expected for the species, then the pipeline is terminated. Otherwise, an expert assembly strategy is created and the pipeline proceeds.</p>
+<h3 id="assemble_1">Assemble</h3>
+<p>Assembles the reads by executing the expert assembly strategy. Currently, this will always involve using SPAdes. However, it is possible to expand assembly to other assemblers in the future.</p>
+<h3 id="evaluate-assembly_1">Evaluate Assembly</h3>
+<p>Evaluates the assembly using QUAST and machine learning probabilistic evaluation, in the same manner as previously done in the fast assembly stage. The QUAST analysis is done without a reference, because of the difficulties of regularly selecting a good reference and maintaining a high-quality reference database.</p>
+<h3 id="compare-assemblies">Compare Assemblies</h3>
+<p>Compares the assembly metrics of all assemblies run in the pipeline (fast, expert) and reports them. These assembly metrics include N50, L50, number of contigs, and assembly length.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../../overview/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Overview
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../../evaluate/evaluate/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Evaluate
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../../assets/javascripts/vendor.93c04032.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.83e5331e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../../..",
+          features: [],
+          search: Object.assign({
+            worker: "../../../assets/javascripts/worker/search.8c7e0a7e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
