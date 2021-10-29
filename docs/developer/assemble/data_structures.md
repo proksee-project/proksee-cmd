@@ -1,6 +1,6 @@
 # Proksee Assemble Data Structures
 
-v1.0.0-alpha  
+v1.0.0a1  
 2021-02-04
 
 The following is a high-level overview of some of the data structures used in the pipeline.
