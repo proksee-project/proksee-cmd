@@ -1,6 +1,6 @@
 # Developer Overview for Proksee
 
-v1.0.0-alpha  
+v1.0.0a1  
 2021-04-08
 
 Proksee is a Python 3 software project that provides a computational pipeline for performing sequence assembly, annotation, and visualization of microbial genomes. It is intented to be used by researchers who will have expertise in microbial genomics, but not necessarily bioinformatics or computational biology.
