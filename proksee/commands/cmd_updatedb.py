@@ -25,29 +25,34 @@ import urllib
 import urllib.error
 import urllib.request
 
+import proksee.config as config
+
 from pathlib import Path
 
-MASH_DATABASE = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                             "refseq.genomes.k21s1000.msh")
 MASH_DATABASE_URL = "https://gembox.cbcb.umd.edu/mash/refseq.genomes.k21s1000.msh"
+MASH_DATABASE_FILENAME = "refseq.genomes.k21s1000.msh"
+
+DEFAULT_DATABASE_DIRECTORY = os.path.join(Path(__file__).parent.parent.absolute(), "database")
 
 
 @click.command('updatedb',
                short_help='Attempts to update the databases used by Proksee.')
+@click.option('-d', '--directory', required=False, default=DEFAULT_DATABASE_DIRECTORY,
+              help='The directory to place the database files.')
 @click.pass_context
-def cli(ctx):
-    update()
+def cli(ctx, directory):
+    update(directory)
 
 
-def update(mash_database_filename=MASH_DATABASE):
+def update(directory):
     """
     The main control flow of the program that attempts to update the Proksee databases.
 
     ARGUMENTS:
-        mash_database_filename (string): optional; the filename of the Mash database
+        directory (string): the directory to place the Mash database files
 
     POST:
-        The Proksee databases will be updated if necessary.
+        The Proksee database files will be updated if necessary.
     """
 
     try:
@@ -64,12 +69,19 @@ def update(mash_database_filename=MASH_DATABASE):
         raise TimeoutError("Could not fetch header for Mash sketch " +
                            "file from {} before timeout.".format(MASH_DATABASE_URL))
 
+    # Make database directory:
+    if not os.path.isdir(directory):
+        os.mkdir(directory)
+
+    config.update(config.DATABASE_DIRECTORY, directory)
+    mash_database_filename = os.path.join(directory, MASH_DATABASE_FILENAME)
+
     if not os.path.isfile(mash_database_filename) or \
-            file_size != os.path.getsize(MASH_DATABASE):
+            file_size != os.path.getsize(mash_database_filename):
 
         click.echo("Downloading database...")
 
-        command = "wget -O " + MASH_DATABASE + " " + MASH_DATABASE_URL
+        command = "wget -O " + str(mash_database_filename) + " " + MASH_DATABASE_URL
 
         try:
             subprocess.check_call(command, shell=True)
