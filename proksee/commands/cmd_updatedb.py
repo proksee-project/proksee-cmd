@@ -70,18 +70,19 @@ def update(directory):
                            "file from {} before timeout.".format(MASH_DATABASE_URL))
 
     # Make database directory:
+    directory = os.path.abspath(directory)
     if not os.path.isdir(directory):
         os.mkdir(directory)
 
-    config.update(config.DATABASE_DIRECTORY, directory)
-    mash_database_filename = os.path.join(directory, MASH_DATABASE_FILENAME)
+    mash_database_path = os.path.join(directory, MASH_DATABASE_FILENAME)
+    config.update(config.MASH_PATH, mash_database_path)
 
-    if not os.path.isfile(mash_database_filename) or \
-            file_size != os.path.getsize(mash_database_filename):
+    if not os.path.isfile(mash_database_path) or \
+            file_size != os.path.getsize(mash_database_path):
 
         click.echo("Downloading database...")
 
-        command = "wget -O " + str(mash_database_filename) + " " + MASH_DATABASE_URL
+        command = "wget -O " + str(mash_database_path) + " " + MASH_DATABASE_URL
 
         try:
             subprocess.check_call(command, shell=True)

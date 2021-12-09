@@ -29,10 +29,10 @@ from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.heuristic_evaluator import HeuristicEvaluator
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
 
+import proksee.config as config
+
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
-MASH_DATABASE = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                             "refseq.genomes.k21s1000.msh")
 ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                                    "mash_id_mapping.tab.gz")
 
@@ -50,24 +50,25 @@ ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "dat
 def cli(ctx, contigs, output, species):
 
     # Check Mash database is installed:
-    if not os.path.isfile(MASH_DATABASE):
+    mash_database_path = config.get(config.MASH_PATH)
+
+    if not os.path.isfile(mash_database_path):
         print("Please run 'proksee updatedb' to install the databases!")
         return
 
-    evaluate(contigs, output, species)
+    evaluate(contigs, output, mash_database_path, species)
 
 
-def evaluate(contigs_filename, output_directory, species_name=None,
-             mash_database_filename=MASH_DATABASE,
-             id_mapping_filename=ID_MAPPING_FILENAME):
+def evaluate(contigs_filename, output_directory, mash_database_path,
+             species_name=None, id_mapping_filename=ID_MAPPING_FILENAME):
     """
     The main control flow of the program that evaluates the assembly.
 
     ARGUMENTS:
         contigs_filename (string): the filename of the contigs to evaluate
         output_directory (string): the location to place all program output and temporary files
+        mash_database_path (string): optional; the name of the Mash database
         species_name (string): optional; the name of the species being assembled
-        mash_database_filename (string): optional; the name of the Mash database
         id_mapping_filename (string) optional; the name of the NCBI ID-to-taxonomy mapping (table) file
 
     POST:
@@ -85,7 +86,7 @@ def evaluate(contigs_filename, output_directory, species_name=None,
 
     # Estimate species
     species_list = utilities.determine_species([contigs_filename], assembly_database, output_directory,
-                                               mash_database_filename, id_mapping_filename, species_name)
+                                               mash_database_path, id_mapping_filename, species_name)
     species = species_list[0]
     click.echo("The identified species is: " + str(species.name) + "\n")
 

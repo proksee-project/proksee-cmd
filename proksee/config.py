@@ -23,8 +23,8 @@ import json
 
 from pathlib import Path
 
-CONFIG_FILENAME = os.path.join(Path(__file__).parent.absolute(), "config.json")
-DATABASE_DIRECTORY = "databaseDirectory"
+CONFIG_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "config.json")
+MASH_PATH = "mashPath"
 
 
 def update(key, value):
@@ -34,12 +34,12 @@ def update(key, value):
     POST: The config file will be updated, such that the passed 'value', will be assigned to 'key'.
     """
 
-    with open('config.json', 'r') as f:
+    with open(CONFIG_FILENAME, 'r') as f:
         config = json.load(f)
 
     config[key] = value
 
-    with open('config.json', 'w') as f:
+    with open(CONFIG_FILENAME, 'w') as f:
         json.dump(config, f)
 
 
@@ -51,7 +51,7 @@ def get(key):
         value (string): the value stored in the config file for 'key'
     """
 
-    with open('config.json', 'r') as f:
+    with open(CONFIG_FILENAME, 'r') as f:
         config = json.load(f)
 
     value = config[key]
