@@ -41,11 +41,6 @@ from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 from proksee import config as config
 
-mash_database_path = config.get(config.MASH_PATH)
-
-if not os.path.isfile(mash_database_path):
-    print("Please run 'proksee updatedb' to install the databases!")
-
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
 ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "database",
