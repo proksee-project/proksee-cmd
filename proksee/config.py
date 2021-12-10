@@ -40,7 +40,7 @@ def update(key, value):
     config[key] = value
 
     with open(CONFIG_FILENAME, 'w') as f:
-        json.dump(config, f)
+        json.dump(config, f, indent=4)
 
 
 def get(key):
