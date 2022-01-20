@@ -39,11 +39,10 @@ from proksee.platform_identify import PlatformIdentifier, identify_name, Platfor
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
+from proksee import config as config
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
-MASH_DATABASE = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                             "refseq.genomes.k21s1000.msh")
 ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                                    "mash_id_mapping.tab.gz")
 
@@ -197,16 +196,18 @@ def determine_platform(reads, platform_name=None):
 def cli(ctx, forward, reverse, output, force, species, platform):
 
     # Check Mash database is installed:
-    if not os.path.isfile(MASH_DATABASE):
+    mash_database_path = config.get(config.MASH_PATH)
+
+    if not os.path.isfile(mash_database_path):
         print("Please run 'proksee updatedb' to install the databases!")
         return
 
     reads = Reads(forward, reverse)
-    assemble(reads, output, force, species, platform)
+    assemble(reads, output, force, mash_database_path, species, platform)
 
 
-def assemble(reads, output_directory, force, species_name=None, platform_name=None,
-             mash_database_filename=MASH_DATABASE,
+def assemble(reads, output_directory, force, mash_database_path,
+             species_name=None, platform_name=None,
              id_mapping_filename=ID_MAPPING_FILENAME):
     """
     The main control flow of the program that assembles reads.
@@ -215,9 +216,9 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
         reads (Reads): the reads to assemble
         output_directory (string): the location to place all program output and temporary files
         force (bool): whether or not to force the assembly to continue, even when it's evaluated as being poor
+        mash_database_path (string): optional; the file path of the Mash database
         species_name (string): optional; the name of the species being assembled
         platform_name (string): optional; the name of the sequencing platform that generated the reads
-        mash_database_filename (string): optional; the name of the Mash database
         id_mapping_filename (string) optional; the name of the NCBI ID to taxonomy mapping database file
 
     POST:
@@ -252,7 +253,7 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
     # Estimate species
     filtered_filenames = filtered_reads.get_file_locations()
     species_list = utilities.determine_species(filtered_filenames, assembly_database, output_directory,
-                                               mash_database_filename, id_mapping_filename, species_name)
+                                               mash_database_path, id_mapping_filename, species_name)
     species = species_list[0]
     report_species(species_list)
 
@@ -271,7 +272,7 @@ def assemble(reads, output_directory, force, species_name=None, platform_name=No
 
     # Check for contamination at the contig level:
     contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_directory,
-                                                 mash_database_filename, id_mapping_filename)
+                                                 mash_database_path, id_mapping_filename)
     evaluation = contamination_handler.estimate_contamination()
     report_contamination(evaluation)
 

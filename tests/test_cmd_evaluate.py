@@ -21,6 +21,7 @@ import os
 from pathlib import Path
 
 from proksee.commands.cmd_evaluate import evaluate
+import proksee.config as config
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
@@ -45,7 +46,8 @@ class TestCmdEvaluate:
         if os.path.isfile(quast_file):
             os.remove(quast_file)
 
-        evaluate(contigs_filename, OUTPUT_DIR, species_name=None)
+        mash_database_path = config.get(config.MASH_PATH)
+        evaluate(contigs_filename, OUTPUT_DIR, mash_database_path, species_name=None)
 
         # Check that expected files were created:
         assert os.path.isfile(quast_file)

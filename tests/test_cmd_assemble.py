@@ -64,8 +64,9 @@ class TestCmdAssemble:
         if os.path.isfile(json_file):
             os.remove(json_file)
 
-        assemble(reads, OUTPUT_DIR, force, species_name=None, platform_name=None,
-                 mash_database_filename=TEST_MASH_DB_FILENAME,
+        assemble(reads, OUTPUT_DIR, force,
+                 TEST_MASH_DB_FILENAME,
+                 species_name=None, platform_name=None,
                  id_mapping_filename=TEST_ID_MAPPING_FILENAME)
 
         # Check that expected files were created:
