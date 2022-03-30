@@ -41,6 +41,7 @@ from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 from proksee import config as config
+from proksee.species_estimator import SpeciesEstimator
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
@@ -229,14 +230,19 @@ def cleanup(output_directory):
     if os.path.isfile(filterer_logfile_path):
         os.remove(filterer_logfile_path)
 
-    fwd_filtered_filename = os.path.join(output_directory, ReadFilterer.FWD_FILTERED_FILENAME)
-    rev_filtered_filename = os.path.join(output_directory, ReadFilterer.REV_FILTERED_FILENAME)
+    fwd_filtered_path = os.path.join(output_directory, ReadFilterer.FWD_FILTERED_FILENAME)
+    rev_filtered_path = os.path.join(output_directory, ReadFilterer.REV_FILTERED_FILENAME)
 
-    if os.path.isfile(fwd_filtered_filename):
-        os.remove(fwd_filtered_filename)
+    if os.path.isfile(fwd_filtered_path):
+        os.remove(fwd_filtered_path)
 
-    if os.path.isfile(rev_filtered_filename):
-        os.remove(rev_filtered_filename)
+    if os.path.isfile(rev_filtered_path):
+        os.remove(rev_filtered_path)
+
+    species_estimation_path = os.path.join(output_directory, SpeciesEstimator.OUTPUT_FILENAME)
+
+    if os.path.isfile(species_estimation_path):
+        os.remove(species_estimation_path)
 
 
 def assemble(reads, output_directory, force, mash_database_path,
