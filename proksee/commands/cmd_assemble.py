@@ -26,6 +26,7 @@ import click
 import os
 
 from pathlib import Path
+from shutil import rmtree
 
 from proksee import utilities
 from proksee.assembly_database import AssemblyDatabase
@@ -204,6 +205,24 @@ def cli(ctx, forward, reverse, output, force, species, platform):
 
     reads = Reads(forward, reverse)
     assemble(reads, output, force, mash_database_path, species, platform)
+    cleanup(output)
+
+
+def cleanup(output_directory):
+    """
+    Cleans up temporary files in the output directory.
+
+    ARGUMENTS:
+        output_directory (string): the location of the program output
+
+    POST:
+        The output directory will have all temporary program files deleted.
+    """
+
+    fasta_directory = os.path.join(output_directory, ContaminationHandler.FASTA_DIRECTORY)
+
+    if os.path.isdir(fasta_directory):
+        rmtree(fasta_directory)
 
 
 def assemble(reads, output_directory, force, mash_database_path,
