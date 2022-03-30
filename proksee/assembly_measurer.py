@@ -33,6 +33,9 @@ class AssemblyMeasurer:
         quast_report_filename (str): the filename of the quast report
     """
 
+    OUTPUT_FILENAME = "quast.out"
+    ERROR_FILENAME = "quast.err"
+
     def __init__(self, contigs_filename, output_directory):
         """
         Initializes the AssemblyEvaluator.
@@ -74,8 +77,8 @@ class AssemblyMeasurer:
             raise FileNotFoundError("File not found: " + self.contigs_filename)
 
         quast_command = "quast " + self.contigs_filename + " -o " + self.quast_directory
-        quast_out = open(os.path.join(self.output_directory, "quast.out"), "w+")
-        quast_err = open(os.path.join(self.output_directory, "quast.err"), "w+")
+        quast_out = open(os.path.join(self.output_directory, self.OUTPUT_FILENAME), "w+")
+        quast_err = open(os.path.join(self.output_directory, self.ERROR_FILENAME), "w+")
 
         try:
             subprocess.check_call(quast_command, shell=True, stdout=quast_out, stderr=quast_err)

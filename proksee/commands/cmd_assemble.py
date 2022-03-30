@@ -244,6 +244,15 @@ def cleanup(output_directory):
     if os.path.isfile(species_estimation_path):
         os.remove(species_estimation_path)
 
+    assembly_measurer_output_path = os.path.join(output_directory, AssemblyMeasurer.OUTPUT_FILENAME)
+    assembly_measurer_error_path = os.path.join(output_directory, AssemblyMeasurer.ERROR_FILENAME)
+
+    if os.path.isfile(assembly_measurer_output_path):
+        os.remove(assembly_measurer_error_path)
+
+    if os.path.isfile(assembly_measurer_output_path):
+        os.remove(assembly_measurer_error_path)
+
 
 def assemble(reads, output_directory, force, mash_database_path,
              species_name=None, platform_name=None,
