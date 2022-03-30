@@ -42,6 +42,8 @@ from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 from proksee import config as config
 from proksee.species_estimator import SpeciesEstimator
+from proksee.skesa_assembler import SkesaAssembler
+from proksee.spades_assembler import SpadesAssembler
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
@@ -252,6 +254,15 @@ def cleanup(output_directory):
 
     if os.path.isfile(assembly_measurer_output_path):
         os.remove(assembly_measurer_error_path)
+
+    skesa_directory = os.path.isfile(SkesaAssembler.DIRECTORY_NAME)
+    spades_directory = os.path.isfile(SpadesAssembler.DIRECTORY_NAME)
+
+    if os.path.isdir(skesa_directory):
+        rmtree(skesa_directory)
+
+    if os.path.isdir(spades_directory):
+        rmtree(spades_directory)
 
 
 def assemble(reads, output_directory, force, mash_database_path,
