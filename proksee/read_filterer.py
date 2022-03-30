@@ -35,7 +35,9 @@ class ReadFilterer():
         output_directory (str): the file location of the output directory for writing files
     """
 
-    LOGFILE_NAME = "fastp.log"
+    LOGFILE_FILENAME = "fastp.log"
+    FWD_FILTERED_FILENAME = "fwd_filtered.fastq"
+    REV_FILTERED_FILENAME = "rev_filtered.fastq"
 
     def __init__(self, reads, output_directory):
         """
@@ -60,8 +62,9 @@ class ReadFilterer():
         forward_reads = self.reads.forward
         reverse_reads = self.reads.reverse
 
-        self.forward_filtered = os.path.join(self.output_directory, 'fwd_filtered.fastq')
-        self.reverse_filtered = os.path.join(self.output_directory, 'rev_filtered.fastq') if reverse_reads else None
+        self.forward_filtered = os.path.join(self.output_directory, self.FWD_FILTERED_FILENAME)
+        self.reverse_filtered = os.path.join(self.output_directory,
+                                             self.REV_FILTERED_FILENAME) if reverse_reads else None
         json = os.path.join(self.output_directory, 'fastp.json')
         html = os.path.join(self.output_directory, 'fastp.html')
 
@@ -80,7 +83,7 @@ class ReadFilterer():
         Runs the FASTP program in order to perform filtering on reads.
         """
 
-        logfile_location = open(os.path.join(self.output_directory, self.LOGFILE_NAME), 'w+')
+        logfile_location = open(os.path.join(self.output_directory, self.LOGFILE_FILENAME), 'w+')
         command = self.__build_fastp_command()
 
         try:

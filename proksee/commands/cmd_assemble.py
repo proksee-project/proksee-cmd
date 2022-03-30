@@ -224,10 +224,19 @@ def cleanup(output_directory):
     if os.path.isdir(fasta_directory):
         rmtree(fasta_directory)
 
-    filterer_logfile_path = os.path.join(output_directory, ReadFilterer.LOGFILE_NAME)
+    filterer_logfile_path = os.path.join(output_directory, ReadFilterer.LOGFILE_FILENAME)
 
     if os.path.isfile(filterer_logfile_path):
         os.remove(filterer_logfile_path)
+
+    fwd_filtered_filename = os.path.join(output_directory, ReadFilterer.FWD_FILTERED_FILENAME)
+    rev_filtered_filename = os.path.join(output_directory, ReadFilterer.REV_FILTERED_FILENAME)
+
+    if os.path.isfile(fwd_filtered_filename):
+        os.remove(fwd_filtered_filename)
+
+    if os.path.isfile(rev_filtered_filename):
+        os.remove(rev_filtered_filename)
 
 
 def assemble(reads, output_directory, force, mash_database_path,
