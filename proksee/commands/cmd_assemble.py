@@ -250,13 +250,13 @@ def cleanup(output_directory):
     assembly_measurer_error_path = os.path.join(output_directory, AssemblyMeasurer.ERROR_FILENAME)
 
     if os.path.isfile(assembly_measurer_output_path):
+        os.remove(assembly_measurer_output_path)
+
+    if os.path.isfile(assembly_measurer_error_path):
         os.remove(assembly_measurer_error_path)
 
-    if os.path.isfile(assembly_measurer_output_path):
-        os.remove(assembly_measurer_error_path)
-
-    skesa_directory = os.path.isfile(SkesaAssembler.DIRECTORY_NAME)
-    spades_directory = os.path.isfile(SpadesAssembler.DIRECTORY_NAME)
+    skesa_directory = os.path.join(output_directory, SkesaAssembler.DIRECTORY_NAME)
+    spades_directory = os.path.join(output_directory, SpadesAssembler.DIRECTORY_NAME)
 
     if os.path.isdir(skesa_directory):
         rmtree(skesa_directory)
