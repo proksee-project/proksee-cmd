@@ -35,6 +35,8 @@ class ReadFilterer():
         output_directory (str): the file location of the output directory for writing files
     """
 
+    LOGFILE_NAME = "fastp.log"
+
     def __init__(self, reads, output_directory):
         """
         Initializes the read filterer.
@@ -78,7 +80,7 @@ class ReadFilterer():
         Runs the FASTP program in order to perform filtering on reads.
         """
 
-        logfile_location = open(os.path.join(self.output_directory, 'fastp.log'), 'w+')
+        logfile_location = open(os.path.join(self.output_directory, self.LOGFILE_NAME), 'w+')
         command = self.__build_fastp_command()
 
         try:

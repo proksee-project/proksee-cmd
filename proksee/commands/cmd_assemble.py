@@ -224,6 +224,11 @@ def cleanup(output_directory):
     if os.path.isdir(fasta_directory):
         rmtree(fasta_directory)
 
+    filterer_logfile_path = os.path.join(output_directory, ReadFilterer.LOGFILE_NAME)
+
+    if os.path.isfile(filterer_logfile_path):
+        os.remove(filterer_logfile_path)
+
 
 def assemble(reads, output_directory, force, mash_database_path,
              species_name=None, platform_name=None,
