@@ -79,6 +79,8 @@ class SpeciesEstimator:
         id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
     """
 
+    OUTPUT_FILENAME = "mash.o"
+
     def __init__(self, input_list, output_directory, mash_database_filename, id_mapping_filename):
         """
         Initializes the species estimator.
@@ -157,7 +159,7 @@ class SpeciesEstimator:
             will be written to file.
         """
 
-        OUTPUT_FILENAME = os.path.join(self.output_directory, "mash.o")
+        output_filepath = os.path.join(self.output_directory, self.OUTPUT_FILENAME)
 
         # create the mash command
         command = "mash screen -i 0 -v 1 " + self.mash_database_filename
@@ -165,7 +167,7 @@ class SpeciesEstimator:
         for item in self.input_list:
             command += " " + str(item)
 
-        command += " | sort -gr > " + OUTPUT_FILENAME
+        command += " | sort -gr > " + output_filepath
 
         # run mash
         try:
@@ -174,4 +176,4 @@ class SpeciesEstimator:
         except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to insure there was output
 
-        return OUTPUT_FILENAME
+        return output_filepath

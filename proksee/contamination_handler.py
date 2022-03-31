@@ -38,6 +38,8 @@ class ContaminationHandler:
         id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
     """
 
+    FASTA_DIRECTORY = "fasta"
+
     def __init__(self, species, contigs_file, output_directory, mash_database_filename, id_mapping_filename):
         """
         Initializes the contamination handler.
@@ -66,10 +68,9 @@ class ContaminationHandler:
                 contains an associated, plain-language report
         """
 
-        FASTA_DIRECTORY = "fasta"
         CHUNKS = 5
 
-        fasta_directory = os.path.join(self.output_directory, FASTA_DIRECTORY)
+        fasta_directory = os.path.join(self.output_directory, self.FASTA_DIRECTORY)
 
         # Split the multi-FASTA file into single-record FASTA files (contigs) and gather a list of file locations in
         # descending order by contig size:

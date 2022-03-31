@@ -26,6 +26,7 @@ import click
 import os
 
 from pathlib import Path
+from shutil import rmtree
 
 from proksee import utilities
 from proksee.assembly_database import AssemblyDatabase
@@ -40,6 +41,9 @@ from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 from proksee import config as config
+from proksee.species_estimator import SpeciesEstimator
+from proksee.skesa_assembler import SkesaAssembler
+from proksee.spades_assembler import SpadesAssembler
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
@@ -204,6 +208,67 @@ def cli(ctx, forward, reverse, output, force, species, platform):
 
     reads = Reads(forward, reverse)
     assemble(reads, output, force, mash_database_path, species, platform)
+    cleanup(output)
+
+
+def cleanup(output_directory):
+    """
+    Cleans up temporary files in the output directory.
+
+    ARGUMENTS:
+        output_directory (string): the location of the program output
+
+    POST:
+        The output directory will have all temporary program files deleted.
+    """
+
+    # Temporary FASTA directory used in contamination detection:
+    fasta_directory = os.path.join(output_directory, ContaminationHandler.FASTA_DIRECTORY)
+
+    if os.path.isdir(fasta_directory):
+        rmtree(fasta_directory)
+
+    # Read filtering logfile (i.e. fastp.log):
+    filterer_logfile_path = os.path.join(output_directory, ReadFilterer.LOGFILE_FILENAME)
+
+    if os.path.isfile(filterer_logfile_path):
+        os.remove(filterer_logfile_path)
+
+    # Forward and reverse filtered read files:
+    fwd_filtered_path = os.path.join(output_directory, ReadFilterer.FWD_FILTERED_FILENAME)
+    rev_filtered_path = os.path.join(output_directory, ReadFilterer.REV_FILTERED_FILENAME)
+
+    if os.path.isfile(fwd_filtered_path):
+        os.remove(fwd_filtered_path)
+
+    if os.path.isfile(rev_filtered_path):
+        os.remove(rev_filtered_path)
+
+    # Species estimation output (i.e. mash.o):
+    species_estimation_path = os.path.join(output_directory, SpeciesEstimator.OUTPUT_FILENAME)
+
+    if os.path.isfile(species_estimation_path):
+        os.remove(species_estimation_path)
+
+    # Assembly quality measurer temporary files (i.e. quast.out and quast.err)
+    assembly_measurer_output_path = os.path.join(output_directory, AssemblyMeasurer.OUTPUT_FILENAME)
+    assembly_measurer_error_path = os.path.join(output_directory, AssemblyMeasurer.ERROR_FILENAME)
+
+    if os.path.isfile(assembly_measurer_output_path):
+        os.remove(assembly_measurer_output_path)
+
+    if os.path.isfile(assembly_measurer_error_path):
+        os.remove(assembly_measurer_error_path)
+
+    # Assembly output directories:
+    skesa_directory = os.path.join(output_directory, SkesaAssembler.DIRECTORY_NAME)
+    spades_directory = os.path.join(output_directory, SpadesAssembler.DIRECTORY_NAME)
+
+    if os.path.isdir(skesa_directory):
+        rmtree(skesa_directory)
+
+    if os.path.isdir(spades_directory):
+        rmtree(spades_directory)
 
 
 def assemble(reads, output_directory, force, mash_database_path,
