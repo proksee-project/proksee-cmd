@@ -389,7 +389,7 @@ def assemble(reads, output_directory, force, mash_database_path,
 
     # Write expert assembly information to JSON file:
     assembly_statistics_writer.write_json(platform, species, read_quality, expert_assembly_quality,
-                                          heuristic_evaluation, machine_learning_evaluation)
+                                          heuristic_evaluation, machine_learning_evaluation, assembly_database)
 
     # Move final assembled contigs to the main level of the output directory and rename it.
     contigs_filename = assembler.get_contigs_filename()

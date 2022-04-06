@@ -194,10 +194,10 @@ class HeuristicEvaluator(AssemblyEvaluator):
         species = self.species
 
         n50 = assembly_quality.n50
-        low_fail = database.get_n50_quantile(species.name, 0.05)
-        low_warning = database.get_n50_quantile(species.name, 0.20)
-        high_warning = database.get_n50_quantile(species.name, 0.80)
-        high_fail = database.get_n50_quantile(species.name, 0.95)
+        low_fail = database.get_n50_quantile(species.name, database.LOW_ERROR_QUANTILE)
+        low_warning = database.get_n50_quantile(species.name, database.LOW_WARNING_QUANTILE)
+        high_warning = database.get_n50_quantile(species.name, database.HIGH_WARNING_QUANTILE)
+        high_fail = database.get_n50_quantile(species.name, database.HIGH_ERROR_QUANTILE)
 
         evaluation = evaluate_value("N50", n50, low_fail, low_warning, high_warning, high_fail)
 
@@ -219,10 +219,10 @@ class HeuristicEvaluator(AssemblyEvaluator):
         species = self.species
 
         num_contigs = assembly_quality.num_contigs
-        low_fail = database.get_contigs_quantile(species.name, 0.05)
-        low_warning = database.get_contigs_quantile(species.name, 0.20)
-        high_warning = database.get_contigs_quantile(species.name, 0.80)
-        high_fail = database.get_contigs_quantile(species.name, 0.95)
+        low_fail = database.get_contigs_quantile(species.name, database.LOW_ERROR_QUANTILE)
+        low_warning = database.get_contigs_quantile(species.name, database.LOW_WARNING_QUANTILE)
+        high_warning = database.get_contigs_quantile(species.name, database.HIGH_WARNING_QUANTILE)
+        high_fail = database.get_contigs_quantile(species.name, database.HIGH_ERROR_QUANTILE)
 
         evaluation = evaluate_value("number of contigs", num_contigs, low_fail, low_warning, high_warning, high_fail)
 
@@ -243,10 +243,10 @@ class HeuristicEvaluator(AssemblyEvaluator):
         species = self.species
 
         l50 = assembly_quality.l50
-        low_fail = database.get_l50_quantile(species.name, 0.05)
-        low_warning = database.get_l50_quantile(species.name, 0.20)
-        high_warning = database.get_l50_quantile(species.name, 0.80)
-        high_fail = database.get_l50_quantile(species.name, 0.95)
+        low_fail = database.get_l50_quantile(species.name, database.LOW_ERROR_QUANTILE)
+        low_warning = database.get_l50_quantile(species.name, database.LOW_WARNING_QUANTILE)
+        high_warning = database.get_l50_quantile(species.name, database.HIGH_WARNING_QUANTILE)
+        high_fail = database.get_l50_quantile(species.name, database.HIGH_ERROR_QUANTILE)
 
         evaluation = evaluate_value("L50", l50, low_fail, low_warning, high_warning, high_fail)
 
@@ -268,10 +268,10 @@ class HeuristicEvaluator(AssemblyEvaluator):
         species = self.species
 
         length = assembly_quality.length
-        low_fail = database.get_length_quantile(species.name, 0.05)
-        low_warning = database.get_length_quantile(species.name, 0.20)
-        high_warning = database.get_length_quantile(species.name, 0.80)
-        high_fail = database.get_length_quantile(species.name, 0.95)
+        low_fail = database.get_length_quantile(species.name, database.LOW_ERROR_QUANTILE)
+        low_warning = database.get_length_quantile(species.name, database.LOW_WARNING_QUANTILE)
+        high_warning = database.get_length_quantile(species.name, database.HIGH_WARNING_QUANTILE)
+        high_fail = database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
 
         evaluation = evaluate_value("assembly length", length, low_fail, low_warning, high_warning, high_fail)
 

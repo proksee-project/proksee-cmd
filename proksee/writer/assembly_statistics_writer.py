@@ -91,7 +91,7 @@ class AssemblyStatisticsWriter:
             return output_filename
 
     def write_json(self, platform, species, read_quality, assembly_quality,
-                   heuristic_evaluation, machine_learning_evaluation):
+                   heuristic_evaluation, machine_learning_evaluation, database):
         """
         Writes the assembly information to a JSON file.
 
@@ -102,6 +102,7 @@ class AssemblyStatisticsWriter:
             assembly_quality (AssemblyQuality): object encapsulating the quality measurements of the assembly
             heuristic_evaluation (AssemblyEvaluation): heuristic evaluation of the assembly
             machine_learning_evaluation (MachineLearningEvaluation): machine learning evaluation of the assembly
+            database (AssemblyDatabase): database containing information about assemblies for species
 
         RETURN
             output_filename (str): the name of the written file
@@ -138,6 +139,25 @@ class AssemblyStatisticsWriter:
             "L50": assembly_quality.l50,
             "Number of Contigs": assembly_quality.num_contigs,
             "Assembly Size": assembly_quality.length
+        }
+
+        data['Assembly Thresholds'] = {
+            "N50 Low Error": database.get_n50_quantile(species.name, database.LOW_ERROR_QUANTILE),
+            "N50 Low Warning": database.get_n50_quantile(species.name, database.LOW_WARNING_QUANTILE),
+            "N50 High Warning": database.get_n50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+            "N50 High Error": database.get_n50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+            "L50 Low Error": database.get_l50_quantile(species.name, database.LOW_ERROR_QUANTILE),
+            "L50 Low Warning": database.get_l50_quantile(species.name, database.LOW_WARNING_QUANTILE),
+            "L50 High Warning": database.get_l50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+            "L50 High Error": database.get_l50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+            "Contigs Low Error": database.get_contigs_quantile(species.name, database.LOW_ERROR_QUANTILE),
+            "Contigs Low Warning": database.get_contigs_quantile(species.name, database.LOW_WARNING_QUANTILE),
+            "Contigs High Warning": database.get_contigs_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+            "Contigs High Error": database.get_contigs_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+            "Length Low Error": database.get_length_quantile(species.name, database.LOW_ERROR_QUANTILE),
+            "Length Low Warning": database.get_length_quantile(species.name, database.LOW_WARNING_QUANTILE),
+            "Length High Warning": database.get_length_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+            "Length High Error": database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
         }
 
         data['Heuristic Evaluation'] = {

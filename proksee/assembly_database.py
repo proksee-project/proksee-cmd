@@ -57,6 +57,12 @@ class AssemblyDatabase:
     L50_QUANTILES = "L50_QUANTILES"
     LENGTH_QUANTILES = "LENGTH_QUANTILES"
 
+    # Thresholds as quantiles:
+    LOW_ERROR_QUANTILE = 0.05
+    LOW_WARNING_QUANTILE = 0.20
+    HIGH_WARNING_QUANTILE = 0.80
+    HIGH_ERROR_QUANTILE = 0.95
+
     def __init__(self, database_filename):
         """
         Initializes the database.
