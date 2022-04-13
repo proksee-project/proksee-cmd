@@ -24,6 +24,7 @@ import os
 
 from proksee import __version__ as version
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
+from proksee.heuristic_evaluator import REFSEQ_MIN_N50, REFSEQ_MAX_L50, REFSEQ_MAX_CONTIGS, REFSEQ_MIN_LENGTH
 
 
 class AssemblyStatisticsWriter:
@@ -158,6 +159,13 @@ class AssemblyStatisticsWriter:
             "Length Low Warning": database.get_length_quantile(species.name, database.LOW_WARNING_QUANTILE),
             "Length High Warning": database.get_length_quantile(species.name, database.HIGH_WARNING_QUANTILE),
             "Length High Error": database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
+        }
+
+        data["NCBI RefSeq Exclusion Criteria"] = {
+            "Minimum Length": REFSEQ_MIN_LENGTH,
+            "Minimum N50": REFSEQ_MIN_N50,
+            "Maximum L50": REFSEQ_MAX_L50,
+            "Maximum Contigs": REFSEQ_MAX_CONTIGS
         }
 
         data['Heuristic Evaluation'] = {

@@ -19,6 +19,15 @@ specific language governing permissions and limitations under the License.
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.evaluation import AssemblyEvaluation, Evaluation
 
+# NCBI RefSeq exclusion criteria:
+# https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/
+REFSEQ_MIN_N50 = 5000
+REFSEQ_MAX_L50 = 500
+REFSEQ_MAX_CONTIGS = 2000
+
+REFSEQ_MIN_LENGTH = 5000
+# Not present in above criteria, but we must evaluate length.
+        # Length cannot be less than the N50 (5000).
 
 class HeuristicEvaluator(AssemblyEvaluator):
     """
@@ -79,10 +88,10 @@ class HeuristicEvaluator(AssemblyEvaluator):
             and l50_evaluation.success and length_evaluation.success
 
         report = "\n"
-        report += n50_evaluation.report
-        report += contigs_evaluation.report
-        report += l50_evaluation.report
-        report += length_evaluation.report
+        report += n50_evaluation.report + "\n"
+        report += contigs_evaluation.report + "\n"
+        report += l50_evaluation.report + "\n"
+        report += length_evaluation.report + "\n"
 
         assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
                                                  success, report)
@@ -100,16 +109,6 @@ class HeuristicEvaluator(AssemblyEvaluator):
             evaluation (AssemblyEvaluation): an evaluation of the assembly's quality
         """
 
-        # Values taken from RefSeq assembly exclusion criteria.
-        # https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/
-        MIN_N50 = 5000
-        MAX_L50 = 500
-        MAX_CONTIGS = 2000
-
-        MIN_LENGTH = 5000
-        # Not present in above criteria, but we must evaluate length.
-        # Length cannot be less than the N50 (5000).
-
         n50 = assembly_quality.n50
         num_contigs = assembly_quality.num_contigs
         l50 = assembly_quality.l50
@@ -117,62 +116,62 @@ class HeuristicEvaluator(AssemblyEvaluator):
 
         total_success = True  # Whether or not all checks pass.
 
-        if n50 < 5000:
+        if n50 < REFSEQ_MIN_N50:
             success = False
-            report = "FAIL: The N50 is smaller than expected: {}\n".format(n50)
-            report += "      The N50 lower bound is: {}\n".format(MIN_N50)
+            report = "FAIL: The N50 is smaller than expected: {}. ".format(n50)
+            report += "The N50 lower bound is: {}.".format(REFSEQ_MIN_N50)
 
         else:
             success = True
-            report = "PASS: The N50 is acceptable: {}\n".format(n50)
-            report += "      The N50 lower bound is: {}\n".format(MIN_N50)
+            report = "PASS: The N50 is acceptable: {}. ".format(n50)
+            report += "The N50 lower bound is: {}.".format(REFSEQ_MIN_N50)
 
         n50_evaluation = Evaluation(success, report)
         total_success = total_success and success
 
-        if num_contigs > MAX_CONTIGS:
+        if num_contigs > REFSEQ_MAX_CONTIGS:
             success = False
-            report = "FAIL: The number of contigs is larger than expected: {}\n".format(num_contigs)
-            report += "      The number of contigs upper bound is: {}\n".format(MAX_CONTIGS)
+            report = "FAIL: The number of contigs is larger than expected: {}. ".format(num_contigs)
+            report += "The number of contigs upper bound is: {}.".format(REFSEQ_MAX_CONTIGS)
         else:
             success = True
-            report = "PASS: The number of contigs is acceptable: {}\n".format(num_contigs)
-            report += "      The number of contigs lower bound is: {}\n".format(MIN_N50)
+            report = "PASS: The number of contigs is acceptable: {}. ".format(num_contigs)
+            report += "The number of contigs lower bound is: {}.".format(REFSEQ_MIN_N50)
 
         contigs_evaluation = Evaluation(success, report)
         total_success = total_success and success
 
-        if l50 > MAX_L50:
+        if l50 > REFSEQ_MAX_L50:
             success = False
-            report = "FAIL: The L50 is larger than expected: {}\n".format(l50)
-            report += "      The L50 upper bound is: {}\n".format(MAX_L50)
+            report = "FAIL: The L50 is larger than expected: {}. ".format(l50)
+            report += "The L50 upper bound is: {}.".format(REFSEQ_MAX_L50)
 
         else:
             success = True
-            report = "PASS: The L50 is acceptable: {}\n".format(l50)
-            report += "      The L50 upper bound is: {}\n".format(MAX_L50)
+            report = "PASS: The L50 is acceptable: {}. ".format(l50)
+            report += "The L50 upper bound is: {}.".format(REFSEQ_MAX_L50)
 
         l50_evaluation = Evaluation(success, report)
         total_success = total_success and success
 
-        if length < MIN_LENGTH:
+        if length < REFSEQ_MIN_LENGTH:
             success = False
-            report = "FAIL: The length is smaller than expected: {}\n".format(length)
-            report += "      The length lower bound is: {}\n".format(MIN_LENGTH)
+            report = "FAIL: The length is smaller than expected: {}. ".format(length)
+            report += "The length lower bound is: {}.".format(REFSEQ_MIN_LENGTH)
 
         else:
             success = True
-            report = "PASS: The length is acceptable: {}\n".format(length)
-            report += "      The length lower bound is: {}\n".format(MIN_LENGTH)
+            report = "PASS: The length is acceptable: {}. ".format(length)
+            report += "The length lower bound is: {}.".format(REFSEQ_MIN_LENGTH)
 
         length_evaluation = Evaluation(success, report)
         total_success = total_success and success
 
         report = "\nWARNING: No assembly statistics available for the species!\n\n"
-        report += n50_evaluation.report
-        report += contigs_evaluation.report
-        report += l50_evaluation.report
-        report += length_evaluation.report
+        report += n50_evaluation.report + "\n"
+        report += contigs_evaluation.report + "\n"
+        report += l50_evaluation.report + "\n"
+        report += length_evaluation.report + "\n"
 
         assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
                                                  total_success, report)
@@ -300,32 +299,32 @@ def evaluate_value(measurement, value, low_fail, low_warning, high_warning, high
     # (-infinity, low_fail] -> low failure
     if value <= low_fail:
         success = False
-        report += "FAIL: The {} is smaller than expected: {}\n".format(measurement, value)
-        report += "      The {} lower bound is: {}\n".format(measurement, low_fail)
+        report += "FAIL: The {} is smaller than expected: {}. ".format(measurement, value)
+        report += "The {} lower bound is: {}.".format(measurement, low_fail)
 
     # (low_fail, low_warning] -> low warning
     elif value <= low_warning:
         success = True
-        report += "WARNING: The {} is somewhat smaller than expected: {}\n".format(measurement, value)
-        report += "         The {} lower bound is: {}\n".format(measurement, low_fail)
+        report += "WARNING: The {} is somewhat smaller than expected: {}. ".format(measurement, value)
+        report += "The {} lower bound is: {}.".format(measurement, low_fail)
 
     # (low_warning, high_warning) -> acceptable, no warning
     elif value < high_warning:
         success = True
-        report += "PASS: The {} is comparable to similar assemblies: {}\n".format(measurement, value)
-        report += "      The acceptable {} range is: ({}, {})\n".format(measurement, low_fail, high_fail)
+        report += "PASS: The {} is comparable to similar assemblies: {}. ".format(measurement, value)
+        report += "The acceptable {} range is: ({}, {}).".format(measurement, low_fail, high_fail)
 
     # [high_warning, high_fail) -> high warning
     elif value < high_fail:
         success = True
-        report += "WARNING: The {} is somewhat larger than expected: {}\n".format(measurement, value)
-        report += "         The {} upper bound is: {}\n".format(measurement, high_fail)
+        report += "WARNING: The {} is somewhat larger than expected: {}. ".format(measurement, value)
+        report += "The {} upper bound is: {}.".format(measurement, high_fail)
 
     # [high_fail, +infinity) -> high failure
     elif value >= high_fail:
         success = False
-        report += "FAIL: The {} is larger than expected: {}\n".format(measurement, value)
-        report += "      The {} upper bound is: {}\n".format(measurement, high_fail)
+        report += "FAIL: The {} is larger than expected: {}. ".format(measurement, value)
+        report += "The {} upper bound is: {}.".format(measurement, high_fail)
 
     evaluation = Evaluation(success, report)
 
