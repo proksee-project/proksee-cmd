@@ -27,7 +27,8 @@ REFSEQ_MAX_CONTIGS = 2000
 
 REFSEQ_MIN_LENGTH = 5000
 # Not present in above criteria, but we must evaluate length.
-        # Length cannot be less than the N50 (5000).
+# Length cannot be less than the N50 (5000).
+
 
 class HeuristicEvaluator(AssemblyEvaluator):
     """
