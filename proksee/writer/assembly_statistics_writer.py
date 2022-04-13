@@ -90,7 +90,7 @@ class AssemblyStatisticsWriter:
 
             return output_filename
 
-    def write_json(self, platform, species, read_quality, assembly_quality,
+    def write_json(self, platform, species, reads, read_quality, assembly_quality,
                    heuristic_evaluation, machine_learning_evaluation):
         """
         Writes the assembly information to a JSON file.
@@ -98,6 +98,7 @@ class AssemblyStatisticsWriter:
         PARAMETERS
             platform (Platform (Enum)): the sequencing platform
             species (Species): the sequencing species
+            reads (Reads): encapsulates the file names of the input reads
             read_quality (ReadQuality): object encapsulating the quality measurements of the sequencing reads
             assembly_quality (AssemblyQuality): object encapsulating the quality measurements of the assembly
             heuristic_evaluation (AssemblyEvaluation): heuristic evaluation of the assembly
@@ -122,6 +123,11 @@ class AssemblyStatisticsWriter:
 
         data['Technology'] = str(platform.value)
         data['Species'] = species.name
+
+        data["Reads"] = {
+            "Forward": reads.forward,
+            "Reverse": reads.reverse
+        }
 
         data['Read Quality'] = {
             "Total Reads": read_quality.total_reads,

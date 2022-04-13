@@ -387,8 +387,8 @@ def assemble(reads, output_directory, force, mash_database_path,
     assembly_statistics_writer.write_csv([fast_strategy.assembler.name, expert_strategy.assembler.name],
                                          [fast_assembly_quality, expert_assembly_quality])
 
-    # Write expert assembly information to JSON file:
-    assembly_statistics_writer.write_json(platform, species, read_quality, expert_assembly_quality,
+    # Write assembly information to JSON file:
+    assembly_statistics_writer.write_json(platform, species, reads, read_quality, expert_assembly_quality,
                                           heuristic_evaluation, machine_learning_evaluation)
 
     # Move final assembled contigs to the main level of the output directory and rename it.
