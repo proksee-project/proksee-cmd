@@ -49,7 +49,7 @@ The assemble pipeline consists of three major stages:
 - **Stage 2: Fast Assembly**: Assembles the reads quickly in order to derive approximate information about the assembly, such as quality metrics. This information will assist the expert assembly.
 - **Stage 3: Expert Assembly**: Assembles the reads in an expert manner using information gathered during the previous stages.
 
-Please see the [documentation](docs/assemble.md) for more information about the assemble command.
+Please see the [documentation](docs/tools/assemble.md) for more information about the assemble command.
 
 ### Command
 
@@ -69,7 +69,7 @@ proksee assemble -o output forward_reads.fastq reverse_reads.fastq
 
 The evaluate pipeline will evaluate the assembly quality of provided assembled contigs.
 
-Please see the [documentation](docs/evaluate.md) for more information about the evaluate command.
+Please see the [documentation](docs/tools/evaluate.md) for more information about the evaluate command.
 
 ### Command
 
