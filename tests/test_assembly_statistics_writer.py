@@ -27,6 +27,7 @@ from proksee.assembly_quality import AssemblyQuality
 from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation
 from proksee.platform_identify import Platform
 from proksee.read_quality import ReadQuality
+from proksee.reads import Reads
 from proksee.species import Species
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 
@@ -75,6 +76,7 @@ class TestAssemblyStatisticsWriter:
 
         platform = Platform.ILLUMINA
         species = Species("Listeria monocytogenes", 1.0)
+        reads = Reads("forward.fastq", "reverse.fastq")
 
         # num_contigs, n50, n75, l50, l75, gc_content, length
         assembly_quality = AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000)
@@ -106,7 +108,7 @@ class TestAssemblyStatisticsWriter:
             True
         )
 
-        json_file_location = writer.write_json(platform, species, read_quality, assembly_quality,
+        json_file_location = writer.write_json(platform, species, reads, read_quality, assembly_quality,
                                                heuristic_evaluation, machine_learning_evaluation)
 
         with open(json_file_location) as json_file:
