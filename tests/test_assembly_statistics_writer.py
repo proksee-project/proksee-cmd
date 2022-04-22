@@ -25,7 +25,7 @@ import pytest
 from pathlib import Path
 
 from proksee.assembly_quality import AssemblyQuality
-from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation
+from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation, EvaluationType
 from proksee.platform_identify import Platform
 from proksee.read_quality import ReadQuality
 from proksee.reads import Reads
@@ -106,7 +106,7 @@ class TestAssemblyStatisticsWriter:
         report += length_evaluation.report
 
         heuristic_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                  success, report)
+                                                  EvaluationType.SPECIES, success, report)
 
         machine_learning_evaluation = MachineLearningEvaluation(
             True,

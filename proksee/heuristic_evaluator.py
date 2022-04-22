@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
 """
 
 from proksee.assembly_evaluator import AssemblyEvaluator
-from proksee.evaluation import AssemblyEvaluation, Evaluation
+from proksee.evaluation import AssemblyEvaluation, Evaluation, EvaluationType
 
 # NCBI RefSeq exclusion criteria:
 # https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/
@@ -95,7 +95,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         report += length_evaluation.report + "\n"
 
         assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                 success, report)
+                                                 EvaluationType.SPECIES, success, report)
 
         return assembly_evaluation
 
@@ -175,7 +175,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         report += length_evaluation.report + "\n"
 
         assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                 total_success, report)
+                                                 EvaluationType.FALLBACK, total_success, report)
 
         return assembly_evaluation
 

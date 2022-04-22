@@ -25,6 +25,7 @@ import os
 from proksee import __version__ as version
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 from proksee.heuristic_evaluator import REFSEQ_MIN_N50, REFSEQ_MAX_L50, REFSEQ_MAX_CONTIGS, REFSEQ_MIN_LENGTH
+from proksee.heuristic_evaluator import EvaluationType
 
 
 class AssemblyStatisticsWriter:
@@ -148,43 +149,61 @@ class AssemblyStatisticsWriter:
             "Assembly Size": assembly_quality.length
         }
 
-        data['Assembly Thresholds'] = {
-            "N50 Low Error": database.get_n50_quantile(species.name, database.LOW_ERROR_QUANTILE),
-            "N50 Low Warning": database.get_n50_quantile(species.name, database.LOW_WARNING_QUANTILE),
-            "N50 High Warning": database.get_n50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
-            "N50 High Error": database.get_n50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
-            "L50 Low Error": database.get_l50_quantile(species.name, database.LOW_ERROR_QUANTILE),
-            "L50 Low Warning": database.get_l50_quantile(species.name, database.LOW_WARNING_QUANTILE),
-            "L50 High Warning": database.get_l50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
-            "L50 High Error": database.get_l50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
-            "Contigs Low Error": database.get_contigs_quantile(species.name, database.LOW_ERROR_QUANTILE),
-            "Contigs Low Warning": database.get_contigs_quantile(species.name, database.LOW_WARNING_QUANTILE),
-            "Contigs High Warning": database.get_contigs_quantile(species.name, database.HIGH_WARNING_QUANTILE),
-            "Contigs High Error": database.get_contigs_quantile(species.name, database.HIGH_ERROR_QUANTILE),
-            "Length Low Error": database.get_length_quantile(species.name, database.LOW_ERROR_QUANTILE),
-            "Length Low Warning": database.get_length_quantile(species.name, database.LOW_WARNING_QUANTILE),
-            "Length High Warning": database.get_length_quantile(species.name, database.HIGH_WARNING_QUANTILE),
-            "Length High Error": database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
-        }
+        # Heuristic Evaluation used the species-specific method:
+        if heuristic_evaluation.evaluation_type is EvaluationType.SPECIES:
+            data['Heuristic Evaluation'] = {
+                "Evaluation Method": "Species",
+                "Success": heuristic_evaluation.success,
+                "N50 Pass": heuristic_evaluation.n50_evaluation.success,
+                "N50 Report": heuristic_evaluation.n50_evaluation.report,
+                "Contigs Pass": heuristic_evaluation.contigs_evaluation.success,
+                "Contigs Report": heuristic_evaluation.contigs_evaluation.report,
+                "L50 Pass": heuristic_evaluation.l50_evaluation.success,
+                "L50 Report": heuristic_evaluation.l50_evaluation.report,
+                "Length Pass": heuristic_evaluation.length_evaluation.success,
+                "Length Report": heuristic_evaluation.length_evaluation.report
+            }
 
-        data["NCBI RefSeq Exclusion Criteria"] = {
-            "Minimum Length": REFSEQ_MIN_LENGTH,
-            "Minimum N50": REFSEQ_MIN_N50,
-            "Maximum L50": REFSEQ_MAX_L50,
-            "Maximum Contigs": REFSEQ_MAX_CONTIGS
-        }
+            data['Assembly Thresholds'] = {
+                "N50 Low Error": database.get_n50_quantile(species.name, database.LOW_ERROR_QUANTILE),
+                "N50 Low Warning": database.get_n50_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "N50 High Warning": database.get_n50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+                "N50 High Error": database.get_n50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+                "L50 Low Error": database.get_l50_quantile(species.name, database.LOW_ERROR_QUANTILE),
+                "L50 Low Warning": database.get_l50_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "L50 High Warning": database.get_l50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+                "L50 High Error": database.get_l50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+                "Contigs Low Error": database.get_contigs_quantile(species.name, database.LOW_ERROR_QUANTILE),
+                "Contigs Low Warning": database.get_contigs_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "Contigs High Warning": database.get_contigs_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+                "Contigs High Error": database.get_contigs_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+                "Length Low Error": database.get_length_quantile(species.name, database.LOW_ERROR_QUANTILE),
+                "Length Low Warning": database.get_length_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "Length High Warning": database.get_length_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+                "Length High Error": database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
+            }
 
-        data['Heuristic Evaluation'] = {
-            "Success": heuristic_evaluation.success,
-            "N50 Pass": heuristic_evaluation.n50_evaluation.success,
-            "N50 Report": heuristic_evaluation.n50_evaluation.report,
-            "Contigs Pass": heuristic_evaluation.contigs_evaluation.success,
-            "Contigs Report": heuristic_evaluation.contigs_evaluation.report,
-            "L50 Pass": heuristic_evaluation.l50_evaluation.success,
-            "L50 Report": heuristic_evaluation.l50_evaluation.report,
-            "Length Pass": heuristic_evaluation.length_evaluation.success,
-            "Length Report": heuristic_evaluation.length_evaluation.report
-        }
+        # Heuristic Evaluation used the fallback method:
+        else:
+            data['Heuristic Evaluation'] = {
+                "Evaluation Method": "Fallback",
+                "Success": heuristic_evaluation.success,
+                "N50 Pass": heuristic_evaluation.n50_evaluation.success,
+                "N50 Report": heuristic_evaluation.n50_evaluation.report,
+                "Contigs Pass": heuristic_evaluation.contigs_evaluation.success,
+                "Contigs Report": heuristic_evaluation.contigs_evaluation.report,
+                "L50 Pass": heuristic_evaluation.l50_evaluation.success,
+                "L50 Report": heuristic_evaluation.l50_evaluation.report,
+                "Length Pass": heuristic_evaluation.length_evaluation.success,
+                "Length Report": heuristic_evaluation.length_evaluation.report
+            }
+
+            data["NCBI RefSeq Exclusion Criteria"] = {
+                "Minimum Length": REFSEQ_MIN_LENGTH,
+                "Minimum N50": REFSEQ_MIN_N50,
+                "Maximum L50": REFSEQ_MAX_L50,
+                "Maximum Contigs": REFSEQ_MAX_CONTIGS
+            }
 
         data['Machine Learning Evaluation'] = {
             "Success": machine_learning_evaluation.success,
