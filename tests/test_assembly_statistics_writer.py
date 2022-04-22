@@ -28,6 +28,7 @@ from proksee.assembly_quality import AssemblyQuality
 from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation
 from proksee.platform_identify import Platform
 from proksee.read_quality import ReadQuality
+from proksee.reads import Reads
 from proksee.species import Species
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 from proksee.assembly_database import AssemblyDatabase
@@ -79,6 +80,7 @@ class TestAssemblyStatisticsWriter:
 
         platform = Platform.ILLUMINA
         species = Species("Listeria monocytogenes", 1.0)
+        reads = Reads("forward.fastq", "reverse.fastq")
 
         # assembly database
         assembly_database = AssemblyDatabase(TEST_DATABASE_PATH)

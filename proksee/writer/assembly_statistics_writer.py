@@ -99,6 +99,7 @@ class AssemblyStatisticsWriter:
         PARAMETERS
             platform (Platform (Enum)): the sequencing platform
             species (Species): the sequencing species
+            reads (Reads): encapsulates the file names of the input reads
             read_quality (ReadQuality): object encapsulating the quality measurements of the sequencing reads
             assembly_quality (AssemblyQuality): object encapsulating the quality measurements of the assembly
             heuristic_evaluation (AssemblyEvaluation): heuristic evaluation of the assembly
@@ -124,6 +125,11 @@ class AssemblyStatisticsWriter:
 
         data['Technology'] = str(platform.value)
         data['Species'] = species.name
+
+        data["Reads"] = {
+            "Forward": reads.forward,
+            "Reverse": reads.reverse
+        }
 
         data['Read Quality'] = {
             "Total Reads": read_quality.total_reads,
