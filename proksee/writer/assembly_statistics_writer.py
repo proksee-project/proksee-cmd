@@ -91,7 +91,7 @@ class AssemblyStatisticsWriter:
 
             return output_filename
 
-    def write_json(self, platform, species, read_quality, assembly_quality,
+    def write_json(self, platform, species, reads, read_quality, assembly_quality,
                    heuristic_evaluation, machine_learning_evaluation, database):
         """
         Writes the assembly information to a JSON file.
