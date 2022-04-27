@@ -23,9 +23,11 @@ from pathlib import Path
 
 from proksee.reads import Reads
 from proksee.spades_assembler import SpadesAssembler
+from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = TEST_INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
+RESOURCE_SPECIFICATION = ResourceSpecification(4, 4)  # 4 threads, 4 gigabytes
 
 
 class TestSpadesAssembler:
@@ -39,7 +41,7 @@ class TestSpadesAssembler:
         reverse_filename = None
         reads = Reads(forward_filename, reverse_filename)
 
-        assembler = SpadesAssembler(reads, OUTPUT_DIR)
+        assembler = SpadesAssembler(reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
         contigs_filename = assembler.get_contigs_filename()
 
         # Remove previous assembly if it exists:
@@ -60,7 +62,7 @@ class TestSpadesAssembler:
         reverse_filename = os.path.join(INPUT_DIR, "NA12878_rev.fastq")
         reads = Reads(forward_filename, reverse_filename)
 
-        assembler = SpadesAssembler(reads, OUTPUT_DIR)
+        assembler = SpadesAssembler(reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
         contigs_filename = assembler.get_contigs_filename()
 
         # Remove previous assembly if it exists:
@@ -82,7 +84,7 @@ class TestSpadesAssembler:
         reads = Reads(forward_filename, reverse_filename)
 
         with pytest.raises(FileNotFoundError):
-            SpadesAssembler(reads, OUTPUT_DIR)
+            SpadesAssembler(reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
 
     def test_bad_file(self):
         """
@@ -97,7 +99,7 @@ class TestSpadesAssembler:
         reverse_filename = None
         reads = Reads(forward_filename, reverse_filename)
 
-        assembler = SpadesAssembler(reads, OUTPUT_DIR)
+        assembler = SpadesAssembler(reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
 
         with pytest.raises(SystemExit):
             assembler.assemble()

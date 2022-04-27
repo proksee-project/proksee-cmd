@@ -35,19 +35,20 @@ class SpadesAssembler(Assembler):
 
     DIRECTORY_NAME = "spades"
 
-    def __init__(self, reads, output_dir):
+    def __init__(self, reads, output_dir, resource_specification):
         """
         Initializes the SPAdes assembler.
 
         PARAMETERS
             reads (Reads): the reads to assemble
             output_dir (str): the filename of the output directory
+            resource_specification (ResourceSpecification): the specification of resource that the assembler should use
         """
 
         NAME = "SPAdes"
 
         spades_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
-        super().__init__(NAME, reads, spades_directory)
+        super().__init__(NAME, reads, spades_directory, resource_specification)
 
         self.contigs_filename = os.path.join(spades_directory, "contigs.fasta")
 
@@ -69,10 +70,16 @@ class SpadesAssembler(Assembler):
         error = open(error_filename, 'w+')
 
         if self.reads.reverse is None:
-            command = "spades.py -s " + str(self.reads.forward) + " -o " + str(self.output_dir)
+            command = "spades.py -s " + str(self.reads.forward) + \
+                      " -o " + str(self.output_dir) + \
+                      " -t " + str(self.resource_specification.threads) + \
+                      " -m " + str(self.resource_specification.memory)
         else:
-            command = "spades.py -1 " + str(self.reads.forward) + " -2 " + str(self.reads.reverse) + " -o " + \
-                      str(self.output_dir)
+            command = "spades.py -1 " + str(self.reads.forward) + \
+                      " -2 " + str(self.reads.reverse) + \
+                      " -o " + str(self.output_dir) + \
+                      " -t " + str(self.resource_specification.threads) + \
+                      " -m " + str(self.resource_specification.memory)
 
         try:
             subprocess.check_call(command, shell=True, stdout=output, stderr=error)
