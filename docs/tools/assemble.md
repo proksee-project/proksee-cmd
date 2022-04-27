@@ -70,6 +70,22 @@ This option allows the user to specify the species in the reads to be assembled.
 
 The option allows the user to specify the sequencing platform that generated the reads. The name must be either: 'Illumina', 'Pac Bio', or 'Ion Torrent'. For example: `--platform 'Ion Torrent'`. If the passed platform name does not match a known platform, then the pipeline will attempt to identify the platform from the reads as normal.
 
+### Threads
+
+```bash
+-t , --threads
+```
+
+The option allows the user to specify the number of threads that the sequence assembly programs should use.
+
+### Memory
+
+```bash
+-m , --memory
+```
+
+The option allows the user to specify the amount of memory in gigabytes that the sequence assembly programs should use.
+
 ### Help
 
 ```bash
