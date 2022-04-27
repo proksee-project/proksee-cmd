@@ -49,13 +49,14 @@ Options:
   -o, --output DIRECTORY  [required]
   --force                 This will force the assembler to proceed when the
                           assembly appears to be poor.
-
   -s, --species TEXT      The species to assemble. This will override species
                           estimation. Must be spelled correctly.
-
   -p, --platform TEXT     The sequencing platform used to generate the reads.
                           'Illumina', 'Ion Torrent', or 'Pac Bio'.
-
+  -t, --threads INTEGER   Specifies the number of threads programs in the
+                          pipeline should use. The default is 4.
+  -m, --memory INTEGER    Specifies the amount of memory in gigabytes programs
+                          in the pipeline should use. The default is 4
   --help                  Show this message and exit.
 ```
 
