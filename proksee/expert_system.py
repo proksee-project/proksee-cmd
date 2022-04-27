@@ -34,7 +34,7 @@ class ExpertSystem:
         species (species): the species to be assembled
         reads (Reads): the reads to assemble
         output_directory (str): the directory to use for program output
-        resource_specification (ResourceSpecification): the specification of resource that sub-programs should use
+        resource_specification (ResourceSpecification): the resources that sub-programs should use
     """
 
     def __init__(self, platform, species, reads, output_directory, resource_specification):
@@ -46,7 +46,7 @@ class ExpertSystem:
             species (species): the species to assemble
             reads (Reads): the reads to assemble
             output_directory (str): the directory to use for program output
-            resource_specification (ResourceSpecification): the specification of resource that sub-programs should use
+            resource_specification (ResourceSpecification): the resources that sub-programs should use
         """
 
         self.platform = platform

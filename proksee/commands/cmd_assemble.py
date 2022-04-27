@@ -288,7 +288,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
         output_directory (string): the location to place all program output and temporary files
         force (bool): whether or not to force the assembly to continue, even when it's evaluated as being poor
         mash_database_path (string): optional; the file path of the Mash database
-        resource_specification (ResourceSpecification): the specification of resource that sub-programs should use
+        resource_specification (ResourceSpecification): the resources that sub-programs should use
         species_name (string): optional; the name of the species being assembled
         platform_name (string): optional; the name of the sequencing platform that generated the reads
         id_mapping_filename (string) optional; the name of the NCBI ID to taxonomy mapping database file

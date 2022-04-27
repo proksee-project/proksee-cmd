@@ -34,7 +34,7 @@ class Assembler(ABC):
         name (str): the plain-language name of the assembler
         reads (Reads): the reads to assemble
         output_dir (str): the filename of the output directory
-        resource_specification (ResourceSpecification): the specification of resource that the assembler should use
+        resource_specification (ResourceSpecification): the resources that the assembler should use
     """
 
     def __init__(self, name, reads, output_dir, resource_specification):
@@ -45,7 +45,7 @@ class Assembler(ABC):
             name (str): the plain-language name of the assembler
             reads (Reads): the reads to assemble
             output_dir (str): the filename of the output directory
-            resource_specification (ResourceSpecification): the specification of resource that the assembler should use
+            resource_specification (ResourceSpecification): the resources that the assembler should use
         """
 
         if not os.path.isfile(reads.forward):

@@ -42,7 +42,7 @@ class SpadesAssembler(Assembler):
         PARAMETERS
             reads (Reads): the reads to assemble
             output_dir (str): the filename of the output directory
-            resource_specification (ResourceSpecification): the specification of resource that the assembler should use
+            resource_specification (ResourceSpecification): the resources that the assembler should use
         """
 
         NAME = "SPAdes"
