@@ -22,9 +22,11 @@ from pathlib import Path
 from proksee.assembler import Assembler
 from proksee.reads import Reads
 from proksee.skesa_assembler import SkesaAssembler
+from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
+RESOURCE_SPECIFICATION = ResourceSpecification(4, 4)  # 4 threads, 4 gigabytes
 
 
 class TestAssembler:
@@ -40,7 +42,7 @@ class TestAssembler:
         reads = Reads(forward_filename, reverse_filename)
 
         # Can't instantiate abstract class, need to instantiate subclass:
-        assembler = SkesaAssembler(reads, OUTPUT_DIR)
+        assembler = SkesaAssembler(reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
 
         Assembler.assemble(assembler)
         Assembler.get_contigs_filename(assembler)

@@ -34,9 +34,10 @@ class ExpertSystem:
         species (species): the species to be assembled
         reads (Reads): the reads to assemble
         output_directory (str): the directory to use for program output
+        resource_specification (ResourceSpecification): the resources that sub-programs should use
     """
 
-    def __init__(self, platform, species, reads, output_directory):
+    def __init__(self, platform, species, reads, output_directory, resource_specification):
         """
         Initializes the expert system.
 
@@ -45,12 +46,14 @@ class ExpertSystem:
             species (species): the species to assemble
             reads (Reads): the reads to assemble
             output_directory (str): the directory to use for program output
+            resource_specification (ResourceSpecification): the resources that sub-programs should use
         """
 
         self.platform = platform
         self.species = species
         self.reads = reads
         self.output_directory = output_directory
+        self.resource_specification = resource_specification
 
         return
 
@@ -77,7 +80,7 @@ class ExpertSystem:
         else:
             report += "The read quality is acceptable.\n"
 
-        assembler = SkesaAssembler(self.reads, self.output_directory)
+        assembler = SkesaAssembler(self.reads, self.output_directory, self.resource_specification)
 
         return AssemblyStrategy(proceed, assembler, report)
 
@@ -101,7 +104,7 @@ class ExpertSystem:
             evaluator = HeuristicEvaluator(self.species, assembly_database)
             evaluation = evaluator.evaluate(assembly_quality)
 
-            assembler = SpadesAssembler(self.reads, self.output_directory)
+            assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
             proceed = evaluation.success  # proceed if evaluation was successful
             strategy = AssemblyStrategy(proceed, assembler, evaluation.report)
 
@@ -127,7 +130,7 @@ class ExpertSystem:
         evaluator = HeuristicEvaluator(self.species, assembly_database)
         evaluation = evaluator.evaluate(assembly_quality)
 
-        assembler = SpadesAssembler(self.reads, self.output_directory)
+        assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
         proceed = evaluation.success  # proceed if evaluation was successful
         strategy = AssemblyStrategy(proceed, assembler, evaluation.report)
 

@@ -25,9 +25,11 @@ from proksee.parser.assembly_quality_parser import parse_assembly_quality_from_q
 from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
 from proksee.reads import Reads
 from proksee.species import Species
+from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = TEST_INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
+RESOURCE_SPECIFICATION = ResourceSpecification(4, 4)  # 4 threads, 4 gigabytes
 
 
 class TestExpertSystem:
@@ -44,7 +46,7 @@ class TestExpertSystem:
         reads = Reads(forward, reverse)
         FASTP_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "good_reads.json")
 
-        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
         read_quality = parse_read_quality_from_fastp(FASTP_PATH)
 
         strategy = system.create_fast_assembly_strategy(read_quality)
@@ -63,7 +65,7 @@ class TestExpertSystem:
         reads = Reads(forward, reverse)
         FASTP_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "tests", "data", "bad_reads.json")
 
-        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
         read_quality = parse_read_quality_from_fastp(FASTP_PATH)
 
         strategy = system.create_fast_assembly_strategy(read_quality)
@@ -84,7 +86,7 @@ class TestExpertSystem:
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "refseq_short.csv")
 
-        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
@@ -106,7 +108,7 @@ class TestExpertSystem:
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "refseq_short.csv")
 
-        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
@@ -128,7 +130,7 @@ class TestExpertSystem:
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "refseq_short.csv")
 
-        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 
@@ -150,7 +152,7 @@ class TestExpertSystem:
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
                                      "refseq_short.csv")
 
-        system = ExpertSystem(platform, species, reads, OUTPUT_DIR)
+        system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
         assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
         database = AssemblyDatabase(DATABASE_PATH)
 

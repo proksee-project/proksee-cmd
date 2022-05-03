@@ -44,6 +44,7 @@ from proksee import config as config
 from proksee.species_estimator import SpeciesEstimator
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
+from proksee.resource_specification import ResourceSpecification
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
@@ -196,8 +197,12 @@ def determine_platform(reads, platform_name=None):
               help="The species to assemble. This will override species estimation. Must be spelled correctly.")
 @click.option('-p', '--platform', required=False, default=None,
               help="The sequencing platform used to generate the reads. 'Illumina', 'Ion Torrent', or 'Pac Bio'.")
+@click.option('-t', '--threads', required=False, default=4,
+              help="Specifies the number of threads programs in the pipeline should use. The default is 4.")
+@click.option('-m', '--memory', required=False, default=4,
+              help="Specifies the amount of memory in gigabytes programs in the pipeline should use. The default is 4")
 @click.pass_context
-def cli(ctx, forward, reverse, output, force, species, platform):
+def cli(ctx, forward, reverse, output, force, species, platform, threads, memory):
 
     # Check Mash database is installed:
     mash_database_path = config.get(config.MASH_PATH)
@@ -207,7 +212,8 @@ def cli(ctx, forward, reverse, output, force, species, platform):
         return
 
     reads = Reads(forward, reverse)
-    assemble(reads, output, force, mash_database_path, species, platform)
+    resource_specification = ResourceSpecification(threads, memory)
+    assemble(reads, output, force, mash_database_path, resource_specification, species, platform)
     cleanup(output)
 
 
@@ -271,7 +277,7 @@ def cleanup(output_directory):
         rmtree(spades_directory)
 
 
-def assemble(reads, output_directory, force, mash_database_path,
+def assemble(reads, output_directory, force, mash_database_path, resource_specification,
              species_name=None, platform_name=None,
              id_mapping_filename=ID_MAPPING_FILENAME):
     """
@@ -282,6 +288,7 @@ def assemble(reads, output_directory, force, mash_database_path,
         output_directory (string): the location to place all program output and temporary files
         force (bool): whether or not to force the assembly to continue, even when it's evaluated as being poor
         mash_database_path (string): optional; the file path of the Mash database
+        resource_specification (ResourceSpecification): the resources that sub-programs should use
         species_name (string): optional; the name of the species being assembled
         platform_name (string): optional; the name of the sequencing platform that generated the reads
         id_mapping_filename (string) optional; the name of the NCBI ID to taxonomy mapping database file
@@ -323,7 +330,7 @@ def assemble(reads, output_directory, force, mash_database_path,
     report_species(species_list)
 
     # Determine a fast assembly strategy:
-    expert = ExpertSystem(platform, species, filtered_reads, output_directory)
+    expert = ExpertSystem(platform, species, filtered_reads, output_directory, resource_specification)
     fast_strategy = expert.create_fast_assembly_strategy(read_quality)
     report_strategy(fast_strategy)
 

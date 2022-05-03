@@ -22,9 +22,11 @@ from pathlib import Path
 
 from proksee.reads import Reads
 from proksee.commands.cmd_assemble import assemble
+from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
+RESOURCE_SPECIFICATION = ResourceSpecification(4, 4)  # 4 threads, 4 gigabytes
 
 TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
 TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
@@ -65,7 +67,7 @@ class TestCmdAssemble:
             os.remove(json_file)
 
         assemble(reads, OUTPUT_DIR, force,
-                 TEST_MASH_DB_FILENAME,
+                 TEST_MASH_DB_FILENAME, RESOURCE_SPECIFICATION,
                  species_name=None, platform_name=None,
                  id_mapping_filename=TEST_ID_MAPPING_FILENAME)
 

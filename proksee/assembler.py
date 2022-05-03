@@ -34,9 +34,10 @@ class Assembler(ABC):
         name (str): the plain-language name of the assembler
         reads (Reads): the reads to assemble
         output_dir (str): the filename of the output directory
+        resource_specification (ResourceSpecification): the resources that the assembler should use
     """
 
-    def __init__(self, name, reads, output_dir):
+    def __init__(self, name, reads, output_dir, resource_specification):
         """
         Initializes the abstract assembler.
 
@@ -44,6 +45,7 @@ class Assembler(ABC):
             name (str): the plain-language name of the assembler
             reads (Reads): the reads to assemble
             output_dir (str): the filename of the output directory
+            resource_specification (ResourceSpecification): the resources that the assembler should use
         """
 
         if not os.path.isfile(reads.forward):
@@ -52,6 +54,7 @@ class Assembler(ABC):
         self.name = name
         self.reads = reads
         self.output_dir = output_dir
+        self.resource_specification = resource_specification
 
     @abstractmethod
     def assemble(self):

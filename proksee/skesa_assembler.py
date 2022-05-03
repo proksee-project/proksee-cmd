@@ -39,19 +39,20 @@ class SkesaAssembler(Assembler):
 
     DIRECTORY_NAME = "skesa"
 
-    def __init__(self, reads, output_dir):
+    def __init__(self, reads, output_dir, resource_specification):
         """
         Initializes the Skesa assembler.
 
         PARAMETERS
             reads (Reads): the reads to assemble
             output_dir (str): the filename of the output directory
+            resource_specification (ResourceSpecification): the resources that the assembler should use
         """
 
         NAME = "Skesa"
 
         skesa_directory = os.path.join(output_dir, self.DIRECTORY_NAME)
-        super().__init__(NAME, reads, skesa_directory)
+        super().__init__(NAME, reads, skesa_directory, resource_specification)
 
         self.contigs_filename = os.path.join(skesa_directory, 'contigs.fasta')
         self.log_filename = os.path.join(skesa_directory, 'skesa.log')
@@ -64,11 +65,18 @@ class SkesaAssembler(Assembler):
             command (str): the command for running Skesa on the command line
         """
 
+        # (below we assumes cores = threads)
+
         if self.reads.reverse is None:
-            command = 'skesa --fastq ' + self.reads.forward
+            command = "skesa --fastq " + self.reads.forward + \
+                      " --cores " + str(self.resource_specification.threads) + \
+                      " --memory " + str(self.resource_specification.memory)
 
         else:
-            command = 'skesa --fastq ' + self.reads.forward + ',' + self.reads.reverse
+            command = "skesa --fastq " + self.reads.forward + \
+                      "," + self.reads.reverse + \
+                      " --cores " + str(self.resource_specification.threads) + \
+                      " --memory " + str(self.resource_specification.memory)
 
         return command
 
