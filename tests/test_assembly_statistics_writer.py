@@ -20,16 +20,20 @@ specific language governing permissions and limitations under the License.
 import json
 import os
 import csv
-
 import pytest
 
+from pathlib import Path
+
 from proksee.assembly_quality import AssemblyQuality
-from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation
+from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation, EvaluationType
 from proksee.platform_identify import Platform
 from proksee.read_quality import ReadQuality
 from proksee.reads import Reads
 from proksee.species import Species
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
+from proksee.assembly_database import AssemblyDatabase
+
+TEST_DATABASE_PATH = os.path.join(Path(__file__).parent.absolute(), "data", "test_database.csv")
 
 
 class TestAssemblyStatisticsWriter:
@@ -78,6 +82,9 @@ class TestAssemblyStatisticsWriter:
         species = Species("Listeria monocytogenes", 1.0)
         reads = Reads("forward.fastq", "reverse.fastq")
 
+        # assembly database
+        assembly_database = AssemblyDatabase(TEST_DATABASE_PATH)
+
         # num_contigs, n50, n75, l50, l75, gc_content, length
         assembly_quality = AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000)
 
@@ -99,7 +106,7 @@ class TestAssemblyStatisticsWriter:
         report += length_evaluation.report
 
         heuristic_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                  success, report)
+                                                  EvaluationType.SPECIES, success, report)
 
         machine_learning_evaluation = MachineLearningEvaluation(
             True,
@@ -109,7 +116,7 @@ class TestAssemblyStatisticsWriter:
         )
 
         json_file_location = writer.write_json(platform, species, reads, read_quality, assembly_quality,
-                                               heuristic_evaluation, machine_learning_evaluation)
+                                               heuristic_evaluation, machine_learning_evaluation, assembly_database)
 
         with open(json_file_location) as json_file:
             data = json.load(json_file)
@@ -129,6 +136,26 @@ class TestAssemblyStatisticsWriter:
             assert (data["Assembly Quality"]["L50"] == 5)
             assert (data["Assembly Quality"]["Number of Contigs"] == 10)
             assert (data["Assembly Quality"]["Assembly Size"] == 25000)
+
+            assert (data["Assembly Thresholds"]["N50 Low Error"] == 142261.85)
+            assert (data["Assembly Thresholds"]["N50 Low Warning"] == 297362.8)
+            assert (data["Assembly Thresholds"]["N50 High Warning"] == 546172.8)
+            assert (data["Assembly Thresholds"]["N50 High Error"] == 1461919.65)
+
+            assert (data["Assembly Thresholds"]["L50 Low Error"] == 1)
+            assert (data["Assembly Thresholds"]["L50 Low Warning"] == 2)
+            assert (data["Assembly Thresholds"]["L50 High Warning"] == 4)
+            assert (data["Assembly Thresholds"]["L50 High Error"] == 7)
+
+            assert (data["Assembly Thresholds"]["Contigs Low Error"] == 10)
+            assert (data["Assembly Thresholds"]["Contigs Low Warning"] == 14)
+            assert (data["Assembly Thresholds"]["Contigs High Warning"] == 36)
+            assert (data["Assembly Thresholds"]["Contigs High Error"] == 83)
+
+            assert (data["Assembly Thresholds"]["Length Low Error"] == 2861443.65)
+            assert (data["Assembly Thresholds"]["Length Low Warning"] == 2904912)
+            assert (data["Assembly Thresholds"]["Length High Warning"] == 3051700)
+            assert (data["Assembly Thresholds"]["Length High Error"] == 3111649.8)
 
             assert not (data["Heuristic Evaluation"]["Success"])
             assert (data["Heuristic Evaluation"]["N50 Pass"])
