@@ -70,4 +70,5 @@ def cli(ctx, forward, reverse, output, force, species, platform, threads, memory
 
     reads = Reads(forward, reverse)
     resource_specification = ResourceSpecification(threads, memory)
-    assemble(reads, output, force, DATABASE_PATH, mash_database_path, resource_specification, ID_MAPPING_FILENAME, species, platform)
+    assemble(reads, output, force, DATABASE_PATH, mash_database_path,
+             resource_specification, ID_MAPPING_FILENAME, species, platform)
