@@ -22,6 +22,7 @@ import click
 
 from proksee.pipelines.annotate import annotate
 from proksee.resource_specification import ResourceSpecification
+from proksee import utilities
 
 
 @click.command('annotate',
@@ -37,6 +38,8 @@ from proksee.resource_specification import ResourceSpecification
               help="Specifies the amount of memory in gigabytes programs in the pipeline should use. The default is 4")
 @click.pass_context
 def cli(ctx, contigs, output, threads, memory):
+
+    print(utilities.build_version_message())
 
     resource_specification = ResourceSpecification(threads, memory)
     annotate(contigs, output, resource_specification)

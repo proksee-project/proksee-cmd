@@ -27,7 +27,6 @@ import os
 from shutil import rmtree
 
 from proksee import utilities
-
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
@@ -249,12 +248,13 @@ def assemble(reads, output_directory, force, database_path, mash_database_path, 
         species_name (string): optional; the name of the species being assembled
         platform_name (string): optional; the name of the sequencing platform that generated the reads
 
+    RETURNS:
+        contigs_filename (string): the file name of the assembled contigs
+
     POST:
         The passed reads will be assembled in the output directory if successful, or a message explaning why assembly
         could not continue will be written to standard output.
     """
-
-    print(utilities.build_version_message() + "\n")
 
     # Make output directory:
     if not os.path.isdir(output_directory):
@@ -363,3 +363,4 @@ def assemble(reads, output_directory, force, database_path, mash_database_path, 
     cleanup(output_directory)
 
     print("Complete.\n")
+    return contigs_new_filename

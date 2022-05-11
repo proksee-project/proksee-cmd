@@ -23,6 +23,7 @@ import os
 
 from proksee.pipelines.evaluate import evaluate
 import proksee.config as config
+from proksee import utilities
 
 
 @click.command('evaluate',
@@ -39,6 +40,8 @@ def cli(ctx, contigs, output, species):
 
     # Check Mash database is installed:
     mash_database_path = config.get(config.MASH_PATH)
+
+    print(utilities.build_version_message())
 
     if not os.path.isfile(mash_database_path):
         print("Please run 'proksee updatedb' to install the databases!")

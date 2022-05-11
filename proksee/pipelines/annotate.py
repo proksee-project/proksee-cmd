@@ -18,8 +18,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee import utilities
-
 
 def annotate(contigs_filename, output_directory, resource_specification):
     """
@@ -34,4 +32,4 @@ def annotate(contigs_filename, output_directory, resource_specification):
         The contigs with passed filename will be evaluated and the results will be written to standard output.
     """
 
-    print(utilities.build_version_message())
+    print("Annotating!")
