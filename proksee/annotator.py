@@ -64,11 +64,11 @@ class Annotator(ABC):
         pass
 
     @abstractmethod
-    def get_annotation_filename(self):
+    def get_summary_filename(self):
         """
-        Gets the filename of the annotations.
+        Gets the filename of the annotation summary.
 
         RETURNS
-            filename (str): the filename of the annotations
+            filename (str): the filename of the summary
         """
         pass
