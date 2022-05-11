@@ -23,11 +23,7 @@ import os
 
 from pathlib import Path
 
-from proksee import utilities
-from proksee.assembly_database import AssemblyDatabase
-from proksee.assembly_measurer import AssemblyMeasurer
-from proksee.heuristic_evaluator import HeuristicEvaluator
-from proksee.machine_learning_evaluator import MachineLearningEvaluator
+from proksee.pipelines.evaluate import evaluate
 
 import proksee.config as config
 
@@ -56,52 +52,4 @@ def cli(ctx, contigs, output, species):
         print("Please run 'proksee updatedb' to install the databases!")
         return
 
-    evaluate(contigs, output, mash_database_path, species)
-
-
-def evaluate(contigs_filename, output_directory, mash_database_path,
-             species_name=None, id_mapping_filename=ID_MAPPING_FILENAME):
-    """
-    The main control flow of the program that evaluates the assembly.
-
-    ARGUMENTS:
-        contigs_filename (string): the filename of the contigs to evaluate
-        output_directory (string): the location to place all program output and temporary files
-        mash_database_path (string): optional; the name of the Mash database
-        species_name (string): optional; the name of the species being assembled
-        id_mapping_filename (string) optional; the name of the NCBI ID-to-taxonomy mapping (table) file
-
-    POST:
-        The contigs with passed filename will be evaluated and the results will be written to standard output.
-    """
-
-    click.echo(utilities.build_version_message())
-
-    # Make output directory:
-    if not os.path.isdir(output_directory):
-        os.mkdir(output_directory)
-
-    # Species and assembly database:
-    assembly_database = AssemblyDatabase(DATABASE_PATH)
-
-    # Estimate species
-    species_list = utilities.determine_species([contigs_filename], assembly_database, output_directory,
-                                               mash_database_path, id_mapping_filename, species_name)
-    species = species_list[0]
-    click.echo("The identified species is: " + str(species.name) + "\n")
-
-    # Measure assembly quality statistics:
-    assembly_measurer = AssemblyMeasurer(contigs_filename, output_directory)
-    assembly_quality = assembly_measurer.measure_quality()
-
-    # Heuristic evaluation:
-    evaluator = HeuristicEvaluator(species, assembly_database)
-    evaluation = evaluator.evaluate(assembly_quality)
-    print(evaluation.report)
-
-    # Machine learning evaluation:
-    evaluator = MachineLearningEvaluator(species)
-    evaluation = evaluator.evaluate(assembly_quality)
-    click.echo(evaluation.report)
-
-    click.echo("\nComplete.\n")
+    evaluate(contigs, output, DATABASE_PATH, mash_database_path, ID_MAPPING_FILENAME, species)

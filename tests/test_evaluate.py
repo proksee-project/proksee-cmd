@@ -20,11 +20,16 @@ import os
 
 from pathlib import Path
 
-from proksee.commands.cmd_evaluate import evaluate
+from proksee.pipelines.evaluate import evaluate
 import proksee.config as config
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
+
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
+                             "refseq_short.csv")
+ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
+                                   "mash_id_mapping.tab.gz")
 
 
 class TestCmdEvaluate:
@@ -47,7 +52,8 @@ class TestCmdEvaluate:
             os.remove(quast_file)
 
         mash_database_path = config.get(config.MASH_PATH)
-        evaluate(contigs_filename, OUTPUT_DIR, mash_database_path, species_name=None)
+        evaluate(contigs_filename, OUTPUT_DIR, DATABASE_PATH, mash_database_path,
+                 ID_MAPPING_FILENAME, species_name=None)
 
         # Check that expected files were created:
         assert os.path.isfile(quast_file)
