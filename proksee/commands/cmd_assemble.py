@@ -25,18 +25,10 @@ specific language governing permissions and limitations under the License.
 import click
 import os
 
-from pathlib import Path
-
 from proksee.pipelines.assemble import assemble
-
 from proksee.resource_specification import ResourceSpecification
 from proksee import config as config
 from proksee.reads import Reads
-
-DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                             "refseq_short.csv")
-ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                                   "mash_id_mapping.tab.gz")
 
 
 @click.command('assemble',
@@ -70,5 +62,5 @@ def cli(ctx, forward, reverse, output, force, species, platform, threads, memory
 
     reads = Reads(forward, reverse)
     resource_specification = ResourceSpecification(threads, memory)
-    assemble(reads, output, force, DATABASE_PATH, mash_database_path,
-             resource_specification, ID_MAPPING_FILENAME, species, platform)
+    assemble(reads, output, force, config.DATABASE_PATH, mash_database_path,
+             resource_specification, config.ID_MAPPING_FILENAME, species, platform)

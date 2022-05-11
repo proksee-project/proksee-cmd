@@ -21,16 +21,8 @@ specific language governing permissions and limitations under the License.
 import click
 import os
 
-from pathlib import Path
-
 from proksee.pipelines.evaluate import evaluate
-
 import proksee.config as config
-
-DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                             "refseq_short.csv")
-ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "database",
-                                   "mash_id_mapping.tab.gz")
 
 
 @click.command('evaluate',
@@ -52,4 +44,4 @@ def cli(ctx, contigs, output, species):
         print("Please run 'proksee updatedb' to install the databases!")
         return
 
-    evaluate(contigs, output, DATABASE_PATH, mash_database_path, ID_MAPPING_FILENAME, species)
+    evaluate(contigs, output, config.DATABASE_PATH, mash_database_path, config.ID_MAPPING_FILENAME, species)

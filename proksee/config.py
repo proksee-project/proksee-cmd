@@ -26,6 +26,9 @@ from pathlib import Path
 CONFIG_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "config.json")
 MASH_PATH = "mashPath"
 
+DATABASE_PATH = os.path.join(Path(__file__).parent.absolute(), "database", "refseq_short.csv")
+ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "database", "mash_id_mapping.tab.gz")
+
 
 def update(key, value):
     """

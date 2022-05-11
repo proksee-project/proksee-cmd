@@ -23,13 +23,12 @@ from pathlib import Path
 from proksee.reads import Reads
 from proksee.pipelines.assemble import assemble
 from proksee.resource_specification import ResourceSpecification
+from proksee import config as config
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
 RESOURCE_SPECIFICATION = ResourceSpecification(4, 4)  # 4 threads, 4 gigabytes
 
-DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
-                             "refseq_short.csv")
 TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
 TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
 
@@ -69,7 +68,7 @@ class TestAssemble:
             os.remove(json_file)
 
         assemble(reads, OUTPUT_DIR, force,
-                 DATABASE_PATH, TEST_MASH_DB_FILENAME, RESOURCE_SPECIFICATION,
+                 config.DATABASE_PATH, TEST_MASH_DB_FILENAME, RESOURCE_SPECIFICATION,
                  TEST_ID_MAPPING_FILENAME, species_name=None, platform_name=None)
 
         # Check that expected files were created:
