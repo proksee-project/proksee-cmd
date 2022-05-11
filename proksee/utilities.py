@@ -75,6 +75,7 @@ def build_version_message():
     message = ('Proksee Version'
                + '\n  Software: {}'.format(version)
                + '\n  Model: {}'.format(MODEL_VERSION)
-               + '\n  Database: {}'.format(NORM_DATABASE_VERSION))
+               + '\n  Database: {}'.format(NORM_DATABASE_VERSION)
+               + '\n')
 
     return message

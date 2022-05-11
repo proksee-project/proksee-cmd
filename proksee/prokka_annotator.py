@@ -111,7 +111,7 @@ class ProkkaAnnotator(Annotator):
             output.close()
             logfile.close()
 
-        output_string = "Annotations completed using Prokka."
+        output_string = "Annotations complete and located in " + str(self.prokka_output_directory) + "."
 
         return output_string
 
