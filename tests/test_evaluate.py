@@ -1,5 +1,5 @@
 """
-Copyright Government of Canada 2021
+Copyright Government of Canada 2022
 
 Written by: Eric Marinier, National Microbiology Laboratory,
             Public Health Agency of Canada
