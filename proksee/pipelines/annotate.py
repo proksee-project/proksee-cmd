@@ -21,7 +21,7 @@ specific language governing permissions and limitations under the License.
 
 def annotate(contigs_filename, output_directory, resource_specification):
     """
-    The main control flow of the program that evaluates the assembly.
+    Performs and evaluates sequence annotation.
 
     ARGUMENTS:
         contigs_filename (string): the filename of the contigs to evaluate
@@ -29,7 +29,8 @@ def annotate(contigs_filename, output_directory, resource_specification):
         resource_specification (ResourceSpecification): the resources that sub-programs should use
 
     POST:
-        The contigs with passed filename will be evaluated and the results will be written to standard output.
+        The contigs with passed filename will be annotated and evaluated. The results will be written to standard
+        output.
     """
 
     print("Annotating!")

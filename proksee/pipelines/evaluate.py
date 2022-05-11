@@ -30,7 +30,7 @@ from proksee.machine_learning_evaluator import MachineLearningEvaluator
 def evaluate(contigs_filename, output_directory, database_path, mash_database_path,
              id_mapping_filename, species_name=None):
     """
-    The main control flow of the program that evaluates the assembly.
+    Evaluates the quality of a provided sequence assembly.
 
     ARGUMENTS:
         contigs_filename (string): the filename of the contigs to evaluate

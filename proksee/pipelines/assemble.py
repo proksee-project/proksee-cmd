@@ -235,7 +235,7 @@ def cleanup(output_directory):
 def assemble(reads, output_directory, force, database_path, mash_database_path, resource_specification,
              id_mapping_filename, species_name=None, platform_name=None):
     """
-    The main control flow of the program that assembles reads.
+    Assembles sequence reads and evaluates the resulting contigs.
 
     ARGUMENTS:
         reads (Reads): the reads to assemble
