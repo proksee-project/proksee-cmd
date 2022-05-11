@@ -124,4 +124,4 @@ class ProkkaAnnotator(Annotator):
         """
 
         # TODO: Update to correct output file
-        return os.path.join(self.prokka_output_directory, "prokka.faa")
+        return os.path.join(self.prokka_output_directory, "prokka.txt")
