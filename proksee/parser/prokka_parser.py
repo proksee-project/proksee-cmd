@@ -23,11 +23,14 @@ def parse_prokka_summary_from_txt(prokka_text_file):
     """
     Parses a Prokka text output summary file and creates a ProkkaSummary object from that information.
 
-    The Prokka text output file is expected to have the following format:
+    The Prokka text output file is expected to start with the following format:
 
     organism: [STRING]
     contigs: [INT]
     bases: [INT]
+
+    Then, the output file may optionally have the following lines:
+
     CDS: [INT]
     rRNA: [INT]
     tRNA: [INT]
@@ -39,25 +42,42 @@ def parse_prokka_summary_from_txt(prokka_text_file):
         prokka_summary (ProkkaSummary): an object encapsulating the information in the Prokka text file
     """
 
+    DELIMETER = ": "
+
+    ORGANISM = "organism"
+    CONTIGS = "contigs"
+    BASES = "bases"
+    CDS = "CDS"
+    RRNA = "rRNA"
+    TRNA = "tRNA"
+
+    # Initialize, because there may be missing values.
+    organism = "Unknown"
+    contigs = 0
+    bases = 0
+    cds = 0
+    rRNA = 0
+    tRNA = 0
+
     with open(prokka_text_file) as file:
 
-        line = file.readline()
-        organism = str(line.split(":")[1].strip())
+        for line in file:
+            tokens = line.split(DELIMETER)
+            key = tokens[0]
+            value = tokens[1].strip()
 
-        line = file.readline()
-        contigs = int(line.split(":")[1].strip())
-
-        line = file.readline()
-        bases = int(line.split(":")[1].strip())
-
-        line = file.readline()
-        cds = int(line.split(":")[1].strip())
-
-        line = file.readline()
-        rRNA = int(line.split(":")[1].strip())
-
-        line = file.readline()
-        tRNA = int(line.split(":")[1].strip())
+            if key == ORGANISM:
+                organism = str(value)
+            elif key == CONTIGS:
+                contigs = int(value)
+            elif key == BASES:
+                bases = int(value)
+            elif key == CDS:
+                cds = int(value)
+            elif key == RRNA:
+                rRNA = int(value)
+            elif key == TRNA:
+                tRNA = int(value)
 
     prokka_summary = ProkkaSummary(organism, contigs, bases, cds, rRNA, tRNA)
 
