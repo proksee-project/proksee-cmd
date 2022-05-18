@@ -4,9 +4,9 @@ Proksee is a suite of command line tools for performing assembly and evaluation 
 
 ## Release
 
-v1.0.0a2
+v1.0.0a3
 
-This release adds the ability to specify the download filepath of the Mash database.
+This release adds resource specification and expands the information provided in the assembly information JSON file.
 
 ## Installation
 

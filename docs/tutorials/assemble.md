@@ -64,6 +64,12 @@ If you see this output, then it is likely that Proksee is installed correctly an
 
 ## Running Proksee
 
+If this is your first time running Proksee, you will likely need to download and install the Mash sketch database required by Proksee by running:
+
+```bash
+proksee updatedb
+```
+
 You can assemble the reads we downloaded earlier with the following command:
 
 ```
