@@ -3,10 +3,6 @@ Copyright Government of Canada 2022
 
 Written by:
 
-Arnab Saha Mandal
-    University of Manitoba
-    National Microbiology Laboratory, Public Health Agency of Canada
-
 Eric Marinier
     National Microbiology Laboratory, Public Health Agency of Canada
 
@@ -25,15 +21,16 @@ specific language governing permissions and limitations under the License.
 import click
 import os
 
+from proksee import utilities
 from proksee.pipelines.assemble import assemble
+from proksee.pipelines.annotate import annotate
 from proksee.resource_specification import ResourceSpecification
 from proksee import config as config
 from proksee.reads import Reads
-from proksee import utilities
 
 
-@click.command('assemble',
-               short_help='Assemble reads.')
+@click.command('full',
+               short_help='Assembles reads and annotates the resulting contigs.')
 @click.argument('forward', required=True,
                 type=click.Path(exists=True, file_okay=True, dir_okay=False))
 @click.argument('reverse', required=False,
@@ -61,9 +58,10 @@ def cli(ctx, forward, reverse, output, force, species, platform, threads, memory
         print("Please run 'proksee updatedb' to install the databases!")
         return
 
-    print(utilities.build_version_message() + "\n")
+    print(utilities.build_version_message())
 
     reads = Reads(forward, reverse)
     resource_specification = ResourceSpecification(threads, memory)
-    assemble(reads, output, force, config.DATABASE_PATH, mash_database_path,
-             resource_specification, config.ID_MAPPING_FILENAME, species, platform)
+    contigs_filename = assemble(reads, output, force, config.DATABASE_PATH, mash_database_path,
+                                resource_specification, config.ID_MAPPING_FILENAME, species, platform)
+    annotate(contigs_filename, output, resource_specification)

@@ -1,5 +1,5 @@
 """
-Copyright Government of Canada 2021
+Copyright Government of Canada 2022
 
 Written by: Eric Marinier, National Microbiology Laboratory,
             Public Health Agency of Canada
@@ -21,8 +21,9 @@ import os
 from pathlib import Path
 
 from proksee.reads import Reads
-from proksee.commands.cmd_assemble import assemble
+from proksee.pipelines.assemble import assemble
 from proksee.resource_specification import ResourceSpecification
+from proksee import config as config
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
@@ -32,7 +33,7 @@ TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "
 TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
 
 
-class TestCmdAssemble:
+class TestAssemble:
 
     def test_simple_assemble(self):
         """
@@ -67,9 +68,8 @@ class TestCmdAssemble:
             os.remove(json_file)
 
         assemble(reads, OUTPUT_DIR, force,
-                 TEST_MASH_DB_FILENAME, RESOURCE_SPECIFICATION,
-                 species_name=None, platform_name=None,
-                 id_mapping_filename=TEST_ID_MAPPING_FILENAME)
+                 config.DATABASE_PATH, TEST_MASH_DB_FILENAME, RESOURCE_SPECIFICATION,
+                 TEST_ID_MAPPING_FILENAME, species_name=None, platform_name=None)
 
         # Check that expected files were created:
         assert os.path.isfile(assembly_statistics_file)

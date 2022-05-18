@@ -19,32 +19,27 @@ specific language governing permissions and limitations under the License.
 """
 
 import click
-import os
 
-from proksee.pipelines.evaluate import evaluate
-import proksee.config as config
+from proksee.pipelines.annotate import annotate
+from proksee.resource_specification import ResourceSpecification
 from proksee import utilities
 
 
-@click.command('evaluate',
-               short_help='Evaluates the quality of an assembly.')
+@click.command('annotate',
+               short_help='Annotate contigs.')
 @click.argument('contigs', required=True,
                 type=click.Path(exists=True, file_okay=True, dir_okay=False))
-@click.option('-s', '--species', required=False, default=None,
-              help="The species to assemble. This will override species estimation. Must be spelled correctly.")
 @click.option('-o', '--output', required=True,
               type=click.Path(exists=False, file_okay=False,
                               dir_okay=True, writable=True))
+@click.option('-t', '--threads', required=False, default=4,
+              help="Specifies the number of threads programs in the pipeline should use. The default is 4.")
+@click.option('-m', '--memory', required=False, default=4,
+              help="Specifies the amount of memory in gigabytes programs in the pipeline should use. The default is 4")
 @click.pass_context
-def cli(ctx, contigs, output, species):
-
-    # Check Mash database is installed:
-    mash_database_path = config.get(config.MASH_PATH)
+def cli(ctx, contigs, output, threads, memory):
 
     print(utilities.build_version_message())
 
-    if not os.path.isfile(mash_database_path):
-        print("Please run 'proksee updatedb' to install the databases!")
-        return
-
-    evaluate(contigs, output, config.DATABASE_PATH, mash_database_path, config.ID_MAPPING_FILENAME, species)
+    resource_specification = ResourceSpecification(threads, memory)
+    annotate(contigs, output, resource_specification)

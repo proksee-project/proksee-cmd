@@ -1,5 +1,5 @@
 """
-Copyright Government of Canada 2021
+Copyright Government of Canada 2022
 
 Written by: Eric Marinier, National Microbiology Laboratory,
             Public Health Agency of Canada
@@ -20,8 +20,8 @@ import os
 
 from pathlib import Path
 
-from proksee.commands.cmd_evaluate import evaluate
-import proksee.config as config
+from proksee.pipelines.evaluate import evaluate
+from proksee import config as config
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
@@ -47,7 +47,8 @@ class TestCmdEvaluate:
             os.remove(quast_file)
 
         mash_database_path = config.get(config.MASH_PATH)
-        evaluate(contigs_filename, OUTPUT_DIR, mash_database_path, species_name=None)
+        evaluate(contigs_filename, OUTPUT_DIR, config.DATABASE_PATH, mash_database_path,
+                 config.ID_MAPPING_FILENAME, species_name=None)
 
         # Check that expected files were created:
         assert os.path.isfile(quast_file)
