@@ -16,8 +16,8 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee.assembly_evaluator import AssemblyEvaluator
-from proksee.evaluation import AssemblyEvaluation, Evaluation, EvaluationType
+from proksee.assemble.assembly_evaluator import AssemblyEvaluator
+from proksee.evaluate.evaluation import AssemblyEvaluation, Evaluation, EvaluationType
 
 # NCBI RefSeq exclusion criteria:
 # https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/

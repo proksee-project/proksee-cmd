@@ -20,7 +20,7 @@ import os
 import subprocess
 
 from proksee.parser.mash_parser import MashParser
-from proksee.species import Species
+from proksee.species.species import Species
 
 
 def estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity,

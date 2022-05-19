@@ -24,8 +24,8 @@ import os
 
 from proksee import __version__ as version
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
-from proksee.heuristic_evaluator import REFSEQ_MIN_N50, REFSEQ_MAX_L50, REFSEQ_MAX_CONTIGS, REFSEQ_MIN_LENGTH
-from proksee.heuristic_evaluator import EvaluationType
+from proksee.evaluate.heuristic_evaluator import REFSEQ_MIN_N50, REFSEQ_MAX_L50, REFSEQ_MAX_CONTIGS, REFSEQ_MIN_LENGTH
+from proksee.evaluate.heuristic_evaluator import EvaluationType
 
 
 class AssemblyStatisticsWriter:

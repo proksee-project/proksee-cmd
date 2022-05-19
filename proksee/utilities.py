@@ -23,8 +23,8 @@ import click
 from proksee import __version__ as version
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 
-from proksee.species import Species
-from proksee.species_estimator import SpeciesEstimator
+from proksee.species.species import Species
+from proksee.species.species_estimator import SpeciesEstimator
 
 
 def determine_species(input_filenames, assembly_database, output_directory, mash_database_filename,

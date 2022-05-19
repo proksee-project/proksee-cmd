@@ -21,8 +21,8 @@ import pytest
 
 from pathlib import Path
 
-from proksee.reads import Reads
-from proksee.spades_assembler import SpadesAssembler
+from proksee.reads.reads import Reads
+from proksee.assemble.spades_assembler import SpadesAssembler
 from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")

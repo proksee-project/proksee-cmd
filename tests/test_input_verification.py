@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 
 import os
 from proksee.input_verification import is_gzipped, is_valid_fastq, has_valid_fastq_extension, are_valid_fastq
-from proksee.reads import Reads
+from proksee.reads.reads import Reads
 
 
 class TestInputVerification:

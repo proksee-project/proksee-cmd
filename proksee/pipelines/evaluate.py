@@ -21,10 +21,10 @@ specific language governing permissions and limitations under the License.
 import os
 
 from proksee import utilities
-from proksee.assembly_database import AssemblyDatabase
-from proksee.assembly_measurer import AssemblyMeasurer
-from proksee.heuristic_evaluator import HeuristicEvaluator
-from proksee.ml_assembly_evaluator import MLAssemblyEvaluator
+from proksee.assemble.assembly_database import AssemblyDatabase
+from proksee.assemble.assembly_measurer import AssemblyMeasurer
+from proksee.evaluate.heuristic_evaluator import HeuristicEvaluator
+from proksee.evaluate.ml_assembly_evaluator import MLAssemblyEvaluator
 
 
 def evaluate(contigs_filename, output_directory, database_path, mash_database_path,

@@ -18,10 +18,10 @@ specific language governing permissions and limitations under the License.
 
 import os
 
-from proksee.evaluation import Evaluation
+from proksee.evaluate.evaluation import Evaluation
 from proksee.parser.fasta_parser import split_multi_fasta_into_fasta
-from proksee.species_estimator import SpeciesEstimator
-from proksee.species import Species
+from proksee.species.species_estimator import SpeciesEstimator
+from proksee.species.species import Species
 
 
 class ContaminationHandler:

@@ -22,9 +22,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee.assembly_evaluator import AssemblyEvaluator
-from proksee.evaluation import MachineLearningEvaluation
-from proksee.machine_learning_assembly_qc import MachineLearningAssemblyQC, NormalizedDatabase
+from proksee.assemble.assembly_evaluator import AssemblyEvaluator
+from proksee.evaluate.evaluation import MachineLearningEvaluation
+from proksee.evaluate.machine_learning_assembly_qc import MachineLearningAssemblyQC, NormalizedDatabase
 
 
 class MLAssemblyEvaluator(AssemblyEvaluator):

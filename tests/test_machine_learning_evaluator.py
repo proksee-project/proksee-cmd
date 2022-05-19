@@ -16,9 +16,9 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee.assembly_quality import AssemblyQuality
-from proksee.ml_assembly_evaluator import MLAssemblyEvaluator
-from proksee.species import Species
+from proksee.assemble.assembly_quality import AssemblyQuality
+from proksee.evaluate.ml_assembly_evaluator import MLAssemblyEvaluator
+from proksee.species.species import Species
 import pytest
 import math
 

@@ -27,20 +27,20 @@ import os
 from shutil import rmtree
 
 from proksee import utilities
-from proksee.assembly_database import AssemblyDatabase
-from proksee.assembly_measurer import AssemblyMeasurer
+from proksee.assemble.assembly_database import AssemblyDatabase
+from proksee.assemble.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
-from proksee.heuristic_evaluator import HeuristicEvaluator, compare_assemblies
+from proksee.evaluate.heuristic_evaluator import HeuristicEvaluator, compare_assemblies
 from proksee.input_verification import are_valid_fastq
-from proksee.ml_assembly_evaluator import MLAssemblyEvaluator
+from proksee.evaluate.ml_assembly_evaluator import MLAssemblyEvaluator
 from proksee.platform_identify import PlatformIdentifier, identify_name, Platform
-from proksee.read_filterer import ReadFilterer
+from proksee.reads.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
-from proksee.species_estimator import SpeciesEstimator
-from proksee.skesa_assembler import SkesaAssembler
-from proksee.spades_assembler import SpadesAssembler
-from proksee.assembly_summary import AssemblySummary
+from proksee.species.species_estimator import SpeciesEstimator
+from proksee.assemble.skesa_assembler import SkesaAssembler
+from proksee.assemble.spades_assembler import SpadesAssembler
+from proksee.assemble.assembly_summary import AssemblySummary
 
 
 def report_valid_fastq(valid):

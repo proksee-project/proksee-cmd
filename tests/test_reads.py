@@ -19,7 +19,7 @@ specific language governing permissions and limitations under the License.
 import os
 
 from pathlib import Path
-from proksee.reads import Reads
+from proksee.reads.reads import Reads
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 

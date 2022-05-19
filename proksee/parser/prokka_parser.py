@@ -16,7 +16,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee.annotation_summary import AnnotationSummary
+from proksee.annotate.annotation_summary import AnnotationSummary
 
 
 def parse_prokka_summary_from_txt(prokka_text_file):

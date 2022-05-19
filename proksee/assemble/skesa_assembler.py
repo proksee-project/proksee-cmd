@@ -26,7 +26,7 @@ import os
 import subprocess
 import sys
 
-from proksee.assembler import Assembler
+from proksee.assemble.assembler import Assembler
 
 
 class SkesaAssembler(Assembler):

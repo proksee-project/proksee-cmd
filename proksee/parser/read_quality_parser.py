@@ -18,7 +18,7 @@ specific language governing permissions and limitations under the License.
 
 import json
 
-from proksee.read_quality import ReadQuality
+from proksee.reads.read_quality import ReadQuality
 
 
 def parse_read_quality_from_fastp(fastp_file):

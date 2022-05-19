@@ -23,7 +23,7 @@ from pathlib import Path
 # Importing PlatformIdentifier class from platform_identify.py
 from proksee.platform_identify import PlatformIdentifier, Platform
 
-from proksee.reads import Reads
+from proksee.reads.reads import Reads
 
 START_DIR = Path(__file__).parent.absolute()
 TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))

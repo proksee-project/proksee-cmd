@@ -19,9 +19,9 @@ specific language governing permissions and limitations under the License.
 import os
 from pathlib import Path
 
-from proksee.assembler import Assembler
-from proksee.reads import Reads
-from proksee.skesa_assembler import SkesaAssembler
+from proksee.assemble.assembler import Assembler
+from proksee.reads.reads import Reads
+from proksee.assemble.skesa_assembler import SkesaAssembler
 from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")

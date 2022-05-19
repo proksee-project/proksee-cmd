@@ -19,12 +19,12 @@ specific language governing permissions and limitations under the License.
 import os
 from pathlib import Path
 
-from proksee.assembly_database import AssemblyDatabase
+from proksee.assemble.assembly_database import AssemblyDatabase
 from proksee.expert_system import ExpertSystem
 from proksee.parser.assembly_quality_parser import parse_assembly_quality_from_quast_report
 from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
-from proksee.reads import Reads
-from proksee.species import Species
+from proksee.reads.reads import Reads
+from proksee.species.species import Species
 from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")

@@ -21,7 +21,7 @@ import os
 from pathlib import Path
 
 from proksee.contamination_handler import ContaminationHandler
-from proksee.species import Species
+from proksee.species.species import Species
 
 TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
 TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")

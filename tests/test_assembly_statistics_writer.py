@@ -24,14 +24,14 @@ import pytest
 
 from pathlib import Path
 
-from proksee.assembly_quality import AssemblyQuality
-from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation, EvaluationType
+from proksee.assemble.assembly_quality import AssemblyQuality
+from proksee.evaluate.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation, EvaluationType
 from proksee.platform_identify import Platform
-from proksee.read_quality import ReadQuality
-from proksee.reads import Reads
-from proksee.species import Species
+from proksee.reads.read_quality import ReadQuality
+from proksee.reads.reads import Reads
+from proksee.species.species import Species
 from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
-from proksee.assembly_database import AssemblyDatabase
+from proksee.assemble.assembly_database import AssemblyDatabase
 
 TEST_DATABASE_PATH = os.path.join(Path(__file__).parent.absolute(), "data", "test_database.csv")
 

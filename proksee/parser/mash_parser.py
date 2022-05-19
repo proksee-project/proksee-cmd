@@ -20,8 +20,8 @@ import os
 import copy
 import gzip
 
-from proksee.species import Species
-from proksee.species_estimation import Estimation
+from proksee.species.species import Species
+from proksee.species.species_estimation import Estimation
 
 
 class MashParser:

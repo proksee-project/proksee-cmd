@@ -23,7 +23,7 @@ import os
 import subprocess
 
 from proksee.parser.read_quality_parser import parse_read_quality_from_fastp
-from proksee.reads import Reads
+from proksee.reads.reads import Reads
 
 
 class ReadFilterer():

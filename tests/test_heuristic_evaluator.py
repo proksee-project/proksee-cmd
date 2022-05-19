@@ -18,10 +18,10 @@ specific language governing permissions and limitations under the License.
 import os
 from pathlib import Path
 
-from proksee.assembly_database import AssemblyDatabase
-from proksee.assembly_quality import AssemblyQuality
-from proksee.heuristic_evaluator import evaluate_value, compare_assemblies, HeuristicEvaluator
-from proksee.species import Species
+from proksee.assemble.assembly_database import AssemblyDatabase
+from proksee.assemble.assembly_quality import AssemblyQuality
+from proksee.evaluate.heuristic_evaluator import evaluate_value, compare_assemblies, HeuristicEvaluator
+from proksee.species.species import Species
 
 
 class TestHeuristicEvaluator:

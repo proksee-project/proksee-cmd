@@ -22,7 +22,7 @@ import pytest
 from pathlib import Path
 
 from proksee.parser.mash_parser import MashParser
-from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
+from proksee.species.species_estimator import estimate_species_from_estimations, SpeciesEstimator
 
 TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
 TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")

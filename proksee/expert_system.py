@@ -18,10 +18,10 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee.assembly_strategy import AssemblyStrategy
-from proksee.heuristic_evaluator import HeuristicEvaluator
-from proksee.skesa_assembler import SkesaAssembler
-from proksee.spades_assembler import SpadesAssembler
+from proksee.assemble.assembly_strategy import AssemblyStrategy
+from proksee.evaluate.heuristic_evaluator import HeuristicEvaluator
+from proksee.assemble.skesa_assembler import SkesaAssembler
+from proksee.assemble.spades_assembler import SpadesAssembler
 
 
 class ExpertSystem:

@@ -28,7 +28,7 @@ import os
 from proksee.pipelines.assemble import assemble
 from proksee.resource_specification import ResourceSpecification
 from proksee import config as config
-from proksee.reads import Reads
+from proksee.reads.reads import Reads
 from proksee import utilities
 
 

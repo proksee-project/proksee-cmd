@@ -20,7 +20,7 @@ specific language governing permissions and limitations under the License.
 
 import os
 
-from proksee.prokka_annotator import ProkkaAnnotator
+from proksee.annotate.prokka_annotator import ProkkaAnnotator
 from proksee.parser.prokka_parser import parse_prokka_summary_from_txt
 
 

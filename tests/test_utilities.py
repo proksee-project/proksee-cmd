@@ -19,8 +19,8 @@ specific language governing permissions and limitations under the License.
 import os
 from pathlib import Path
 
-from proksee.assembly_database import AssemblyDatabase
-from proksee.species import Species
+from proksee.assemble.assembly_database import AssemblyDatabase
+from proksee.species.species import Species
 from proksee.utilities import determine_species
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")

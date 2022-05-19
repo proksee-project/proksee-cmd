@@ -21,11 +21,11 @@ import os
 from pathlib import Path
 
 # Importing ReadFilterer class from read_filterer.py
-from proksee.read_filterer import ReadFilterer
+from proksee.reads.read_filterer import ReadFilterer
 import pytest
 
 #  Defining global variables for testing
-from proksee.reads import Reads
+from proksee.reads.reads import Reads
 
 START_DIR = Path(__file__).parent.absolute()
 TEST_INPUT_DIR = '{}/data/'.format(str(START_DIR))

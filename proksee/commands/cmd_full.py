@@ -26,8 +26,8 @@ from proksee.pipelines.assemble import assemble
 from proksee.pipelines.annotate import annotate
 from proksee.resource_specification import ResourceSpecification
 from proksee import config as config
-from proksee.reads import Reads
-from proksee.ml_annotated_assembly_evaluator import MLAnnoatedAssemblyEvaluator
+from proksee.reads.reads import Reads
+from proksee.evaluate.ml_annotated_assembly_evaluator import MLAnnoatedAssemblyEvaluator
 
 
 @click.command('full',

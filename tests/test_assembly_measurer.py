@@ -21,7 +21,7 @@ from subprocess import CalledProcessError
 
 import pytest
 
-from proksee.assembly_measurer import AssemblyMeasurer
+from proksee.assemble.assembly_measurer import AssemblyMeasurer
 
 
 class TestAssemblyMeasurer:

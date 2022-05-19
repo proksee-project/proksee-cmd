@@ -22,7 +22,7 @@ import os
 import subprocess
 import sys
 
-from proksee.annotator import Annotator
+from proksee.annotate.annotator import Annotator
 
 
 class ProkkaAnnotator(Annotator):

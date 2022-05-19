@@ -20,7 +20,7 @@ import os
 import pytest
 
 from pathlib import Path
-from proksee.assembly_database import AssemblyDatabase
+from proksee.assemble.assembly_database import AssemblyDatabase
 
 
 class TestAssemblyDatabase:

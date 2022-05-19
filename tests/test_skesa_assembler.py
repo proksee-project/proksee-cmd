@@ -21,8 +21,8 @@ import pytest
 
 from pathlib import Path
 
-from proksee.reads import Reads
-from proksee.skesa_assembler import SkesaAssembler
+from proksee.reads.reads import Reads
+from proksee.assemble.skesa_assembler import SkesaAssembler
 from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
