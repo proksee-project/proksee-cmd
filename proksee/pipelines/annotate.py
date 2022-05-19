@@ -33,6 +33,9 @@ def annotate(contigs_filename, output_directory, resource_specification):
         output_directory (string): the location to place all program output and temporary files
         resource_specification (ResourceSpecification): the resources that sub-programs should use
 
+    RETURNS:
+        annotation_summary (AnnotationSummary): summary statistics of the annotation
+
     POST:
         The contigs with passed filename will be annotated and evaluated. The results will be written to standard
         output.
@@ -49,7 +52,9 @@ def annotate(contigs_filename, output_directory, resource_specification):
     print(output + "\n")
 
     prokka_text_summary_filename = prokka_annotator.get_summary_filename()
-    prokka_summary = parse_prokka_summary_from_txt(prokka_text_summary_filename)
+    annotation_summary = parse_prokka_summary_from_txt(prokka_text_summary_filename)
 
-    print(prokka_summary.generate_report())
+    print(annotation_summary.generate_report())
     print("Complete!")
+
+    return annotation_summary

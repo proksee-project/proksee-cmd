@@ -123,5 +123,4 @@ class ProkkaAnnotator(Annotator):
             filename (str): the filename of the summary
         """
 
-        # TODO: Update to correct output file
         return os.path.join(self.prokka_output_directory, "prokka.txt")

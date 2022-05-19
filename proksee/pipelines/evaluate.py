@@ -24,7 +24,7 @@ from proksee import utilities
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.heuristic_evaluator import HeuristicEvaluator
-from proksee.machine_learning_evaluator import MachineLearningEvaluator
+from proksee.ml_assembly_evaluator import MLAssemblyEvaluator
 
 
 def evaluate(contigs_filename, output_directory, database_path, mash_database_path,
@@ -67,7 +67,7 @@ def evaluate(contigs_filename, output_directory, database_path, mash_database_pa
     print(evaluation.report)
 
     # Machine learning evaluation:
-    evaluator = MachineLearningEvaluator(species)
+    evaluator = MLAssemblyEvaluator(species)
     evaluation = evaluator.evaluate(assembly_quality)
     print(evaluation.report)
 

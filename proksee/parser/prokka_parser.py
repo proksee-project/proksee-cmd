@@ -16,12 +16,12 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from proksee.prokka_summary import ProkkaSummary
+from proksee.annotation_summary import AnnotationSummary
 
 
 def parse_prokka_summary_from_txt(prokka_text_file):
     """
-    Parses a Prokka text output summary file and creates a ProkkaSummary object from that information.
+    Parses a Prokka text output summary file and creates a AnnotationSummary object from that information.
 
     The Prokka text output file is expected to start with the following format:
 
@@ -39,7 +39,7 @@ def parse_prokka_summary_from_txt(prokka_text_file):
         prokka_text_file (str): the file location of the Prokka text output file
 
     RETURNS:
-        prokka_summary (ProkkaSummary): an object encapsulating the information in the Prokka text file
+        annotation_summary (AnnotationSummary): an object encapsulating the information in the Prokka text file
     """
 
     DELIMETER = ": "
@@ -79,6 +79,6 @@ def parse_prokka_summary_from_txt(prokka_text_file):
             elif key == TRNA:
                 tRNA = int(value)
 
-    prokka_summary = ProkkaSummary(organism, contigs, bases, cds, rRNA, tRNA)
+    annotation_summary = AnnotationSummary(organism, contigs, bases, cds, rRNA, tRNA)
 
-    return prokka_summary
+    return annotation_summary

@@ -17,13 +17,13 @@ specific language governing permissions and limitations under the License.
 """
 
 from proksee.assembly_quality import AssemblyQuality
-from proksee.machine_learning_evaluator import MachineLearningEvaluator
+from proksee.ml_assembly_evaluator import MLAssemblyEvaluator
 from proksee.species import Species
 import pytest
 import math
 
 
-class TestMachineLearningEvaluator:
+class TestMLAssemblyEvaluator:
 
     def test_evaluate_probability(self):
         """
@@ -35,7 +35,7 @@ class TestMachineLearningEvaluator:
         assembly_quality = AssemblyQuality(2806, 3039, 4000, 522, 600, 0.573, 5208476)
         species = Species("Klebsiella pneumoniae", 1.0)
 
-        evaluator = MachineLearningEvaluator(species)
+        evaluator = MLAssemblyEvaluator(species)
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert not evaluation.success
@@ -46,7 +46,7 @@ class TestMachineLearningEvaluator:
         assembly_quality = AssemblyQuality(545295, 108384, 100000, 6, 8, 0.387, 2117857)
         species = Species("Streptococcus pyogenes", 1.0)
 
-        evaluator = MachineLearningEvaluator(species)
+        evaluator = MLAssemblyEvaluator(species)
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert not evaluation.success
@@ -57,7 +57,7 @@ class TestMachineLearningEvaluator:
         assembly_quality = AssemblyQuality(35, 41086, 4000, 5, 600, 0.521, 4689259)
         species = Species("Salmonella enterica", 1.0)
 
-        evaluator = MachineLearningEvaluator(species)
+        evaluator = MLAssemblyEvaluator(species)
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert evaluation.success
@@ -68,7 +68,7 @@ class TestMachineLearningEvaluator:
         assembly_quality = AssemblyQuality(36, 359164, 359200, 3, 4, 0.378, 3094380)
         species = Species("Listeria monocytogenes", 1.0)
 
-        evaluator = MachineLearningEvaluator(species)
+        evaluator = MLAssemblyEvaluator(species)
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert evaluation.success
@@ -83,7 +83,7 @@ class TestMachineLearningEvaluator:
         assembly_quality = AssemblyQuality(400, 4029, 4000, 195, 600, math.nan, 2475580)
         species = Species("Listeria monocytogenes", 1.0)
 
-        evaluator = MachineLearningEvaluator(species)
+        evaluator = MLAssemblyEvaluator(species)
         with pytest.raises(ValueError):
             evaluator.evaluate(assembly_quality)
 
@@ -96,6 +96,6 @@ class TestMachineLearningEvaluator:
         assembly_quality = AssemblyQuality(0, 0, 4000, 0, 600, 0, 0)
         species = Species("Listeria monocytogenes", 1.0)
 
-        evaluator = MachineLearningEvaluator(species)
+        evaluator = MLAssemblyEvaluator(species)
         with pytest.raises(ValueError):
             evaluator.evaluate(assembly_quality)

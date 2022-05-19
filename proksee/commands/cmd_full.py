@@ -27,6 +27,7 @@ from proksee.pipelines.annotate import annotate
 from proksee.resource_specification import ResourceSpecification
 from proksee import config as config
 from proksee.reads import Reads
+from proksee.ml_annotated_assembly_evaluator import MLAnnoatedAssemblyEvaluator
 
 
 @click.command('full',
@@ -62,6 +63,14 @@ def cli(ctx, forward, reverse, output, force, species, platform, threads, memory
 
     reads = Reads(forward, reverse)
     resource_specification = ResourceSpecification(threads, memory)
-    contigs_filename = assemble(reads, output, force, config.DATABASE_PATH, mash_database_path,
+
+    assembly_summary = assemble(reads, output, force, config.DATABASE_PATH, mash_database_path,
                                 resource_specification, config.ID_MAPPING_FILENAME, species, platform)
-    annotate(contigs_filename, output, resource_specification)
+
+    contigs_filename = assembly_summary.contigs_filename
+    annotation_summary = annotate(contigs_filename, output, resource_specification)
+
+    species = assembly_summary.species
+    assembly_quality = assembly_summary.assembly_quality
+    evaluator = MLAnnoatedAssemblyEvaluator(species)
+    evaluator.evaluate(assembly_quality, annotation_summary)

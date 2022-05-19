@@ -1,11 +1,7 @@
 """
-Copyright Government of Canada 2020
+Copyright Government of Canada 2022
 
 Written by:
-
-Arnab Saha Mandal
-    University of Manitoba
-    National Microbiology Laboratory, Public Health Agency of Canada
 
 Eric Marinier
     National Microbiology Laboratory, Public Health Agency of Canada
@@ -24,32 +20,30 @@ specific language governing permissions and limitations under the License.
 
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.evaluation import MachineLearningEvaluation
-from proksee.machine_learning_assembly_qc import MachineLearningAssemblyQC, NormalizedDatabase
 
 
-class MachineLearningEvaluator(AssemblyEvaluator):
+class MLAnnoatedAssemblyEvaluator(AssemblyEvaluator):
     """
     A machine learning-based sequence assembly evaluator.
     """
 
     def __init__(self, species):
         """
-        Initializes the machine learning-based assembly evaluator.
+        Initializes the machine learning-based annoated assembly evaluator.
 
         PARAMETERS:
             species (Species): the biological species
         """
 
         super().__init__(species)
-        self.normalized_database = NormalizedDatabase()
-        self.assembly_qc = MachineLearningAssemblyQC(self.normalized_database)
 
-    def evaluate(self, assembly_quality):
+    def evaluate(self, assembly_quality, annotation_summary):
         """
         Evaluates the quality of the assembly using a machine learning-based approach.
 
         PARAMETERS:
             assembly_quality (AssemblyQuality): the quality measurements of the assembly
+            annotation_summary (AnnotationSummary): a summary of annotation metrics (related to the assembly)
 
         RETURN
             evaluation (Evaluation): an evaluation of the assembly's quality
@@ -61,10 +55,19 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         assembly_length = assembly_quality.length
         gc_content = assembly_quality.gc_content
 
-        if self.normalized_database.contains(self.species.name):
+        # TODO: Integrate ML code
+        cds = annotation_summary.cds
+        tRNA = annotation_summary.tRNA
+
+        # TODO: Temporary!
+        if self.species.name:
             species_present = True
-            probability = self.assembly_qc.calculate_probability(self.species.name, n50, num_contigs, l50,
-                                                                 assembly_length, gc_content)
+
+            # TODO: Integrate ML code
+            # probability = calculate_probability(n50, l50, num_contigs, assembly_length, gc_content, cds, tRNA)
+            print([n50, l50, num_contigs, assembly_length, gc_content, cds, tRNA])
+            probability = 404
+
             success = True if probability > 0.5 else False
             report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
 

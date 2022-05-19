@@ -17,9 +17,9 @@ specific language governing permissions and limitations under the License.
 """
 
 
-class ProkkaSummary:
+class AnnotationSummary:
     """
-    A class containing a variety Prokka-related annotation summary metrics.
+    A class containing a variety annotation summary metrics.
 
     ATTRIBUTES:
 

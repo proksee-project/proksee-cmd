@@ -32,7 +32,7 @@ from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
 from proksee.heuristic_evaluator import HeuristicEvaluator, compare_assemblies
 from proksee.input_verification import are_valid_fastq
-from proksee.machine_learning_evaluator import MachineLearningEvaluator
+from proksee.ml_assembly_evaluator import MLAssemblyEvaluator
 from proksee.platform_identify import PlatformIdentifier, identify_name, Platform
 from proksee.read_filterer import ReadFilterer
 from proksee.expert_system import ExpertSystem
@@ -40,6 +40,7 @@ from proksee.writer.assembly_statistics_writer import AssemblyStatisticsWriter
 from proksee.species_estimator import SpeciesEstimator
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
+from proksee.assembly_summary import AssemblySummary
 
 
 def report_valid_fastq(valid):
@@ -312,7 +313,7 @@ def assemble(reads, output_directory, force, database_path, mash_database_path, 
     fast_assembly_quality = assembly_measurer.measure_quality()
 
     # Machine learning evaluation (fast assembly)
-    machine_learning_evaluator = MachineLearningEvaluator(species)
+    machine_learning_evaluator = MLAssemblyEvaluator(species)
     evaluation = machine_learning_evaluator.evaluate(fast_assembly_quality)
     print(evaluation.report)
 
@@ -363,4 +364,4 @@ def assemble(reads, output_directory, force, database_path, mash_database_path, 
     cleanup(output_directory)
 
     print("Complete.\n")
-    return contigs_new_filename
+    return AssemblySummary(species, expert_assembly_quality, contigs_new_filename)
