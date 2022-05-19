@@ -24,7 +24,7 @@ import joblib
 import warnings
 import math
 
-DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database")
+DATABASE_PATH = os.path.join(Path(__file__).parent.parent.parent.absolute(), "proksee", "database")
 DATABASE_FILENAME = "species_normalization_factor_database.txt"
 MACHINE_LEARNING_MODEL_FILENAME = "species_assemblyQC_randomforest.joblib.gz"
 
