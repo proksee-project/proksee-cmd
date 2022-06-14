@@ -45,8 +45,8 @@ def annotate(contigs_filename, output_directory, resource_specification):
     print("Annotating with Prokka!\n")
 
     prokka_annotator = ProkkaAnnotator(contigs_filename, output_directory, resource_specification)
-    output = prokka_annotator.annotate()
-    print(output + "\n")
+    pipeline_message = prokka_annotator.annotate()
+    print(pipeline_message + "\n")
 
     prokka_text_summary_filename = prokka_annotator.get_summary_filename()
     prokka_summary = parse_prokka_summary_from_txt(prokka_text_summary_filename)
