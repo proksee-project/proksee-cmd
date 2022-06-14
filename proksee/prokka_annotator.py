@@ -83,7 +83,7 @@ class ProkkaAnnotator(Annotator):
         Annotates the contigs.
 
         RETURNS
-            output (str): an output string reporting the result back to the user
+            message (str): a message explaining the result of running the pipeline (not console output)
 
         POST
             If completed without error, the output will be placed in the output directory.
