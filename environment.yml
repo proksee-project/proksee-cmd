@@ -8,7 +8,7 @@ dependencies:
 - fastp
 - skesa
 - mash
-- quast
+- quast=5.0.2
 - scipy
 - spades
 - wget
