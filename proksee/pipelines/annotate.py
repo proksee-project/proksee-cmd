@@ -18,6 +18,11 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
+import os
+
+from proksee.prokka_annotator import ProkkaAnnotator
+from proksee.parser.prokka_parser import parse_prokka_summary_from_txt
+
 
 def annotate(contigs_filename, output_directory, resource_specification):
     """
@@ -33,4 +38,18 @@ def annotate(contigs_filename, output_directory, resource_specification):
         output.
     """
 
-    print("Annotating!")
+    # Make output directory:
+    if not os.path.isdir(output_directory):
+        os.mkdir(output_directory)
+
+    print("Annotating with Prokka!\n")
+
+    prokka_annotator = ProkkaAnnotator(contigs_filename, output_directory, resource_specification)
+    pipeline_message = prokka_annotator.annotate()
+    print(pipeline_message + "\n")
+
+    prokka_text_summary_filename = prokka_annotator.get_summary_filename()
+    prokka_summary = parse_prokka_summary_from_txt(prokka_text_summary_filename)
+
+    print(prokka_summary.generate_report())
+    print("Complete!")
