@@ -1,2 +1,3 @@
 include proksee/database/*
+include config.json
 exclude *.msh
