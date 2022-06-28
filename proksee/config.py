@@ -23,7 +23,7 @@ import json
 
 from pathlib import Path
 
-CONFIG_FILENAME = os.path.join(Path(__file__).parent.absolute(), "config", "config.json")
+CONFIG_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "config.json")
 MASH_PATH = "mashPath"
 
 
