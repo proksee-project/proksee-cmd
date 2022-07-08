@@ -12,6 +12,7 @@ setup(
     description='Proksee Cmd Line Tools',
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
+    package_data = { 'proksee' : ['config/config.json']},
     install_requires=dependencies,
     entry_points='''
         [console_scripts]
