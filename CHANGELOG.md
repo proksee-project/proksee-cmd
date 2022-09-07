@@ -2,6 +2,14 @@
 
 All notable changes to Proksee will be documented in this file. 
 
+v1.0.0a5
+
+This release makes improvements to the assembly information output file.
+
+v1.0.0a4
+
+This release corrects an issue with the config file path.
+
 v1.0.0a3
 
 This release adds resource specification and expands the information provided in the assembly information JSON file.
