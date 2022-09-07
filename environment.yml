@@ -5,12 +5,12 @@ channels:
 - defaults
 dependencies:
 - python=3.7
-- fastp
-- skesa
-- mash
+- fastp=0.23.2
+- skesa=2.4.0
+- mash=2.3
 - quast=5.0.2
 - scipy
-- spades
+- spades=3.15.5
 - wget
 - pip
 - pip:

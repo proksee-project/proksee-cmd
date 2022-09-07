@@ -23,6 +23,9 @@ import json
 import os
 
 from proksee import __version__ as version
+
+from version import FASTP_VERSION, QUAST_VERSION, SKESA_VERSION, SPADES_VERSION, MASH_VERSION
+
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 from proksee.heuristic_evaluator import REFSEQ_MIN_N50, REFSEQ_MAX_L50, REFSEQ_MAX_CONTIGS, REFSEQ_MIN_LENGTH
 from proksee.heuristic_evaluator import EvaluationType
@@ -119,9 +122,14 @@ class AssemblyStatisticsWriter:
         data = {}
 
         data['Version'] = {
-            "Software": version,
+            "Proksee": version,
             "Model": MODEL_VERSION,
-            "Database": NORM_DATABASE_VERSION
+            "Database": NORM_DATABASE_VERSION,
+            "fastp": FASTP_VERSION,
+            "SKESA": SKESA_VERSION,
+            "QUAST": QUAST_VERSION,
+            "SPAdes": SPADES_VERSION,
+            "Mash": MASH_VERSION
         }
 
         data['Technology'] = str(platform.value)
