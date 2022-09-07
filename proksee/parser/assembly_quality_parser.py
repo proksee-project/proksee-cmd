@@ -35,7 +35,7 @@ def parse_assembly_quality_from_quast_report(quast_filename):
         TSV-format file.
     """
 
-    NUM_CONTIGS = "# contigs"
+    NUM_CONTIGS = "# contigs (>= 0 bp)"
     N50 = "N50"
     N75 = "N75"
     L50 = "L50"
