@@ -24,7 +24,7 @@ import os
 
 from proksee import __version__ as version
 
-from version import FASTP_VERSION, QUAST_VERSION, SKESA_VERSION, SPADES_VERSION, MASH_VERSION
+from proksee.version import FASTP_VERSION, QUAST_VERSION, SKESA_VERSION, SPADES_VERSION, MASH_VERSION
 
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 from proksee.heuristic_evaluator import REFSEQ_MIN_N50, REFSEQ_MAX_L50, REFSEQ_MAX_CONTIGS, REFSEQ_MIN_LENGTH
