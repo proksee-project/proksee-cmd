@@ -49,7 +49,7 @@ class TestContaminationHandler:
         message += "      The following species were estimated from the contigs:\n\n"
         message += "      " + "Escherichia coli (p=1.00)" + "\n"
 
-        assert(evaluation.report == message)
+        assert (evaluation.report == message)
 
     def test_no_contamination(self):
 
@@ -67,7 +67,7 @@ class TestContaminationHandler:
         message += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
         message += "      The estimated species is: " + str(species) + "\n"
 
-        assert(evaluation.report == message)
+        assert (evaluation.report == message)
 
     def test_low_confidence_estimation(self):
 
@@ -84,4 +84,4 @@ class TestContaminationHandler:
 
         message = "\nWARNING: Unable to confidently estimate the species from the assembled contigs.\n"
 
-        assert(evaluation.report == message)
+        assert (evaluation.report == message)
