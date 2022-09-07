@@ -206,12 +206,12 @@ class AssemblyStatisticsWriter:
                 "Length Report": heuristic_evaluation.length_evaluation.report
             }
 
-            data["NCBI RefSeq Exclusion Criteria"] = {
-                "Minimum Length": REFSEQ_MIN_LENGTH,
-                "Minimum N50": REFSEQ_MIN_N50,
-                "Maximum L50": REFSEQ_MAX_L50,
-                "Maximum Contigs": REFSEQ_MAX_CONTIGS
-            }
+        data["NCBI RefSeq Exclusion Criteria"] = {
+            "Minimum Length": REFSEQ_MIN_LENGTH,
+            "Minimum N50": REFSEQ_MIN_N50,
+            "Maximum L50": REFSEQ_MAX_L50,
+            "Maximum Contigs": REFSEQ_MAX_CONTIGS
+        }
 
         data['Machine Learning Evaluation'] = {
             "Success": machine_learning_evaluation.success,
