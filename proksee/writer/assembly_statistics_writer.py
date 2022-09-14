@@ -173,20 +173,25 @@ class AssemblyStatisticsWriter:
             }
 
             data['Assembly Thresholds'] = {
+                "Species Counts": database.get_count(species.name),
                 "N50 Low Error": database.get_n50_quantile(species.name, database.LOW_ERROR_QUANTILE),
                 "N50 Low Warning": database.get_n50_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "N50 Median": database.get_n50_quantile(species.name, database.MEDIAN),
                 "N50 High Warning": database.get_n50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
                 "N50 High Error": database.get_n50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
                 "L50 Low Error": database.get_l50_quantile(species.name, database.LOW_ERROR_QUANTILE),
                 "L50 Low Warning": database.get_l50_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "L50 Median": database.get_l50_quantile(species.name, database.MEDIAN),
                 "L50 High Warning": database.get_l50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
                 "L50 High Error": database.get_l50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
                 "Contigs Low Error": database.get_contigs_quantile(species.name, database.LOW_ERROR_QUANTILE),
                 "Contigs Low Warning": database.get_contigs_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "Contigs Median": database.get_contigs_quantile(species.name, database.MEDIAN),
                 "Contigs High Warning": database.get_contigs_quantile(species.name, database.HIGH_WARNING_QUANTILE),
                 "Contigs High Error": database.get_contigs_quantile(species.name, database.HIGH_ERROR_QUANTILE),
                 "Length Low Error": database.get_length_quantile(species.name, database.LOW_ERROR_QUANTILE),
                 "Length Low Warning": database.get_length_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "Length Median": database.get_length_quantile(species.name, database.MEDIAN),
                 "Length High Warning": database.get_length_quantile(species.name, database.HIGH_WARNING_QUANTILE),
                 "Length High Error": database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
             }

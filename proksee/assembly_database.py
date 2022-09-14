@@ -34,24 +34,30 @@ class AssemblyDatabase:
     # Constants for different assembly statistics. These are used both to identify position in parsing,
     # and as unique identifiers for dictionaries.
     SPECIES = 0
-    N50_05 = 1  # the 0.05 quantile of the N50
-    N50_20 = 2  # the 0.20 quantile of the N50
-    N50_80 = 3
-    N50_95 = 4
-    CONTIG_05 = 5   # the 0.05 quantile of the number of contigs
-    CONTIG_20 = 6   # the 0.20 quantile of the number of contigs
-    CONTIG_80 = 7
-    CONTIG_95 = 8
-    L50_05 = 9   # the 0.05 quantile of the L50
-    L50_20 = 10  # the 0.20 quantile of the L50
-    L50_80 = 11
-    L50_95 = 12
-    LENGTH_05 = 13  # the 0.05 quantile of the assembly length
-    LENGTH_20 = 14  # the 0.20 quantile of the assembly length
-    LENGTH_80 = 15
-    LENGTH_95 = 16
+    COUNT = 1
+    N50_05 = 2  # the 0.05 quantile of the N50
+    N50_20 = 3  # the 0.20 quantile of the N50
+    N50_50 = 4
+    N50_80 = 5
+    N50_95 = 6
+    CONTIG_05 = 7   # the 0.05 quantile of the number of contigs
+    CONTIG_20 = 8   # the 0.20 quantile of the number of contigs
+    CONTIG_50 = 9
+    CONTIG_80 = 10
+    CONTIG_95 = 11
+    L50_05 = 12   # the 0.05 quantile of the L50
+    L50_20 = 13  # the 0.20 quantile of the L50
+    L50_50 = 14
+    L50_80 = 15
+    L50_95 = 16
+    LENGTH_05 = 17  # the 0.05 quantile of the assembly length
+    LENGTH_20 = 18  # the 0.20 quantile of the assembly length
+    LENGTH_50 = 19
+    LENGTH_80 = 20
+    LENGTH_95 = 21
 
     # Constants acting as dictionary keys for accessing the database information.
+    SPECIES_COUNT = "SPECIES_COUNT"
     N50_QUANTILES = "N50_QUANTILES"
     CONTIGS_QUANTILES = "CONTIGS_QUANTILES"
     L50_QUANTILES = "L50_QUANTILES"
@@ -60,6 +66,7 @@ class AssemblyDatabase:
     # Thresholds as quantiles:
     LOW_ERROR_QUANTILE = 0.05
     LOW_WARNING_QUANTILE = 0.20
+    MEDIAN = 0.50
     HIGH_WARNING_QUANTILE = 0.80
     HIGH_ERROR_QUANTILE = 0.95
 
@@ -96,6 +103,8 @@ class AssemblyDatabase:
             for row in reader:
                 species = row[self.SPECIES]
 
+                count = row[self.COUNT]
+
                 n50_quantiles = {}
                 contigs_quantiles = {}
                 l50_quantiles = {}
@@ -103,25 +112,30 @@ class AssemblyDatabase:
 
                 n50_quantiles[0.05] = row[self.N50_05]
                 n50_quantiles[0.20] = row[self.N50_20]
+                n50_quantiles[0.50] = row[self.N50_50]
                 n50_quantiles[0.80] = row[self.N50_80]
                 n50_quantiles[0.95] = row[self.N50_95]
 
                 contigs_quantiles[0.05] = row[self.CONTIG_05]
                 contigs_quantiles[0.20] = row[self.CONTIG_20]
+                contigs_quantiles[0.50] = row[self.CONTIG_50]
                 contigs_quantiles[0.80] = row[self.CONTIG_80]
                 contigs_quantiles[0.95] = row[self.CONTIG_95]
 
                 l50_quantiles[0.05] = row[self.L50_05]
                 l50_quantiles[0.20] = row[self.L50_20]
+                l50_quantiles[0.50] = row[self.L50_50]
                 l50_quantiles[0.80] = row[self.L50_80]
                 l50_quantiles[0.95] = row[self.L50_95]
 
                 length_quantiles[0.05] = row[self.LENGTH_05]
                 length_quantiles[0.20] = row[self.LENGTH_20]
+                length_quantiles[0.50] = row[self.LENGTH_50]
                 length_quantiles[0.80] = row[self.LENGTH_80]
                 length_quantiles[0.95] = row[self.LENGTH_95]
 
                 information = {
+                    self.SPECIES_COUNT: count,
                     self.N50_QUANTILES: n50_quantiles,
                     self.CONTIGS_QUANTILES: contigs_quantiles,
                     self.L50_QUANTILES: l50_quantiles,
@@ -145,13 +159,31 @@ class AssemblyDatabase:
 
         return present
 
+    def get_count(self, species):
+        """
+        Returns the count for the specified species. This is the number of times the
+        particular species was observed when building the assembly statistics database.
+
+        RETURNS
+            count (int): the observed counts for the species when building the database
+                returns None if the species is missing
+        """
+
+        if species in self.database:
+            count = self.database[species][self.SPECIES_COUNT]
+
+        else:
+            count = None
+
+        return count
+
     def get_n50_quantile(self, species, value):
         """
         Returns the N50 quantile for the specified species and quantile value.
 
         RETURNS
             quantile (float): the N50 quantile for the specified species and quantile value
-                returns None if the species on quantile is missing
+                returns None if the species or quantile is missing
         """
 
         if species in self.database:
@@ -169,7 +201,7 @@ class AssemblyDatabase:
 
         RETURNS
             quantile (float): the number of contigs quantile for the specified species and quantile value
-                returns None if the species on quantile is missing
+                returns None if the species or quantile is missing
         """
 
         if species in self.database:
@@ -187,7 +219,7 @@ class AssemblyDatabase:
 
         RETURNS
             quantile (float): the L50 quantile for the specified species and quantile value
-                returns None if the species on quantile is missing
+                returns None if the species or quantile is missing
         """
 
         if species in self.database:
@@ -205,7 +237,7 @@ class AssemblyDatabase:
 
         RETURNS
             quantile (float): the assembly length quantile for the specified species and quantile value
-                returns None if the species on quantile is missing
+                returns None if the species or quantile is missing
         """
 
         if species in self.database:

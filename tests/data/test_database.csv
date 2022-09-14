@@ -1,2 +1,2 @@
-species,n50_05,n50_20,n50_80,n50_95,contig_count_05,contig_count_20,contig_count_80,contig_count_95,l50_05,l50_20,l50_80,l50_95,length_05,length_20,length_80,length_95
-Listeria monocytogenes,142261.85,297362.8,546172.8,1461919.65,10,14,36,83,1,2,4,7,2861443.65,2904912,3051700,3111649.8
+species,count,n50_05,n50_20,n50_50,n50_80,n50_95,contig_count_05,contig_count_20,contig_count_50,contig_count_80,contig_count_95,l50_05,l50_20,l50_50,l50_80,l50_95,length_05,length_20,length_50,length_80,length_95
+Listeria monocytogenes,2144,142261.85,297362.80,478121.00,546172.80,1461919.65,10.00,14.00,20.00,36.00,83.00,1.00,2.00,3.00,4.00,7.00,2861443.65,2904912.00,2969993.00,3051700.00,3111649.80
