@@ -121,7 +121,8 @@ class TestAssemblyStatisticsWriter:
         )
 
         json_file_location = writer.write_json(platform, species, reads, read_quality, assembly_quality,
-                                               species_evaluation, machine_learning_evaluation, ncbi_evaluation, assembly_database)
+                                               species_evaluation, machine_learning_evaluation, ncbi_evaluation,
+                                               assembly_database)
 
         with open(json_file_location) as json_file:
             data = json.load(json_file)
