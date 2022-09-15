@@ -19,8 +19,9 @@ import os
 from pathlib import Path
 
 from proksee.assembly_database import AssemblyDatabase
+from proksee.ncbi_assembly_evaluator import NCBIAssemblyEvaluator
 from proksee.assembly_quality import AssemblyQuality
-from proksee.heuristic_evaluator import evaluate_value, compare_assemblies, HeuristicEvaluator
+from proksee.heuristic_evaluator import evaluate_value, compare_assemblies
 from proksee.species import Species
 
 
@@ -136,6 +137,7 @@ class TestHeuristicEvaluator:
     def test_evaluate_assembly_from_fallback(self):
         """
         Tests the fallback heuristic evaluation (when the species is not present in the assembly database).
+        This is the NCBI RefSeq exclusion criteria.
         """
 
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
@@ -143,7 +145,7 @@ class TestHeuristicEvaluator:
         species = Species("not a species", 1.0)
 
         database = AssemblyDatabase(DATABASE_PATH)
-        evaluator = HeuristicEvaluator(species, database)  # Need to instantiate child class.
+        evaluator = NCBIAssemblyEvaluator(species, database)  # Need to instantiate child class.
 
         # Good assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length

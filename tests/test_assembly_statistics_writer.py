@@ -25,7 +25,7 @@ import pytest
 from pathlib import Path
 
 from proksee.assembly_quality import AssemblyQuality
-from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation, EvaluationType
+from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation
 from proksee.platform_identify import Platform
 from proksee.read_quality import ReadQuality
 from proksee.reads import Reads
@@ -105,18 +105,23 @@ class TestAssemblyStatisticsWriter:
         report += l50_evaluation.report
         report += length_evaluation.report
 
-        heuristic_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                  EvaluationType.SPECIES, success, report)
+        species_evaluation = AssemblyEvaluation(success, True,
+                                                n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
+                                                report)
+
+        ncbi_evaluation = AssemblyEvaluation(success, True,
+                                             n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
+                                             report)
 
         machine_learning_evaluation = MachineLearningEvaluation(
             True,
-            "The probability of the assembly being good is: 1.0",
+            True,
             1.0,
-            True
+            "The probability of the assembly being good is: 1.0"
         )
 
         json_file_location = writer.write_json(platform, species, reads, read_quality, assembly_quality,
-                                               heuristic_evaluation, machine_learning_evaluation, assembly_database)
+                                               species_evaluation, machine_learning_evaluation, ncbi_evaluation, assembly_database)
 
         with open(json_file_location) as json_file:
             data = json.load(json_file)
@@ -137,35 +142,31 @@ class TestAssemblyStatisticsWriter:
             assert (data["Assembly Quality"]["Number of Contigs"] == 10)
             assert (data["Assembly Quality"]["Assembly Size"] == 25000)
 
-            assert (data["Assembly Thresholds"]["N50 Low Error"] == 142261.85)
-            assert (data["Assembly Thresholds"]["N50 Low Warning"] == 297362.8)
-            assert (data["Assembly Thresholds"]["N50 High Warning"] == 546172.8)
-            assert (data["Assembly Thresholds"]["N50 High Error"] == 1461919.65)
+            assert (data['Heuristic Evaluation']['Thresholds']["N50 Low Error"] == 142261.85)
+            assert (data['Heuristic Evaluation']['Thresholds']["N50 Low Warning"] == 297362.8)
+            assert (data['Heuristic Evaluation']['Thresholds']["N50 High Warning"] == 546172.8)
+            assert (data['Heuristic Evaluation']['Thresholds']["N50 High Error"] == 1461919.65)
 
-            assert (data["Assembly Thresholds"]["L50 Low Error"] == 1)
-            assert (data["Assembly Thresholds"]["L50 Low Warning"] == 2)
-            assert (data["Assembly Thresholds"]["L50 High Warning"] == 4)
-            assert (data["Assembly Thresholds"]["L50 High Error"] == 7)
+            assert (data['Heuristic Evaluation']['Thresholds']["L50 Low Error"] == 1)
+            assert (data['Heuristic Evaluation']['Thresholds']["L50 Low Warning"] == 2)
+            assert (data['Heuristic Evaluation']['Thresholds']["L50 High Warning"] == 4)
+            assert (data['Heuristic Evaluation']['Thresholds']["L50 High Error"] == 7)
 
-            assert (data["Assembly Thresholds"]["Contigs Low Error"] == 10)
-            assert (data["Assembly Thresholds"]["Contigs Low Warning"] == 14)
-            assert (data["Assembly Thresholds"]["Contigs High Warning"] == 36)
-            assert (data["Assembly Thresholds"]["Contigs High Error"] == 83)
+            assert (data['Heuristic Evaluation']['Thresholds']["Contigs Low Error"] == 10)
+            assert (data['Heuristic Evaluation']['Thresholds']["Contigs Low Warning"] == 14)
+            assert (data['Heuristic Evaluation']['Thresholds']["Contigs High Warning"] == 36)
+            assert (data['Heuristic Evaluation']['Thresholds']["Contigs High Error"] == 83)
 
-            assert (data["Assembly Thresholds"]["Length Low Error"] == 2861443.65)
-            assert (data["Assembly Thresholds"]["Length Low Warning"] == 2904912)
-            assert (data["Assembly Thresholds"]["Length High Warning"] == 3051700)
-            assert (data["Assembly Thresholds"]["Length High Error"] == 3111649.8)
+            assert (data['Heuristic Evaluation']['Thresholds']["Length Low Error"] == 2861443.65)
+            assert (data['Heuristic Evaluation']['Thresholds']["Length Low Warning"] == 2904912)
+            assert (data['Heuristic Evaluation']['Thresholds']["Length High Warning"] == 3051700)
+            assert (data['Heuristic Evaluation']['Thresholds']["Length High Error"] == 3111649.8)
 
             assert not (data["Heuristic Evaluation"]["Success"])
             assert (data["Heuristic Evaluation"]["N50 Pass"])
-            assert (data["Heuristic Evaluation"]["N50 Report"] == "The N50 looks good!")
             assert (data["Heuristic Evaluation"]["Contigs Pass"])
-            assert (data["Heuristic Evaluation"]["Contigs Report"] == "The contigs look good!")
             assert not (data["Heuristic Evaluation"]["L50 Pass"])
-            assert (data["Heuristic Evaluation"]["L50 Report"] == "The L50 looks bad!")
             assert not (data["Heuristic Evaluation"]["Length Pass"])
-            assert (data["Heuristic Evaluation"]["Length Report"] == "The length looks bad!")
 
             assert (data["Machine Learning Evaluation"]["Success"])
             assert (data["Machine Learning Evaluation"]["Probability"] == 1.0)

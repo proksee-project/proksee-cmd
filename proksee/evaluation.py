@@ -16,14 +16,6 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
 
-from enum import Enum, auto, unique
-
-
-@unique
-class EvaluationType(Enum):
-    SPECIES = auto()  # The species exists in the database. Species-specific metrics are used.
-    FALLBACK = auto()  # The species does not exist in the database. Generic metrics are used.
-
 
 class Evaluation:
     """
@@ -51,36 +43,45 @@ class AssemblyEvaluation(Evaluation):
     An evaluation of a sequence assembly.
 
     ATTRIBUTES
+        success (bool): whether or not the evaluation is successful
+        species_present (bool): whether or not the species is present in the database
+
         n50_evaluation (Evaluation): an evaluation of the assembly's n50
         contigs_evaluation (Evaluation): an evaluation of the assembly's number of contigs
         l50_evaluation (Evaluation): an evaluation of the assembly's l50
         length_evaluation (Evaluation): an evaluation of the assembly's length
-        evaluation_type (EvaluationType): the type of heuristic evaluation (SPECIES or FALLBACK)
+
+        report (str): a plain-language String describing the assembly evaluation
     """
 
-    def __init__(self, n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation, evaluation_type,
-                 success, report):
+    def __init__(self, success, species_present,
+                 n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
+                 report):
         """
         Initializes the AssemblyEvaluation.
 
         PARAMETERS
+            success (bool): whether or not the evaluation is successful
+            species_present (bool): whether or not the species is present in the database
+
             n50_evaluation (Evaluation): an evaluation of the assembly's n50
             contigs_evaluation (Evaluation): an evaluation of the assembly's number of contigs
             l50_evaluation (Evaluation): an evaluation of the assembly's l50
             length_evaluation (Evaluation): an evaluation of the assembly's length
-            evaluation_type (Enum): the type of heuristic evaluation (SPECIES or NCBI)
-            success (bool): whether or not the evaluation is successful
+
             report (str): a plain-language String describing the assembly evaluation
         """
 
         super().__init__(success, report)
 
+        self.success = success
+        self.species_present = species_present
+
         self.n50_evaluation = n50_evaluation
         self.contigs_evaluation = contigs_evaluation
         self.l50_evaluation = l50_evaluation
         self.length_evaluation = length_evaluation
-        self.evaluation_type = evaluation_type
-        self.success = success
+
         self.report = report
 
 
@@ -90,20 +91,20 @@ class MachineLearningEvaluation(Evaluation):
 
     ATTRIBUTES
         success (bool): whether or not the evaluation is successful
-        report (str): a plain-language String describing the evaluation
+        species_present (bool): whether or not the species is present in the database
         probability (float): the probability of the assembly being a "good" assembly
-        species_present (bool): whether or not the species is present in the ML database
+        report (str): a plain-language String describing the evaluation
     """
 
-    def __init__(self, success, report, probability, species_present):
+    def __init__(self, success, species_present, probability, report):
         """
         Initializes the MachineLearningEvaluation.
 
         PARAMETERS
-           success (bool): whether or not the evaluation is successful
-           report (str): a plain-language String describing the evaluation
-           probability (float): the probability of the assembly being a "good" assembly
-           species_present (bool): whether or not the species is present in the ML database
+            success (bool): whether or not the evaluation is successful
+            species_present (bool): whether or not the species is present in the database
+            probability (float): the probability of the assembly being a "good" assembly
+            report (str): a plain-language String describing the evaluation
         """
 
         super().__init__(success, report)

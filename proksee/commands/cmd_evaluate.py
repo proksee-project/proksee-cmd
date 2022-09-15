@@ -26,10 +26,11 @@ from pathlib import Path
 from proksee import utilities
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
-from proksee.heuristic_evaluator import HeuristicEvaluator
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
 
 import proksee.config as config
+from proksee.ncbi_assembly_evaluator import NCBIAssemblyEvaluator
+from proksee.species_assembly_evaluator import SpeciesAssemblyEvaluator
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
@@ -95,9 +96,13 @@ def evaluate(contigs_filename, output_directory, mash_database_path,
     assembly_quality = assembly_measurer.measure_quality()
 
     # Heuristic evaluation:
-    evaluator = HeuristicEvaluator(species, assembly_database)
-    evaluation = evaluator.evaluate(assembly_quality)
-    print(evaluation.report)
+    species_evaluator = SpeciesAssemblyEvaluator(species, assembly_database)
+    species_evaluation = species_evaluator.evaluate_assembly_from_database(assembly_quality)
+    click.echo(species_evaluation.report)
+
+    ncbi_evaluator = NCBIAssemblyEvaluator(species, assembly_database)
+    ncbi_evaluation = ncbi_evaluator.evaluate_assembly_from_fallback(assembly_quality)
+    click.echo(ncbi_evaluation.report)
 
     # Machine learning evaluation:
     evaluator = MachineLearningEvaluator(species)

@@ -27,8 +27,7 @@ from proksee import __version__ as version
 from proksee.version import FASTP_VERSION, QUAST_VERSION, SKESA_VERSION, SPADES_VERSION, MASH_VERSION
 
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
-from proksee.heuristic_evaluator import REFSEQ_MIN_N50, REFSEQ_MAX_L50, REFSEQ_MAX_CONTIGS, REFSEQ_MIN_LENGTH
-from proksee.heuristic_evaluator import EvaluationType
+from proksee.ncbi_assembly_evaluator import REFSEQ_MIN_N50, REFSEQ_MAX_L50, REFSEQ_MAX_CONTIGS, REFSEQ_MIN_LENGTH
 
 
 class AssemblyStatisticsWriter:
@@ -96,7 +95,7 @@ class AssemblyStatisticsWriter:
             return output_filename
 
     def write_json(self, platform, species, reads, read_quality, assembly_quality,
-                   heuristic_evaluation, machine_learning_evaluation, database):
+                   species_evaluation, machine_learning_evaluation, ncbi_evaluation, database):
         """
         Writes the assembly information to a JSON file.
 
@@ -106,8 +105,9 @@ class AssemblyStatisticsWriter:
             reads (Reads): encapsulates the file names of the input reads
             read_quality (ReadQuality): object encapsulating the quality measurements of the sequencing reads
             assembly_quality (AssemblyQuality): object encapsulating the quality measurements of the assembly
-            heuristic_evaluation (AssemblyEvaluation): heuristic evaluation of the assembly
+            species_evaluation (AssemblyEvaluation): heuristic species-based evaluation of the assembly
             machine_learning_evaluation (MachineLearningEvaluation): machine learning evaluation of the assembly
+            ncbi_evaluation (AssemblyEvaluation): heuristic ncbi fallback-based evaluation of the assembly
             database (AssemblyDatabase): database containing information about assemblies for species
 
         RETURN
@@ -157,22 +157,21 @@ class AssemblyStatisticsWriter:
             "Assembly Size": assembly_quality.length
         }
 
-        # Heuristic Evaluation used the species-specific method:
-        if heuristic_evaluation.evaluation_type is EvaluationType.SPECIES:
+        # Heuristic (Species-based) Evaluation
+        # Species Found:
+        if species_evaluation.species_present:
             data['Heuristic Evaluation'] = {
+                "Status": "evaluated",
                 "Evaluation Method": "Species",
-                "Success": heuristic_evaluation.success,
-                "N50 Pass": heuristic_evaluation.n50_evaluation.success,
-                "N50 Report": heuristic_evaluation.n50_evaluation.report,
-                "Contigs Pass": heuristic_evaluation.contigs_evaluation.success,
-                "Contigs Report": heuristic_evaluation.contigs_evaluation.report,
-                "L50 Pass": heuristic_evaluation.l50_evaluation.success,
-                "L50 Report": heuristic_evaluation.l50_evaluation.report,
-                "Length Pass": heuristic_evaluation.length_evaluation.success,
-                "Length Report": heuristic_evaluation.length_evaluation.report
+                "Success": species_evaluation.success,
+                "N50 Pass": species_evaluation.n50_evaluation.success,
+                "Contigs Pass": species_evaluation.contigs_evaluation.success,
+                "L50 Pass": species_evaluation.l50_evaluation.success,
+                "Length Pass": species_evaluation.length_evaluation.success
             }
 
-            data['Assembly Thresholds'] = {
+            # Thresholds
+            data['Heuristic Evaluation']['Thresholds'] = {
                 "Species Counts": database.get_count(species.name),
                 "N50 Low Error": database.get_n50_quantile(species.name, database.LOW_ERROR_QUANTILE),
                 "N50 Low Warning": database.get_n50_quantile(species.name, database.LOW_WARNING_QUANTILE),
@@ -196,33 +195,43 @@ class AssemblyStatisticsWriter:
                 "Length High Error": database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
             }
 
-        # Heuristic Evaluation used the fallback method:
+        # Evaluation not performed:
         else:
             data['Heuristic Evaluation'] = {
-                "Evaluation Method": "Fallback",
-                "Success": heuristic_evaluation.success,
-                "N50 Pass": heuristic_evaluation.n50_evaluation.success,
-                "N50 Report": heuristic_evaluation.n50_evaluation.report,
-                "Contigs Pass": heuristic_evaluation.contigs_evaluation.success,
-                "Contigs Report": heuristic_evaluation.contigs_evaluation.report,
-                "L50 Pass": heuristic_evaluation.l50_evaluation.success,
-                "L50 Report": heuristic_evaluation.l50_evaluation.report,
-                "Length Pass": heuristic_evaluation.length_evaluation.success,
-                "Length Report": heuristic_evaluation.length_evaluation.report
+                "Status": "not evaluated",
             }
 
-        data["NCBI RefSeq Exclusion Criteria"] = {
+        # NCBI Exclusion Evaluation
+        data['NCBI-Fallback Evaluation'] = {
+            "Status": "evaluated",
+            "Success": ncbi_evaluation.success,
+            "N50 Pass": ncbi_evaluation.n50_evaluation.success,
+            "Contigs Pass": ncbi_evaluation.contigs_evaluation.success,
+            "L50 Pass": ncbi_evaluation.l50_evaluation.success,
+            "Length Pass": ncbi_evaluation.length_evaluation.success
+        }
+
+        # Thresholds
+        data['NCBI-Fallback Evaluation']['Thresholds'] = {
             "Minimum Length": REFSEQ_MIN_LENGTH,
             "Minimum N50": REFSEQ_MIN_N50,
             "Maximum L50": REFSEQ_MAX_L50,
             "Maximum Contigs": REFSEQ_MAX_CONTIGS
         }
 
-        data['Machine Learning Evaluation'] = {
-            "Success": machine_learning_evaluation.success,
-            "Probability": machine_learning_evaluation.probability,
-            "Report": machine_learning_evaluation.report
-        }
+        # Machine learning-based evaluation:
+        if machine_learning_evaluation.species_present:
+            data['Machine Learning Evaluation'] = {
+                "Status": "evaluated",
+                "Success": machine_learning_evaluation.success,
+                "Probability": machine_learning_evaluation.probability,
+                "Report": machine_learning_evaluation.report
+            }
+        # Machine learning evaluation not performed:
+        else:
+            data['Machine Learning Evaluation'] = {
+                "Status": "not evaluated",
+            }
 
         with open(output_filename, 'w') as output_file:
             json.dump(data, output_file, indent=4)

@@ -22,8 +22,8 @@ from pathlib import Path
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_evaluator import AssemblyEvaluator
 from proksee.assembly_quality import AssemblyQuality
-from proksee.heuristic_evaluator import HeuristicEvaluator
 from proksee.species import Species
+from proksee.species_assembly_evaluator import SpeciesAssemblyEvaluator
 
 
 class TestAssemblyEvaluator:
@@ -39,7 +39,7 @@ class TestAssemblyEvaluator:
         species = Species("Staphylococcus aureus", 1.0)
 
         database = AssemblyDatabase(DATABASE_PATH)
-        evaluator = HeuristicEvaluator(species, database)  # Need to instantiate child class.
+        evaluator = SpeciesAssemblyEvaluator(species, database)  # Need to instantiate child class.
 
         # num_contigs, n50, n75, l50, l75, gc_content, length
         assembly_quality = AssemblyQuality(788, 4029, 4000, 195, 600, 0.66, 2475580)

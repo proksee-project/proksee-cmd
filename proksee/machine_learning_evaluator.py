@@ -62,6 +62,7 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         gc_content = assembly_quality.gc_content
 
         if self.normalized_database.contains(self.species.name):
+
             species_present = True
             probability = self.assembly_qc.calculate_probability(self.species.name, n50, num_contigs, l50,
                                                                  assembly_length, gc_content)
@@ -74,6 +75,6 @@ class MachineLearningEvaluator(AssemblyEvaluator):
             success = False
             report = "The species is not present in the database."
 
-        evaluation = MachineLearningEvaluation(success, report, probability, species_present)
+        evaluation = MachineLearningEvaluation(success, species_present, probability, report)
 
         return evaluation

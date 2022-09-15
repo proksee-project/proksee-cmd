@@ -17,19 +17,10 @@ specific language governing permissions and limitations under the License.
 """
 
 from proksee.assembly_evaluator import AssemblyEvaluator
-from proksee.evaluation import AssemblyEvaluation, Evaluation, EvaluationType
-
-# NCBI RefSeq exclusion criteria:
-# https://www.ncbi.nlm.nih.gov/assembly/help/anomnotrefseq/
-REFSEQ_MIN_N50 = 5000
-REFSEQ_MAX_L50 = 500
-REFSEQ_MAX_CONTIGS = 2000
-
-REFSEQ_MIN_LENGTH = 5000
-# Not present in above criteria, but we must evaluate length.
-# Length cannot be less than the N50 (5000).
+from proksee.evaluation import Evaluation
 
 
+# An abstract class of an abstract class
 class HeuristicEvaluator(AssemblyEvaluator):
     """
     A heuristic sequence assembly evaluator.
@@ -49,135 +40,6 @@ class HeuristicEvaluator(AssemblyEvaluator):
 
         super().__init__(species)
         self.assembly_database = assembly_database
-
-    def evaluate(self, assembly_quality):
-        """
-        Evaluates the quality of the assembly. The quality measurements will be compared against the assembly
-        statistics for the given species in the assembly database. If the species is not present in the database, then
-        it will be compared to fallback values.
-
-        PARAMETERS:
-            assembly_quality (AssemblyQuality): the quality measurements of the assembly
-
-        RETURN
-            evaluation (AssemblyEvaluation): an evaluation of the assembly's quality
-        """
-
-        if self.assembly_database.contains(self.species.name):
-            assembly_evaluation = self.evaluate_assembly_from_database(assembly_quality)
-
-        else:
-            assembly_evaluation = self.evaluate_assembly_from_fallback(assembly_quality)
-
-        return assembly_evaluation
-
-    def evaluate_assembly_from_database(self, assembly_quality):
-        """
-        Evaluates the quality of the assembly. The quality measurements will be compared against the assembly
-        statistics for the given species in the assembly database.
-
-        RETURN
-            evaluation (AssemblyEvaluation): an evaluation of the assembly's quality against the assembly database
-        """
-
-        n50_evaluation = self.evaluate_n50(assembly_quality)
-        contigs_evaluation = self.evaluate_num_contigs(assembly_quality)
-        l50_evaluation = self.evaluate_l50(assembly_quality)
-        length_evaluation = self.evaluate_length(assembly_quality)
-
-        success = n50_evaluation.success and contigs_evaluation.success \
-            and l50_evaluation.success and length_evaluation.success
-
-        report = "\n"
-        report += n50_evaluation.report + "\n"
-        report += contigs_evaluation.report + "\n"
-        report += l50_evaluation.report + "\n"
-        report += length_evaluation.report + "\n"
-
-        assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                 EvaluationType.SPECIES, success, report)
-
-        return assembly_evaluation
-
-    def evaluate_assembly_from_fallback(self, assembly_quality):
-        """
-        Evaluates the quality of the assembly. The quality measurements will be compared against fallback values.
-
-        PARAMETERS:
-            assembly_quality (AssemblyQuality): the quality measurements of the assembly
-
-        RETURN
-            evaluation (AssemblyEvaluation): an evaluation of the assembly's quality
-        """
-
-        n50 = assembly_quality.n50
-        num_contigs = assembly_quality.num_contigs
-        l50 = assembly_quality.l50
-        length = assembly_quality.length
-
-        total_success = True  # Whether or not all checks pass.
-
-        if n50 < REFSEQ_MIN_N50:
-            success = False
-            report = "FAIL: The N50 is smaller than expected: {}. ".format(n50)
-            report += "The N50 lower bound is: {}.".format(REFSEQ_MIN_N50)
-
-        else:
-            success = True
-            report = "PASS: The N50 is acceptable: {}. ".format(n50)
-            report += "The N50 lower bound is: {}.".format(REFSEQ_MIN_N50)
-
-        n50_evaluation = Evaluation(success, report)
-        total_success = total_success and success
-
-        if num_contigs > REFSEQ_MAX_CONTIGS:
-            success = False
-            report = "FAIL: The number of contigs is larger than expected: {}. ".format(num_contigs)
-            report += "The number of contigs upper bound is: {}.".format(REFSEQ_MAX_CONTIGS)
-        else:
-            success = True
-            report = "PASS: The number of contigs is acceptable: {}. ".format(num_contigs)
-            report += "The number of contigs lower bound is: {}.".format(REFSEQ_MIN_N50)
-
-        contigs_evaluation = Evaluation(success, report)
-        total_success = total_success and success
-
-        if l50 > REFSEQ_MAX_L50:
-            success = False
-            report = "FAIL: The L50 is larger than expected: {}. ".format(l50)
-            report += "The L50 upper bound is: {}.".format(REFSEQ_MAX_L50)
-
-        else:
-            success = True
-            report = "PASS: The L50 is acceptable: {}. ".format(l50)
-            report += "The L50 upper bound is: {}.".format(REFSEQ_MAX_L50)
-
-        l50_evaluation = Evaluation(success, report)
-        total_success = total_success and success
-
-        if length < REFSEQ_MIN_LENGTH:
-            success = False
-            report = "FAIL: The length is smaller than expected: {}. ".format(length)
-            report += "The length lower bound is: {}.".format(REFSEQ_MIN_LENGTH)
-
-        else:
-            success = True
-            report = "PASS: The length is acceptable: {}. ".format(length)
-            report += "The length lower bound is: {}.".format(REFSEQ_MIN_LENGTH)
-
-        length_evaluation = Evaluation(success, report)
-        total_success = total_success and success
-
-        report = "\nWARNING: No assembly statistics available for the species!\n\n"
-        report += n50_evaluation.report + "\n"
-        report += contigs_evaluation.report + "\n"
-        report += l50_evaluation.report + "\n"
-        report += length_evaluation.report + "\n"
-
-        assembly_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                 EvaluationType.FALLBACK, total_success, report)
-
-        return assembly_evaluation
 
     def evaluate_n50(self, assembly_quality):
         """

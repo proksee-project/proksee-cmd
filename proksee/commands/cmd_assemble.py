@@ -32,7 +32,9 @@ from proksee import utilities
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
-from proksee.heuristic_evaluator import HeuristicEvaluator, compare_assemblies
+from proksee.heuristic_evaluator import compare_assemblies
+from proksee.species_assembly_evaluator import SpeciesAssemblyEvaluator
+from proksee.ncbi_assembly_evaluator import NCBIAssemblyEvaluator
 from proksee.input_verification import are_valid_fastq
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
 from proksee.reads import Reads
@@ -381,9 +383,13 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
     click.echo(machine_learning_evaluation.report)
 
     # Evaluate assembly quality
-    heuristic_evaluator = HeuristicEvaluator(species, assembly_database)
-    heuristic_evaluation = heuristic_evaluator.evaluate(expert_assembly_quality)
-    click.echo(heuristic_evaluation.report)
+    species_evaluator = SpeciesAssemblyEvaluator(species, assembly_database)
+    species_evaluation = species_evaluator.evaluate_assembly_from_database(expert_assembly_quality)
+    click.echo(species_evaluation.report)
+
+    ncbi_evaluator = NCBIAssemblyEvaluator(species, assembly_database)
+    ncbi_evaluation = ncbi_evaluator.evaluate_assembly_from_fallback(expert_assembly_quality)
+    click.echo(ncbi_evaluation.report)
 
     # Compare fast and slow assemblies:
     report = compare_assemblies(fast_assembly_quality, expert_assembly_quality)
@@ -396,7 +402,8 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
 
     # Write expert assembly information to JSON file:
     assembly_statistics_writer.write_json(platform, species, reads, read_quality, expert_assembly_quality,
-                                          heuristic_evaluation, machine_learning_evaluation, assembly_database)
+                                          species_evaluation, machine_learning_evaluation, ncbi_evaluation,
+                                          assembly_database)
 
     # Move final assembled contigs to the main level of the output directory and rename it.
     contigs_filename = assembler.get_contigs_filename()
