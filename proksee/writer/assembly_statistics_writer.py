@@ -200,6 +200,9 @@ class AssemblyStatisticsWriter:
             data['Heuristic Evaluation'] = {
                 "Status": "not evaluated",
             }
+        
+        # Species information (always present):
+        data['Heuristic Evaluation']['Species in Database'] = species_evaluation.species_present
 
         # NCBI Exclusion Evaluation
         data['NCBI-Fallback Evaluation'] = {
@@ -232,6 +235,9 @@ class AssemblyStatisticsWriter:
             data['Machine Learning Evaluation'] = {
                 "Status": "not evaluated",
             }
+
+        # Species information (always present):
+        data['Machine Learning Evaluation']['Species in Database'] = machine_learning_evaluation.species_present
 
         with open(output_filename, 'w') as output_file:
             json.dump(data, output_file, indent=4)
