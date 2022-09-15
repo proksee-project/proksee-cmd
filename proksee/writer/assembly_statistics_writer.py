@@ -200,7 +200,7 @@ class AssemblyStatisticsWriter:
             data['Heuristic Evaluation'] = {
                 "Status": "not evaluated",
             }
-        
+
         # Species information (always present):
         data['Heuristic Evaluation']['Species in Database'] = species_evaluation.species_present
 
