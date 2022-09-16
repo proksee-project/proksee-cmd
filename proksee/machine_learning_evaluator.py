@@ -67,7 +67,7 @@ class MachineLearningEvaluator(AssemblyEvaluator):
             probability = self.assembly_qc.calculate_probability(self.species.name, n50, num_contigs, l50,
                                                                  assembly_length, gc_content)
             success = True if probability > 0.5 else False
-            report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
+            report = "The probability of the assembly being similar to a curated assembly of the same species: " + str(probability) + "."
 
         else:
             species_present = False
