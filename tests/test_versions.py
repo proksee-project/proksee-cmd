@@ -23,6 +23,7 @@ import proksee.version as version
 
 ENVIRONMENT_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "environment.yml")
 
+
 class TestVersions:
 
     def test_versions_match(self):
