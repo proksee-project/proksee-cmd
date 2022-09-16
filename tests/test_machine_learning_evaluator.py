@@ -39,7 +39,7 @@ class TestMachineLearningEvaluator:
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert not evaluation.success
-        assert (evaluation.report == "The probability of the assembly being a good assembly is: 0.0.")
+        assert (evaluation.report == "The probability of the assembly being similar to a curated assembly of the same species: 0.0.")
 
         # Evaluating fairly bad assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
@@ -50,7 +50,7 @@ class TestMachineLearningEvaluator:
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert not evaluation.success
-        assert (evaluation.report == "The probability of the assembly being a good assembly is: 0.24.")
+        assert (evaluation.report == "The probability of the assembly being similar to a curated assembly of the same species: 0.24.")
 
         # Evaluating fairly good assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
@@ -61,7 +61,7 @@ class TestMachineLearningEvaluator:
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert evaluation.success
-        assert (evaluation.report == "The probability of the assembly being a good assembly is: 0.64.")
+        assert (evaluation.report == "The probability of the assembly being similar to a curated assembly of the same species: 0.64.")
 
         # Evaluating very good assembly
         # num_contigs, n50, n75, l50, l75, gc_content, length
@@ -72,7 +72,7 @@ class TestMachineLearningEvaluator:
         evaluation = evaluator.evaluate(assembly_quality)
 
         assert evaluation.success
-        assert (evaluation.report == "The probability of the assembly being a good assembly is: 0.96.")
+        assert (evaluation.report == "The probability of the assembly being similar to a curated assembly of the same species: 0.96.")
 
     def test_missing_genomic_attributes(self):
         """
