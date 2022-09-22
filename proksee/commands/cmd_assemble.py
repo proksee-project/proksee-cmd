@@ -295,6 +295,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
         resource_specification (ResourceSpecification): the resources that sub-programs should use
         species_name (string): optional; the name of the species being assembled
         platform_name (string): optional; the name of the sequencing platform that generated the reads
+        minimum_contig_length (int): optional; the minimum contig length to use for assembly and analysis
         id_mapping_filename (string) optional; the name of the NCBI ID to taxonomy mapping database file
 
     POST:

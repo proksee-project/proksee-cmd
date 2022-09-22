@@ -87,7 +87,7 @@ class TestExpertSystem:
                                      "refseq_short.csv")
 
         system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
-        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
+        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME, 1000)
         database = AssemblyDatabase(DATABASE_PATH)
 
         strategy = system.create_expert_assembly_strategy(assembly_quality, database)
@@ -109,7 +109,7 @@ class TestExpertSystem:
                                      "refseq_short.csv")
 
         system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
-        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
+        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME, 1000)
         database = AssemblyDatabase(DATABASE_PATH)
 
         strategy = system.create_expert_assembly_strategy(assembly_quality, database)
@@ -131,7 +131,7 @@ class TestExpertSystem:
                                      "refseq_short.csv")
 
         system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
-        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
+        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME, 1000)
         database = AssemblyDatabase(DATABASE_PATH)
 
         strategy = system.create_expert_assembly_strategy(assembly_quality, database)
@@ -153,7 +153,7 @@ class TestExpertSystem:
                                      "refseq_short.csv")
 
         system = ExpertSystem(platform, species, reads, OUTPUT_DIR, RESOURCE_SPECIFICATION)
-        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME)
+        assembly_quality = parse_assembly_quality_from_quast_report(QUAST_FILENAME, 1000)
         database = AssemblyDatabase(DATABASE_PATH)
 
         strategy = system.create_expert_assembly_strategy(assembly_quality, database)

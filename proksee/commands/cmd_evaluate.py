@@ -44,11 +44,13 @@ ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "dat
                 type=click.Path(exists=True, file_okay=True, dir_okay=False))
 @click.option('-s', '--species', required=False, default=None,
               help="The species to assemble. This will override species estimation. Must be spelled correctly.")
+@click.option('--min_contig_length', required=False, default=1000,
+              help="The minimum contig length to include in analysis and output. The default is 1000.")
 @click.option('-o', '--output', required=True,
               type=click.Path(exists=False, file_okay=False,
                               dir_okay=True, writable=True))
 @click.pass_context
-def cli(ctx, contigs, output, species):
+def cli(ctx, contigs, species, min_contig_length, output):
 
     # Check Mash database is installed:
     mash_database_path = config.get(config.MASH_PATH)
@@ -57,11 +59,11 @@ def cli(ctx, contigs, output, species):
         print("Please run 'proksee updatedb' to install the databases!")
         return
 
-    evaluate(contigs, output, mash_database_path, species)
+    evaluate(contigs, output, mash_database_path, species, min_contig_length)
 
 
 def evaluate(contigs_filename, output_directory, mash_database_path,
-             species_name=None, id_mapping_filename=ID_MAPPING_FILENAME):
+             species_name=None, minimum_contig_length=1000, id_mapping_filename=ID_MAPPING_FILENAME):
     """
     The main control flow of the program that evaluates the assembly.
 
@@ -70,6 +72,7 @@ def evaluate(contigs_filename, output_directory, mash_database_path,
         output_directory (string): the location to place all program output and temporary files
         mash_database_path (string): optional; the name of the Mash database
         species_name (string): optional; the name of the species being assembled
+        minimum_contig_length (int): optional; the minimum contig length to consider for analysis
         id_mapping_filename (string) optional; the name of the NCBI ID-to-taxonomy mapping (table) file
 
     POST:
@@ -92,7 +95,7 @@ def evaluate(contigs_filename, output_directory, mash_database_path,
     click.echo("The identified species is: " + str(species.name) + "\n")
 
     # Measure assembly quality statistics:
-    assembly_measurer = AssemblyMeasurer(contigs_filename, output_directory)
+    assembly_measurer = AssemblyMeasurer(contigs_filename, output_directory, minimum_contig_length)
     assembly_quality = assembly_measurer.measure_quality()
 
     # Heuristic evaluation:

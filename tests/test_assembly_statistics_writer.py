@@ -49,9 +49,9 @@ class TestAssemblyStatisticsWriter:
         writer = AssemblyStatisticsWriter(output_directory)
         names = ["test1", "test2"]
 
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        qualities = [AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000),
-                     AssemblyQuality(20, 18000, 10000, 10, 6, 0.52, 50000)]
+        # num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content, length
+        qualities = [AssemblyQuality(10, 1000, 9000, 5000, 5, 3, 0.51, 25000),
+                     AssemblyQuality(20, 1000, 18000, 10000, 10, 6, 0.52, 50000)]
 
         csv_filename = writer.write_csv(names, qualities)
 
@@ -76,6 +76,7 @@ class TestAssemblyStatisticsWriter:
         output_directory = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "temp")
 
+        mimimum_contig_length = 1000
         writer = AssemblyStatisticsWriter(output_directory)
 
         platform = Platform.ILLUMINA
@@ -86,7 +87,7 @@ class TestAssemblyStatisticsWriter:
         assembly_database = AssemblyDatabase(TEST_DATABASE_PATH)
 
         # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000)
+        assembly_quality = AssemblyQuality(10, mimimum_contig_length, 9000, 5000, 5, 3, 0.51, 25000)
 
         # total_reads, total_bases, q20_bases, q30_bases, forward_median_length, reverse_median_length, gc_content
         read_quality = ReadQuality(1000, 30000, 20000, 5000, 150, 140, 0.55)
@@ -141,6 +142,7 @@ class TestAssemblyStatisticsWriter:
             assert (data["Assembly Quality"]["N50"] == 9000)
             assert (data["Assembly Quality"]["L50"] == 5)
             assert (data["Assembly Quality"]["Number of Contigs"] == 10)
+            assert (data["Assembly Quality"]["Minimum Contig Length"] == mimimum_contig_length)
             assert (data["Assembly Quality"]["Assembly Size"] == 25000)
 
             assert (data['Heuristic Evaluation']['Thresholds']["N50 Low Error"] == 142261.85)

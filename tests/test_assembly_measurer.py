@@ -38,7 +38,7 @@ class TestAssemblyMeasurer:
         if not os.path.isdir(output_directory):
             os.mkdir(output_directory)
 
-        measurer = AssemblyMeasurer(contigs_filename, output_directory)
+        measurer = AssemblyMeasurer(contigs_filename, output_directory, 500)
         measurer.measure_quality()
 
         assert os.path.isfile(measurer.quast_report_filename)
@@ -55,7 +55,7 @@ class TestAssemblyMeasurer:
         if not os.path.isdir(output_directory):
             os.mkdir(output_directory)
 
-        measurer = AssemblyMeasurer(missing_filename, output_directory)
+        measurer = AssemblyMeasurer(missing_filename, output_directory, 1000)
 
         with pytest.raises(FileNotFoundError):
             measurer.measure_quality()
@@ -72,7 +72,7 @@ class TestAssemblyMeasurer:
         if not os.path.isdir(output_directory):
             os.mkdir(output_directory)
 
-        measurer = AssemblyMeasurer(bad_filename, output_directory)
+        measurer = AssemblyMeasurer(bad_filename, output_directory, 2000)
 
         with pytest.raises(CalledProcessError):
             measurer.measure_quality()
