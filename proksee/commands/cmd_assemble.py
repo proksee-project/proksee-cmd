@@ -199,12 +199,14 @@ def determine_platform(reads, platform_name=None):
               help="The species to assemble. This will override species estimation. Must be spelled correctly.")
 @click.option('-p', '--platform', required=False, default=None,
               help="The sequencing platform used to generate the reads. 'Illumina', 'Ion Torrent', or 'Pac Bio'.")
+@click.option('--min_contig_length', required=False, default=1000,
+              help="The minimum contig length to include in analysis and output. The default is 1000.")
 @click.option('-t', '--threads', required=False, default=4,
               help="Specifies the number of threads programs in the pipeline should use. The default is 4.")
 @click.option('-m', '--memory', required=False, default=4,
               help="Specifies the amount of memory in gigabytes programs in the pipeline should use. The default is 4")
 @click.pass_context
-def cli(ctx, forward, reverse, output, force, species, platform, threads, memory):
+def cli(ctx, forward, reverse, output, force, species, platform, min_contig_length, threads, memory):
 
     # Check Mash database is installed:
     mash_database_path = config.get(config.MASH_PATH)
@@ -215,7 +217,7 @@ def cli(ctx, forward, reverse, output, force, species, platform, threads, memory
 
     reads = Reads(forward, reverse)
     resource_specification = ResourceSpecification(threads, memory)
-    assemble(reads, output, force, mash_database_path, resource_specification, species, platform)
+    assemble(reads, output, force, mash_database_path, resource_specification, species, platform, min_contig_length)
     cleanup(output)
 
 
@@ -280,7 +282,7 @@ def cleanup(output_directory):
 
 
 def assemble(reads, output_directory, force, mash_database_path, resource_specification,
-             species_name=None, platform_name=None,
+             species_name=None, platform_name=None, minimum_contig_length=1000,
              id_mapping_filename=ID_MAPPING_FILENAME):
     """
     The main control flow of the program that assembles reads.
@@ -354,7 +356,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
         return
 
     # Measure assembly quality statistics:
-    assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory)
+    assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory, minimum_contig_length)
     fast_assembly_quality = assembly_measurer.measure_quality()
 
     # Machine learning evaluation (fast assembly)
@@ -375,21 +377,24 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
     click.echo(output)
 
     # Measure assembly quality:
-    assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory)
+    assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory, minimum_contig_length)
     expert_assembly_quality = assembly_measurer.measure_quality()
 
     # Machine learning evaluation (expert assembly)
     machine_learning_evaluation = machine_learning_evaluator.evaluate(expert_assembly_quality)
     click.echo(machine_learning_evaluation.report)
 
-    # Evaluate assembly quality
-    species_evaluator = SpeciesAssemblyEvaluator(species, assembly_database)
-    species_evaluation = species_evaluator.evaluate_assembly_from_database(expert_assembly_quality)
-    click.echo(species_evaluation.report)
-
+    # NCBI RefSeq Exclusion Criteria Evaluation
+    click.echo("Comparing the assembly against the NCBI RefSeq exclusion criteria:")
     ncbi_evaluator = NCBIAssemblyEvaluator(species, assembly_database)
     ncbi_evaluation = ncbi_evaluator.evaluate_assembly_from_fallback(expert_assembly_quality)
     click.echo(ncbi_evaluation.report)
+
+    # Species-Based Evaluation
+    click.echo("Comparing the assembly to similar assemblies of the same species:")
+    species_evaluator = SpeciesAssemblyEvaluator(species, assembly_database)
+    species_evaluation = species_evaluator.evaluate_assembly_from_database(expert_assembly_quality)
+    click.echo(species_evaluation.report)
 
     # Compare fast and slow assemblies:
     report = compare_assemblies(fast_assembly_quality, expert_assembly_quality)

@@ -21,13 +21,15 @@ import os
 from proksee.assembly_quality import AssemblyQuality
 
 
-def parse_assembly_quality_from_quast_report(quast_filename):
+def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_size):
     """
     Parses a QUAST TSV-format report file and creates an AssemblyQuality object from that information.
 
     PARAMETERS:
 
         quast_filename (str): the filename of the QUAST TSV-format file
+        minimum_contig_length (int): the minimum contig length; this is necessary because the number is
+            used to parse the output of the QUAST report
 
     RETURNS:
 
@@ -35,13 +37,13 @@ def parse_assembly_quality_from_quast_report(quast_filename):
         TSV-format file.
     """
 
-    NUM_CONTIGS = "# contigs (>= 0 bp)"
+    NUM_CONTIGS = "# contigs (>= " + str(minimum_contig_size) + " bp)"
     N50 = "N50"
     N75 = "N75"
     L50 = "L50"
     L75 = "L75"
     GC_CONTENT = "GC (%)"
-    TOTAL_LENGTH = "Total length"
+    TOTAL_LENGTH = "Total length (>= " + str(minimum_contig_size) + " bp)"
 
     report = {}
 
