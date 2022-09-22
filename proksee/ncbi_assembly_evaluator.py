@@ -98,7 +98,7 @@ class NCBIAssemblyEvaluator(HeuristicEvaluator):
         else:
             success = True
             report = "PASS: The number of contigs is acceptable: {}. ".format(num_contigs)
-            report += "The number of contigs lower bound is: {}.".format(REFSEQ_MIN_N50)
+            report += "The number of contigs upper bound is: {}.".format(REFSEQ_MIN_N50)
 
         contigs_evaluation = Evaluation(success, report)
         total_success = total_success and success

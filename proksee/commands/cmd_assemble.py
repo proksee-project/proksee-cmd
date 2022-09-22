@@ -385,7 +385,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
     click.echo(machine_learning_evaluation.report)
 
     # NCBI RefSeq Exclusion Criteria Evaluation
-    click.echo("Comparing the assembly against the NCBI RefSeq exclusion criteria:")
+    click.echo("\nComparing the assembly against the NCBI RefSeq exclusion criteria:\n")
     ncbi_evaluator = NCBIAssemblyEvaluator(species, assembly_database)
     ncbi_evaluation = ncbi_evaluator.evaluate_assembly_from_fallback(expert_assembly_quality)
     click.echo(ncbi_evaluation.report)
