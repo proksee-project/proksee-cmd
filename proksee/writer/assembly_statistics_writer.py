@@ -122,123 +122,123 @@ class AssemblyStatisticsWriter:
         data = {}
 
         data['Version'] = {
-            "Proksee": version,
-            "Model": MODEL_VERSION,
-            "Database": NORM_DATABASE_VERSION,
+            "proksee": version,
+            "model": MODEL_VERSION,
+            "database": NORM_DATABASE_VERSION,
             "fastp": FASTP_VERSION,
-            "SKESA": SKESA_VERSION,
-            "QUAST": QUAST_VERSION,
-            "SPAdes": SPADES_VERSION,
-            "Mash": MASH_VERSION
+            "skesa": SKESA_VERSION,
+            "quast": QUAST_VERSION,
+            "spades": SPADES_VERSION,
+            "mash": MASH_VERSION
         }
 
-        data['Technology'] = str(platform.value)
-        data['Species'] = species.name
+        data['technology'] = str(platform.value)
+        data['species'] = species.name
 
-        data["Reads"] = {
-            "Forward": reads.forward,
-            "Reverse": reads.reverse
+        data["reads"] = {
+            "forward": reads.forward,
+            "reverse": reads.reverse
         }
 
-        data['Read Quality'] = {
-            "Total Reads": read_quality.total_reads,
-            "Total Bases": read_quality.total_bases,
-            "Q20 Bases": read_quality.q20_bases,
-            "Q20 Rate": read_quality.q20_rate,
-            "Q30 Bases": read_quality.q30_bases,
-            "Q30 Rate": read_quality.q30_rate,
-            "GC Content": read_quality.gc_content
+        data['readQuality'] = {
+            "totalReads": read_quality.total_reads,
+            "totalBases": read_quality.total_bases,
+            "q20Bases": read_quality.q20_bases,
+            "q20Rate": read_quality.q20_rate,
+            "q30Bases": read_quality.q30_bases,
+            "q30Rate": read_quality.q30_rate,
+            "gcContent": read_quality.gc_content
         }
 
-        data['Assembly Quality'] = {
-            "N50": assembly_quality.n50,
-            "L50": assembly_quality.l50,
-            "Minimum Contig Length": assembly_quality.minimum_contig_length,
-            "Number of Contigs": assembly_quality.num_contigs,
-            "Assembly Size": assembly_quality.length
+        data['assemblyQuality'] = {
+            "n50": assembly_quality.n50,
+            "l50": assembly_quality.l50,
+            "minContigLength": assembly_quality.minimum_contig_length,
+            "numContigs": assembly_quality.num_contigs,
+            "assemblySize": assembly_quality.length
         }
 
         # Heuristic (Species-based) Evaluation
         # Species Found:
         if species_evaluation.species_present:
-            data['Heuristic Evaluation'] = {
-                "Status": "evaluated",
-                "Evaluation Method": "Species",
-                "Success": species_evaluation.success,
-                "N50 Pass": species_evaluation.n50_evaluation.success,
-                "Contigs Pass": species_evaluation.contigs_evaluation.success,
-                "L50 Pass": species_evaluation.l50_evaluation.success,
-                "Length Pass": species_evaluation.length_evaluation.success
+            data['heuristicEvaluation'] = {
+                "status": "evaluated",
+                "evaluationMethod": "Species",
+                "success": species_evaluation.success,
+                "n50Pass": species_evaluation.n50_evaluation.success,
+                "contigsPass": species_evaluation.contigs_evaluation.success,
+                "l50Pass": species_evaluation.l50_evaluation.success,
+                "lengthPass": species_evaluation.length_evaluation.success
             }
 
             # Thresholds
-            data['Heuristic Evaluation']['Thresholds'] = {
-                "Species Counts": database.get_count(species.name),
-                "N50 Low Error": database.get_n50_quantile(species.name, database.LOW_ERROR_QUANTILE),
-                "N50 Low Warning": database.get_n50_quantile(species.name, database.LOW_WARNING_QUANTILE),
-                "N50 Median": database.get_n50_quantile(species.name, database.MEDIAN),
-                "N50 High Warning": database.get_n50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
-                "N50 High Error": database.get_n50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
-                "L50 Low Error": database.get_l50_quantile(species.name, database.LOW_ERROR_QUANTILE),
-                "L50 Low Warning": database.get_l50_quantile(species.name, database.LOW_WARNING_QUANTILE),
-                "L50 Median": database.get_l50_quantile(species.name, database.MEDIAN),
-                "L50 High Warning": database.get_l50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
-                "L50 High Error": database.get_l50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
-                "Contigs Low Error": database.get_contigs_quantile(species.name, database.LOW_ERROR_QUANTILE),
-                "Contigs Low Warning": database.get_contigs_quantile(species.name, database.LOW_WARNING_QUANTILE),
-                "Contigs Median": database.get_contigs_quantile(species.name, database.MEDIAN),
-                "Contigs High Warning": database.get_contigs_quantile(species.name, database.HIGH_WARNING_QUANTILE),
-                "Contigs High Error": database.get_contigs_quantile(species.name, database.HIGH_ERROR_QUANTILE),
-                "Length Low Error": database.get_length_quantile(species.name, database.LOW_ERROR_QUANTILE),
-                "Length Low Warning": database.get_length_quantile(species.name, database.LOW_WARNING_QUANTILE),
-                "Length Median": database.get_length_quantile(species.name, database.MEDIAN),
-                "Length High Warning": database.get_length_quantile(species.name, database.HIGH_WARNING_QUANTILE),
-                "Length High Error": database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
+            data['heuristicEvaluation']['thresholds'] = {
+                "numAssembliesForSpecies": database.get_count(species.name),
+                "n50LowError": database.get_n50_quantile(species.name, database.LOW_ERROR_QUANTILE),
+                "n50LowWarning": database.get_n50_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "n50Median": database.get_n50_quantile(species.name, database.MEDIAN),
+                "n50HighWarning": database.get_n50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+                "n50HighError": database.get_n50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+                "l50LowError": database.get_l50_quantile(species.name, database.LOW_ERROR_QUANTILE),
+                "l50LowWarning": database.get_l50_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "l50Median": database.get_l50_quantile(species.name, database.MEDIAN),
+                "l50HighWarning": database.get_l50_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+                "l50HighError": database.get_l50_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+                "contigsLowError": database.get_contigs_quantile(species.name, database.LOW_ERROR_QUANTILE),
+                "contigsLowWarning": database.get_contigs_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "contigsMedian": database.get_contigs_quantile(species.name, database.MEDIAN),
+                "contigsHighWarning": database.get_contigs_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+                "contigsHighError": database.get_contigs_quantile(species.name, database.HIGH_ERROR_QUANTILE),
+                "lengthLowError": database.get_length_quantile(species.name, database.LOW_ERROR_QUANTILE),
+                "lengthLowWarning": database.get_length_quantile(species.name, database.LOW_WARNING_QUANTILE),
+                "lengthMedian": database.get_length_quantile(species.name, database.MEDIAN),
+                "lengthHighWarning": database.get_length_quantile(species.name, database.HIGH_WARNING_QUANTILE),
+                "lengthHighError": database.get_length_quantile(species.name, database.HIGH_ERROR_QUANTILE)
             }
 
         # Evaluation not performed:
         else:
-            data['Heuristic Evaluation'] = {
-                "Status": "not evaluated",
+            data['heuristicEvaluation'] = {
+                "status": "not evaluated",
             }
 
         # Species information (always present):
-        data['Heuristic Evaluation']['Species in Database'] = species_evaluation.species_present
+        data['heuristicEvaluation']['speciesInDatabase'] = species_evaluation.species_present
 
         # NCBI Exclusion Evaluation
-        data['NCBI-Fallback Evaluation'] = {
-            "Status": "evaluated",
-            "Success": ncbi_evaluation.success,
-            "N50 Pass": ncbi_evaluation.n50_evaluation.success,
-            "Contigs Pass": ncbi_evaluation.contigs_evaluation.success,
-            "L50 Pass": ncbi_evaluation.l50_evaluation.success,
-            "Length Pass": ncbi_evaluation.length_evaluation.success
+        data['NCBIFallbackEvaluation'] = {
+            "status": "evaluated",
+            "success": ncbi_evaluation.success,
+            "n50Pass": ncbi_evaluation.n50_evaluation.success,
+            "contigsPass": ncbi_evaluation.contigs_evaluation.success,
+            "l50Pass": ncbi_evaluation.l50_evaluation.success,
+            "lengthPass": ncbi_evaluation.length_evaluation.success
         }
 
         # Thresholds
-        data['NCBI-Fallback Evaluation']['Thresholds'] = {
-            "Minimum Length": REFSEQ_MIN_LENGTH,
-            "Minimum N50": REFSEQ_MIN_N50,
-            "Maximum L50": REFSEQ_MAX_L50,
-            "Maximum Contigs": REFSEQ_MAX_CONTIGS
+        data['NCBIFallbackEvaluation']['thresholds'] = {
+            "minLength": REFSEQ_MIN_LENGTH,
+            "minN50": REFSEQ_MIN_N50,
+            "maxL50": REFSEQ_MAX_L50,
+            "maxContigs": REFSEQ_MAX_CONTIGS
         }
 
         # Machine learning-based evaluation:
         if machine_learning_evaluation.species_present:
-            data['Machine Learning Evaluation'] = {
-                "Status": "evaluated",
-                "Success": machine_learning_evaluation.success,
-                "Probability": machine_learning_evaluation.probability,
-                "Report": machine_learning_evaluation.report
+            data['machineLearningEvaluation'] = {
+                "status": "evaluated",
+                "success": machine_learning_evaluation.success,
+                "probability": machine_learning_evaluation.probability,
+                "report": machine_learning_evaluation.report
             }
         # Machine learning evaluation not performed:
         else:
-            data['Machine Learning Evaluation'] = {
-                "Status": "not evaluated",
+            data['machineLearningEvaluation'] = {
+                "status": "not evaluated",
             }
 
         # Species information (always present):
-        data['Machine Learning Evaluation']['Species in Database'] = machine_learning_evaluation.species_present
+        data['machineLearningEvaluation']['SpeciesInDatabase'] = machine_learning_evaluation.species_present
 
         with open(output_filename, 'w') as output_file:
             json.dump(data, output_file, indent=4)
