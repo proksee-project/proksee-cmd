@@ -44,7 +44,7 @@ ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "dat
                 type=click.Path(exists=True, file_okay=True, dir_okay=False))
 @click.option('-s', '--species', required=False, default=None,
               help="The species to assemble. This will override species estimation. Must be spelled correctly.")
-@click.option('--min_contig_length', required=False, default=1000,
+@click.option('--min-contig-length', required=False, default=1000,
               help="The minimum contig length to include in analysis and output. The default is 1000.")
 @click.option('-o', '--output', required=True,
               type=click.Path(exists=False, file_okay=False,

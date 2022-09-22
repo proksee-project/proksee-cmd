@@ -199,7 +199,7 @@ def determine_platform(reads, platform_name=None):
               help="The species to assemble. This will override species estimation. Must be spelled correctly.")
 @click.option('-p', '--platform', required=False, default=None,
               help="The sequencing platform used to generate the reads. 'Illumina', 'Ion Torrent', or 'Pac Bio'.")
-@click.option('--min_contig_length', required=False, default=1000,
+@click.option('--min-contig-length', required=False, default=1000,
               help="The minimum contig length to include in analysis and output. The default is 1000.")
 @click.option('-t', '--threads', required=False, default=4,
               help="Specifies the number of threads programs in the pipeline should use. The default is 4.")
