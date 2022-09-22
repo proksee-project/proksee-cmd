@@ -413,7 +413,8 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
 
     # Move final assembled contigs to the main level of the output directory and rename it.
     contigs_filename = assembler.get_contigs_filename()
-    contigs_new_filename = os.path.join(output_directory, "contigs.fasta")
-    os.rename(contigs_filename, contigs_new_filename)  # moves and renames
+
+    contigs_filtered_filename = os.path.join(output_directory, "contigs.fasta")
+    utilities.filter_spades_contigs_by_length(contigs_filename, contigs_filtered_filename, minimum_contig_length)
 
     click.echo("Complete.\n")

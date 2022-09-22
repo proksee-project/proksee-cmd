@@ -78,3 +78,31 @@ def build_version_message():
                + '\n  Database: {}'.format(NORM_DATABASE_VERSION))
 
     return message
+
+
+def filter_spades_contigs_by_length(input_file_location, output_file_location, minimum_contig_length):
+    """
+    Filters a SPAdes-generated assembly by creating a copy of the contigs file that contains only contigs with a length
+    greater than specified.
+
+    POST:
+        A file named according to the passed output_file_location will be created and contain only SPAdes-generated
+        assembly contigs with lengths >= minimum_contig_length.
+    """
+
+    LENGTH_POSITION = 3  # The SPAdes FASTA record headers look like: ">NODE_1_length_7819_cov_4.681350"
+
+    output_contig_file = open(output_file_location, "w")
+
+    with open(input_file_location) as input_contigs_file:
+        for line in input_contigs_file.readlines():
+            # All the SPAdes contigs are sorted by length.
+            # If we have a new FASTA record and the length isn't long enough, stop writing everything.
+            if line.startswith(">") and not int(line.split("_")[LENGTH_POSITION]) >= minimum_contig_length:
+                output_contig_file.close()
+                break
+            # Otherwise, keep writing.
+            else:
+                output_contig_file.write(line)
+
+    output_contig_file.close()
