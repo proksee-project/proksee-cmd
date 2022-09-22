@@ -21,7 +21,7 @@ import os
 from proksee.assembly_quality import AssemblyQuality
 
 
-def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_size):
+def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_length):
     """
     Parses a QUAST TSV-format report file and creates an AssemblyQuality object from that information.
 
@@ -37,13 +37,13 @@ def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_size
         TSV-format file.
     """
 
-    NUM_CONTIGS = "# contigs (>= " + str(minimum_contig_size) + " bp)"
+    NUM_CONTIGS = "# contigs (>= " + str(minimum_contig_length) + " bp)"
     N50 = "N50"
     N75 = "N75"
     L50 = "L50"
     L75 = "L75"
     GC_CONTENT = "GC (%)"
-    TOTAL_LENGTH = "Total length (>= " + str(minimum_contig_size) + " bp)"
+    TOTAL_LENGTH = "Total length (>= " + str(minimum_contig_length) + " bp)"
 
     report = {}
 
@@ -66,6 +66,7 @@ def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_size
     gc_content = float(report[GC_CONTENT]) / 100.0  # Quast reports as a percentage
     total_length = int(report[TOTAL_LENGTH])
 
-    assembly_quality = AssemblyQuality(num_contigs, n50, n75, l50, l75, gc_content, total_length)
+    assembly_quality = AssemblyQuality(num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content,
+                                       total_length)
 
     return assembly_quality

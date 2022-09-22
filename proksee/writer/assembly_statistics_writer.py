@@ -153,6 +153,7 @@ class AssemblyStatisticsWriter:
         data['Assembly Quality'] = {
             "N50": assembly_quality.n50,
             "L50": assembly_quality.l50,
+            "Minimum Contig Length": assembly_quality.minimum_contig_length,
             "Number of Contigs": assembly_quality.num_contigs,
             "Assembly Size": assembly_quality.length
         }

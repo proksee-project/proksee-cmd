@@ -23,6 +23,7 @@ class AssemblyQuality:
 
     ATTRIBUTES:
         num_contigs (int): the number of contigs in the assembly
+        minimum_contig_length (int): the minimum contig length considered when evaluating the assembly
         n50 (int): the length of shortest contig in the smallest set of contigs needed to cover 50% of the assembly
         n75 (int): the length of shortest contig in the smallest set of contigs needed to cover 75% of the assembly
         l50 (int): the number of contigs in the smallest set of contigs needed to cover 50% of the assembly
@@ -31,12 +32,13 @@ class AssemblyQuality:
         length (int): the total assembly length
     """
 
-    def __init__(self, num_contigs, n50, n75, l50, l75, gc_content, length):
+    def __init__(self, num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content, length):
         """
         Initializes the AssemblyQuality object.
 
         PARAMETERS:
             num_contigs (int): the number of contigs in the assembly
+            minimum_contig_length (int): the minimum contig length considered when evaluating the assembly
             n50 (int): the length of shortest contig in the smallest set of contigs needed to cover 50% of the assembly
             n75 (int): the length of shortest contig in the smallest set of contigs needed to cover 75% of the assembly
             l50 (int): the number of contigs in the smallest set of contigs needed to cover 50% of the assembly
@@ -46,6 +48,7 @@ class AssemblyQuality:
         """
 
         self.num_contigs = num_contigs
+        self.minimum_contig_length = minimum_contig_length
 
         self.n50 = n50
         self.n75 = n75
