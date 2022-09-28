@@ -58,7 +58,7 @@ class MachineLearningEvaluator(AssemblyEvaluator):
         n50 = assembly_quality.n50
         l50 = assembly_quality.l50
         num_contigs = assembly_quality.num_contigs
-        assembly_length = assembly_quality.length
+        assembly_length = assembly_quality.length_filtered
         gc_content = assembly_quality.gc_content
 
         if self.normalized_database.contains(self.species.name):

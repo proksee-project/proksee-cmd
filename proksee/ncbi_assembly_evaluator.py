@@ -74,7 +74,7 @@ class NCBIAssemblyEvaluator(HeuristicEvaluator):
         n50 = assembly_quality.n50
         num_contigs = assembly_quality.num_contigs
         l50 = assembly_quality.l50
-        length = assembly_quality.length
+        length = assembly_quality.length_filtered
 
         total_success = True  # Whether or not all checks pass.
 

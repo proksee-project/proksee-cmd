@@ -49,9 +49,9 @@ class TestAssemblyStatisticsWriter:
         writer = AssemblyStatisticsWriter(output_directory)
         names = ["test1", "test2"]
 
-        # num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content, length
-        qualities = [AssemblyQuality(10, 1000, 9000, 5000, 5, 3, 0.51, 25000),
-                     AssemblyQuality(20, 1000, 18000, 10000, 10, 6, 0.52, 50000)]
+        # num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content, length_unfiltered, length_filtered
+        qualities = [AssemblyQuality(10, 1000, 9000, 5000, 5, 3, 0.51, 25000, 25000),
+                     AssemblyQuality(20, 1000, 18000, 10000, 10, 6, 0.52, 50000, 50000)]
 
         csv_filename = writer.write_csv(names, qualities)
 
@@ -86,8 +86,8 @@ class TestAssemblyStatisticsWriter:
         # assembly database
         assembly_database = AssemblyDatabase(TEST_DATABASE_PATH)
 
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(10, mimimum_contig_length, 9000, 5000, 5, 3, 0.51, 25000)
+        # num_contigs, n50, n75, l50, l75, gc_content, length_unfilted, length_filtered
+        assembly_quality = AssemblyQuality(10, mimimum_contig_length, 9000, 5000, 5, 3, 0.51, 30000, 25000)
 
         # total_reads, total_bases, q20_bases, q30_bases, forward_median_length, reverse_median_length, gc_content
         read_quality = ReadQuality(1000, 30000, 20000, 5000, 150, 140, 0.55)
@@ -143,7 +143,8 @@ class TestAssemblyStatisticsWriter:
             assert (data["assemblyQuality"]["l50"] == 5)
             assert (data["assemblyQuality"]["numContigs"] == 10)
             assert (data["assemblyQuality"]["minContigLength"] == mimimum_contig_length)
-            assert (data["assemblyQuality"]["assemblySize"] == 25000)
+            assert (data["assemblyQuality"]["totalAssemblyLength"] == 30000)
+            assert (data["assemblyQuality"]["filteredAssemblyLength"] == 25000)
 
             assert (data['heuristicEvaluation']['thresholds']["n50LowError"] == 142261.85)
             assert (data['heuristicEvaluation']['thresholds']["n50LowWarning"] == 297362.8)

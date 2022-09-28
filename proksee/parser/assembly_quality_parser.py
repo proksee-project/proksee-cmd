@@ -43,7 +43,8 @@ def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_leng
     L50 = "L50"
     L75 = "L75"
     GC_CONTENT = "GC (%)"
-    TOTAL_LENGTH = "Total length (>= " + str(minimum_contig_length) + " bp)"
+    TOTAL_LENGTH_UNFILTERED = "Total length (>= 0 bp)"
+    TOTAL_LENGTH_FILTERED = "Total length (>= " + str(minimum_contig_length) + " bp)"
 
     report = {}
 
@@ -64,9 +65,10 @@ def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_leng
     l50 = int(report[L50])
     l75 = int(report[L75])
     gc_content = float(report[GC_CONTENT]) / 100.0  # Quast reports as a percentage
-    total_length = int(report[TOTAL_LENGTH])
+    total_length_unfiltered = int(report[TOTAL_LENGTH_UNFILTERED])
+    total_length_filtered = int(report[TOTAL_LENGTH_FILTERED])
 
     assembly_quality = AssemblyQuality(num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content,
-                                       total_length)
+                                       total_length_unfiltered, total_length_filtered)
 
     return assembly_quality

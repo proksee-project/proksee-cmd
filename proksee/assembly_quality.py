@@ -29,10 +29,12 @@ class AssemblyQuality:
         l50 (int): the number of contigs in the smallest set of contigs needed to cover 50% of the assembly
         l75 (int): the number of contigs in the smallest set of contigs needed to cover 75% of the assembly
         gc_content (float): the GC-ratio of the bases in the assembly
-        length (int): the total assembly length
+        length_unfiltered (int): the total assembly length of all contigs
+        length_filtered (int): the total assembly length of contigs larger than "minimum_contig_length"
     """
 
-    def __init__(self, num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content, length):
+    def __init__(self, num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content,
+                 length_unfiltered, length_filtered):
         """
         Initializes the AssemblyQuality object.
 
@@ -44,7 +46,8 @@ class AssemblyQuality:
             l50 (int): the number of contigs in the smallest set of contigs needed to cover 50% of the assembly
             l75 (int): the number of contigs in the smallest set of contigs needed to cover 75% of the assembly
             gc_content (float): the GC-ratio of the bases in the assembly
-            length (int): the total assembly length
+            length_unfiltered (int): the total assembly length of all contigs
+            length_filtered (int): the total assembly length of contigs larger than "minimum_contig_length"
         """
 
         self.num_contigs = num_contigs
@@ -58,4 +61,5 @@ class AssemblyQuality:
 
         self.gc_content = gc_content
 
-        self.length = length
+        self.length_unfiltered = length_unfiltered
+        self.length_filtered = length_filtered
