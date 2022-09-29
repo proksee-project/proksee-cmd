@@ -239,7 +239,7 @@ class AssemblyStatisticsWriter:
             }
 
         # Species information (always present):
-        data['machineLearningEvaluation']['SpeciesInDatabase'] = machine_learning_evaluation.species_present
+        data['machineLearningEvaluation']['speciesInDatabase'] = machine_learning_evaluation.species_present
 
         with open(output_filename, 'w') as output_file:
             json.dump(data, output_file, indent=4)
