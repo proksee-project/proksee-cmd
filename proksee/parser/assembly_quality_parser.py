@@ -37,7 +37,8 @@ def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_leng
         TSV-format file.
     """
 
-    NUM_CONTIGS = "# contigs (>= " + str(minimum_contig_length) + " bp)"
+    NUM_CONTIGS_UNFILTERED = "# contigs (>= 0 bp)"
+    NUM_CONTIGS_FILTERED = "# contigs (>= " + str(minimum_contig_length) + " bp)"
     N50 = "N50"
     N75 = "N75"
     L50 = "L50"
@@ -59,7 +60,8 @@ def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_leng
 
             report[key] = value
 
-    num_contigs = int(report[NUM_CONTIGS])
+    num_contigs_unfiltered = int(report[NUM_CONTIGS_UNFILTERED])
+    num_contigs_filtered = int(report[NUM_CONTIGS_FILTERED])
     n50 = int(report[N50])
     n75 = int(report[N75])
     l50 = int(report[L50])
@@ -68,7 +70,7 @@ def parse_assembly_quality_from_quast_report(quast_filename, minimum_contig_leng
     total_length_unfiltered = int(report[TOTAL_LENGTH_UNFILTERED])
     total_length_filtered = int(report[TOTAL_LENGTH_FILTERED])
 
-    assembly_quality = AssemblyQuality(num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content,
-                                       total_length_unfiltered, total_length_filtered)
+    assembly_quality = AssemblyQuality(num_contigs_unfiltered, num_contigs_filtered, minimum_contig_length,
+                                       n50, n75, l50, l75, gc_content, total_length_unfiltered, total_length_filtered)
 
     return assembly_quality

@@ -41,7 +41,6 @@ class TestAssemblyEvaluator:
         database = AssemblyDatabase(DATABASE_PATH)
         evaluator = SpeciesAssemblyEvaluator(species, database)  # Need to instantiate child class.
 
-        # num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(788, 1001, 4029, 4000, 195, 600, 0.66, 2475580, 2475580)
+        assembly_quality = AssemblyQuality(788, 788, 1001, 4029, 4000, 195, 600, 0.66, 2475580, 2475580)
 
         AssemblyEvaluator.evaluate(evaluator, assembly_quality)

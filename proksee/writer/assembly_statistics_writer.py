@@ -89,7 +89,8 @@ class AssemblyStatisticsWriter:
                 name = names[i]
                 quality = qualities[i]
 
-                row = [name, quality.num_contigs, quality.n50, quality.l50, quality.gc_content, quality.length_filtered]
+                row = [name, quality.num_contigs_filtered, quality.n50, quality.l50,
+                       quality.gc_content, quality.length_filtered]
                 csv_writer.writerow(row)
 
             return output_filename
@@ -153,10 +154,11 @@ class AssemblyStatisticsWriter:
         data['assemblyQuality'] = {
             "n50": assembly_quality.n50,
             "l50": assembly_quality.l50,
-            "minContigLength": assembly_quality.minimum_contig_length,
-            "numContigs": assembly_quality.num_contigs,
-            "totalAssemblyLength": assembly_quality.length_unfiltered,
-            "filteredAssemblyLength": assembly_quality.length_filtered
+            "numContigs": assembly_quality.num_contigs_filtered,
+            "assemblyLength": assembly_quality.length_filtered,
+            "minContigLengthFilter": assembly_quality.minimum_contig_length,
+            "unfilteredNumContigs": assembly_quality.num_contigs_unfiltered,
+            "unfilteredAssemblyLength": assembly_quality.length_unfiltered
         }
 
         # Heuristic (Species-based) Evaluation

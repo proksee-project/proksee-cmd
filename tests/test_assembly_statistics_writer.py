@@ -49,9 +49,8 @@ class TestAssemblyStatisticsWriter:
         writer = AssemblyStatisticsWriter(output_directory)
         names = ["test1", "test2"]
 
-        # num_contigs, minimum_contig_length, n50, n75, l50, l75, gc_content, length_unfiltered, length_filtered
-        qualities = [AssemblyQuality(10, 1000, 9000, 5000, 5, 3, 0.51, 25000, 25000),
-                     AssemblyQuality(20, 1000, 18000, 10000, 10, 6, 0.52, 50000, 50000)]
+        qualities = [AssemblyQuality(10, 8, 1000, 9000, 5000, 5, 3, 0.51, 25000, 25000),
+                     AssemblyQuality(20, 18, 1000, 18000, 10000, 10, 6, 0.52, 50000, 50000)]
 
         csv_filename = writer.write_csv(names, qualities)
 
@@ -63,10 +62,10 @@ class TestAssemblyStatisticsWriter:
             assert row == ["Assembly Name", "Number of Contigs", "N50", "L50", "GC Content", "Length"]
 
             row = next(csv_reader)
-            assert row == ["test1", "10", "9000", "5", "0.51", "25000"]
+            assert row == ["test1", "8", "9000", "5", "0.51", "25000"]
 
             row = next(csv_reader)
-            assert row == ["test2", "20", "18000", "10", "0.52", "50000"]
+            assert row == ["test2", "18", "18000", "10", "0.52", "50000"]
 
     def test_json_writer_valid(self):
         """
@@ -83,11 +82,8 @@ class TestAssemblyStatisticsWriter:
         species = Species("Listeria monocytogenes", 1.0)
         reads = Reads("forward.fastq", "reverse.fastq")
 
-        # assembly database
         assembly_database = AssemblyDatabase(TEST_DATABASE_PATH)
-
-        # num_contigs, n50, n75, l50, l75, gc_content, length_unfilted, length_filtered
-        assembly_quality = AssemblyQuality(10, mimimum_contig_length, 9000, 5000, 5, 3, 0.51, 30000, 25000)
+        assembly_quality = AssemblyQuality(10, 8, mimimum_contig_length, 9000, 5000, 5, 3, 0.51, 30000, 25000)
 
         # total_reads, total_bases, q20_bases, q30_bases, forward_median_length, reverse_median_length, gc_content
         read_quality = ReadQuality(1000, 30000, 20000, 5000, 150, 140, 0.55)
@@ -141,10 +137,11 @@ class TestAssemblyStatisticsWriter:
 
             assert (data["assemblyQuality"]["n50"] == 9000)
             assert (data["assemblyQuality"]["l50"] == 5)
-            assert (data["assemblyQuality"]["numContigs"] == 10)
-            assert (data["assemblyQuality"]["minContigLength"] == mimimum_contig_length)
-            assert (data["assemblyQuality"]["totalAssemblyLength"] == 30000)
-            assert (data["assemblyQuality"]["filteredAssemblyLength"] == 25000)
+            assert (data["assemblyQuality"]["numContigs"] == 8)
+            assert (data["assemblyQuality"]["assemblyLength"] == 25000)
+            assert (data["assemblyQuality"]["minContigLengthFilter"] == mimimum_contig_length)
+            assert (data["assemblyQuality"]["unfilteredNumContigs"] == 10)
+            assert (data["assemblyQuality"]["unfilteredAssemblyLength"] == 30000)
 
             assert (data['heuristicEvaluation']['thresholds']["n50LowError"] == 142261.85)
             assert (data['heuristicEvaluation']['thresholds']["n50LowWarning"] == 297362.8)

@@ -80,7 +80,7 @@ class HeuristicEvaluator(AssemblyEvaluator):
         database = self.assembly_database
         species = self.species
 
-        num_contigs = assembly_quality.num_contigs
+        num_contigs = assembly_quality.num_contigs_filtered
         low_fail = database.get_contigs_quantile(species.name, database.LOW_ERROR_QUANTILE)
         low_warning = database.get_contigs_quantile(species.name, database.LOW_WARNING_QUANTILE)
         high_warning = database.get_contigs_quantile(species.name, database.HIGH_WARNING_QUANTILE)
@@ -208,7 +208,8 @@ def compare_assemblies(assembly_quality1, assembly_quality2):
 
     report = "Changes in assembly statistics:\n"
     report += "N50: {}\n".format(assembly_quality2.n50 - assembly_quality1.n50)
-    report += "Number of Contigs: {}\n".format(assembly_quality2.num_contigs - assembly_quality1.num_contigs)
+    report += "Number of Contigs: {}\n".format(assembly_quality2.num_contigs_filtered -
+                                               assembly_quality1.num_contigs_filtered)
     report += "L50: {}\n".format(assembly_quality2.l50 - assembly_quality1.l50)
     report += "Length: {}\n".format(assembly_quality2.length_filtered - assembly_quality1.length_filtered)
     report += "\n"

@@ -35,7 +35,7 @@ class TestAssemblyQualityParser:
         minimum_contig_length = 1000
         assembly_quality = parse_assembly_quality_from_quast_report(valid_quast_filename, minimum_contig_length)
 
-        assert assembly_quality.num_contigs == 1
+        assert assembly_quality.num_contigs_filtered == 1
         assert assembly_quality.minimum_contig_length == minimum_contig_length
         assert assembly_quality.n50 == 1249
         assert assembly_quality.n75 == 1249
