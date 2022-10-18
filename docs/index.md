@@ -4,9 +4,9 @@ Proksee is a suite of command line tools for performing genome [assembly](tools/
 
 ## Release
 
-v1.0.0a3
+v1.0.0a5
 
-This release adds resource specification and expands the information provided in the assembly information JSON file.
+This release makes improvements to the assembly information output file.
 
 ## Contact
 

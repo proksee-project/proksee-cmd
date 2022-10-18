@@ -57,16 +57,18 @@ class MachineLearningEvaluator(AssemblyEvaluator):
 
         n50 = assembly_quality.n50
         l50 = assembly_quality.l50
-        num_contigs = assembly_quality.num_contigs
-        assembly_length = assembly_quality.length
+        num_contigs = assembly_quality.num_contigs_filtered
+        assembly_length = assembly_quality.length_filtered
         gc_content = assembly_quality.gc_content
 
         if self.normalized_database.contains(self.species.name):
+
             species_present = True
             probability = self.assembly_qc.calculate_probability(self.species.name, n50, num_contigs, l50,
                                                                  assembly_length, gc_content)
             success = True if probability > 0.5 else False
-            report = "The probability of the assembly being a good assembly is: " + str(probability) + "."
+            report = "The probability of the assembly being similar to a curated assembly of the same species: " + \
+                str(probability) + "."
 
         else:
             species_present = False
@@ -74,6 +76,6 @@ class MachineLearningEvaluator(AssemblyEvaluator):
             success = False
             report = "The species is not present in the database."
 
-        evaluation = MachineLearningEvaluation(success, report, probability, species_present)
+        evaluation = MachineLearningEvaluation(success, species_present, probability, report)
 
         return evaluation

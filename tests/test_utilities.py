@@ -45,7 +45,7 @@ class TestUtilities:
 
         species_list = determine_species(input_filenames, database, OUTPUT_DIR,
                                          TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME, species_name)
-        assert(species_list[0] == Species("Escherichia coli", 1.0))
+        assert (species_list[0] == Species("Escherichia coli", 1.0))
 
     def test_determine_species_provided_absent(self):
         """
@@ -65,4 +65,4 @@ class TestUtilities:
         # Tries to find species when name missing:
         # The problem here, is it will find "Unknown", because the test data file isn't large enough
         # to accurately determine the species.
-        assert(species_list[0] == Species("Unknown", 0.0))
+        assert (species_list[0] == Species("Unknown", 0.0))

@@ -19,8 +19,9 @@ import os
 from pathlib import Path
 
 from proksee.assembly_database import AssemblyDatabase
+from proksee.ncbi_assembly_evaluator import NCBIAssemblyEvaluator
 from proksee.assembly_quality import AssemblyQuality
-from proksee.heuristic_evaluator import evaluate_value, compare_assemblies, HeuristicEvaluator
+from proksee.heuristic_evaluator import evaluate_value, compare_assemblies
 from proksee.species import Species
 
 
@@ -118,9 +119,8 @@ class TestHeuristicEvaluator:
         Tests comparison of two assemblies.
         """
 
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        qualities = [AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000),
-                     AssemblyQuality(20, 18000, 10000, 10, 6, 0.52, 50000)]
+        qualities = [AssemblyQuality(10, 8, 1000, 9000, 5000, 5, 3, 0.51, 25000, 25000),
+                     AssemblyQuality(20, 18, 1000, 18000, 10000, 10, 6, 0.52, 50000, 50000)]
 
         report = compare_assemblies(qualities[0], qualities[1])
 
@@ -136,6 +136,7 @@ class TestHeuristicEvaluator:
     def test_evaluate_assembly_from_fallback(self):
         """
         Tests the fallback heuristic evaluation (when the species is not present in the assembly database).
+        This is the NCBI RefSeq exclusion criteria.
         """
 
         DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "proksee", "database",
@@ -143,17 +144,15 @@ class TestHeuristicEvaluator:
         species = Species("not a species", 1.0)
 
         database = AssemblyDatabase(DATABASE_PATH)
-        evaluator = HeuristicEvaluator(species, database)  # Need to instantiate child class.
+        evaluator = NCBIAssemblyEvaluator(species, database)  # Need to instantiate child class.
 
         # Good assembly
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(1000, 6000, 5500, 300, 350, 0.50, 2475580)
+        assembly_quality = AssemblyQuality(1000, 900, 1000, 6000, 5500, 300, 350, 0.50, 2475580, 2475580)
         evaluation = evaluator.evaluate(assembly_quality)
         assert evaluation.success
 
         # Too many contigs
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(10000, 6000, 5500, 300, 350, 0.50, 2475580)
+        assembly_quality = AssemblyQuality(10000, 9000, 1000, 6000, 5500, 300, 350, 0.50, 2475580, 2475580)
         evaluation = evaluator.evaluate(assembly_quality)
         assert not evaluation.success
         assert evaluation.n50_evaluation.success
@@ -162,8 +161,7 @@ class TestHeuristicEvaluator:
         assert evaluation.length_evaluation.success
 
         # N50 too small
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(1000, 1000, 500, 300, 350, 0.50, 2475580)
+        assembly_quality = AssemblyQuality(1000, 900, 1000, 1000, 500, 300, 350, 0.50, 2475580, 2475580)
         evaluation = evaluator.evaluate(assembly_quality)
         assert not evaluation.success
         assert not evaluation.n50_evaluation.success
@@ -172,8 +170,7 @@ class TestHeuristicEvaluator:
         assert evaluation.length_evaluation.success
 
         # L50 too large
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(1000, 6000, 5500, 1000, 2000, 0.50, 2475580)
+        assembly_quality = AssemblyQuality(1000, 900, 1000, 6000, 5500, 1000, 2000, 0.50, 2475580, 2475580)
         evaluation = evaluator.evaluate(assembly_quality)
         assert not evaluation.success
         assert evaluation.n50_evaluation.success
@@ -182,8 +179,7 @@ class TestHeuristicEvaluator:
         assert evaluation.length_evaluation.success
 
         # length too small
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(1000, 6000, 5500, 300, 350, 0.50, 100)
+        assembly_quality = AssemblyQuality(1000, 900, 1000, 6000, 5500, 300, 350, 0.50, 100, 100)
         evaluation = evaluator.evaluate(assembly_quality)
         assert not evaluation.success
         assert evaluation.n50_evaluation.success

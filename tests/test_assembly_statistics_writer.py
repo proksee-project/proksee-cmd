@@ -25,7 +25,7 @@ import pytest
 from pathlib import Path
 
 from proksee.assembly_quality import AssemblyQuality
-from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation, EvaluationType
+from proksee.evaluation import AssemblyEvaluation, Evaluation, MachineLearningEvaluation
 from proksee.platform_identify import Platform
 from proksee.read_quality import ReadQuality
 from proksee.reads import Reads
@@ -49,9 +49,8 @@ class TestAssemblyStatisticsWriter:
         writer = AssemblyStatisticsWriter(output_directory)
         names = ["test1", "test2"]
 
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        qualities = [AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000),
-                     AssemblyQuality(20, 18000, 10000, 10, 6, 0.52, 50000)]
+        qualities = [AssemblyQuality(10, 8, 1000, 9000, 5000, 5, 3, 0.51, 25000, 25000),
+                     AssemblyQuality(20, 18, 1000, 18000, 10000, 10, 6, 0.52, 50000, 50000)]
 
         csv_filename = writer.write_csv(names, qualities)
 
@@ -63,10 +62,10 @@ class TestAssemblyStatisticsWriter:
             assert row == ["Assembly Name", "Number of Contigs", "N50", "L50", "GC Content", "Length"]
 
             row = next(csv_reader)
-            assert row == ["test1", "10", "9000", "5", "0.51", "25000"]
+            assert row == ["test1", "8", "9000", "5", "0.51", "25000"]
 
             row = next(csv_reader)
-            assert row == ["test2", "20", "18000", "10", "0.52", "50000"]
+            assert row == ["test2", "18", "18000", "10", "0.52", "50000"]
 
     def test_json_writer_valid(self):
         """
@@ -76,17 +75,15 @@ class TestAssemblyStatisticsWriter:
         output_directory = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "temp")
 
+        mimimum_contig_length = 1000
         writer = AssemblyStatisticsWriter(output_directory)
 
         platform = Platform.ILLUMINA
         species = Species("Listeria monocytogenes", 1.0)
         reads = Reads("forward.fastq", "reverse.fastq")
 
-        # assembly database
         assembly_database = AssemblyDatabase(TEST_DATABASE_PATH)
-
-        # num_contigs, n50, n75, l50, l75, gc_content, length
-        assembly_quality = AssemblyQuality(10, 9000, 5000, 5, 3, 0.51, 25000)
+        assembly_quality = AssemblyQuality(10, 8, mimimum_contig_length, 9000, 5000, 5, 3, 0.51, 30000, 25000)
 
         # total_reads, total_bases, q20_bases, q30_bases, forward_median_length, reverse_median_length, gc_content
         read_quality = ReadQuality(1000, 30000, 20000, 5000, 150, 140, 0.55)
@@ -105,69 +102,74 @@ class TestAssemblyStatisticsWriter:
         report += l50_evaluation.report
         report += length_evaluation.report
 
-        heuristic_evaluation = AssemblyEvaluation(n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
-                                                  EvaluationType.SPECIES, success, report)
+        species_evaluation = AssemblyEvaluation(success, True,
+                                                n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
+                                                report)
+
+        ncbi_evaluation = AssemblyEvaluation(success, True,
+                                             n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,
+                                             report)
 
         machine_learning_evaluation = MachineLearningEvaluation(
             True,
-            "The probability of the assembly being good is: 1.0",
+            True,
             1.0,
-            True
+            "The probability of the assembly being good is: 1.0"
         )
 
         json_file_location = writer.write_json(platform, species, reads, read_quality, assembly_quality,
-                                               heuristic_evaluation, machine_learning_evaluation, assembly_database)
+                                               species_evaluation, machine_learning_evaluation, ncbi_evaluation,
+                                               assembly_database)
 
         with open(json_file_location) as json_file:
             data = json.load(json_file)
 
-            assert (data["Technology"] == "Illumina")
-            assert (data["Species"] == "Listeria monocytogenes")
+            assert (data["technology"] == "Illumina")
+            assert (data["species"] == "Listeria monocytogenes")
 
-            assert (data["Read Quality"]["Total Reads"] == 1000)
-            assert (data["Read Quality"]["Total Bases"] == 30000)
-            assert (data["Read Quality"]["Q20 Bases"] == 20000)
-            assert (data["Read Quality"]["Q20 Rate"] == pytest.approx(0.67, 0.1))
-            assert (data["Read Quality"]["Q30 Bases"] == 5000)
-            assert (data["Read Quality"]["Q30 Rate"] == pytest.approx(0.17, 0.1))
-            assert (data["Read Quality"]["GC Content"] == pytest.approx(0.55, 0.1))
+            assert (data["readQuality"]["totalReads"] == 1000)
+            assert (data["readQuality"]["totalBases"] == 30000)
+            assert (data["readQuality"]["q20Bases"] == 20000)
+            assert (data["readQuality"]["q20Rate"] == pytest.approx(0.67, 0.1))
+            assert (data["readQuality"]["q30Bases"] == 5000)
+            assert (data["readQuality"]["q30Rate"] == pytest.approx(0.17, 0.1))
+            assert (data["readQuality"]["gcContent"] == pytest.approx(0.55, 0.1))
 
-            assert (data["Assembly Quality"]["N50"] == 9000)
-            assert (data["Assembly Quality"]["L50"] == 5)
-            assert (data["Assembly Quality"]["Number of Contigs"] == 10)
-            assert (data["Assembly Quality"]["Assembly Size"] == 25000)
+            assert (data["assemblyQuality"]["n50"] == 9000)
+            assert (data["assemblyQuality"]["l50"] == 5)
+            assert (data["assemblyQuality"]["numContigs"] == 8)
+            assert (data["assemblyQuality"]["assemblyLength"] == 25000)
+            assert (data["assemblyQuality"]["minContigLengthFilter"] == mimimum_contig_length)
+            assert (data["assemblyQuality"]["unfilteredNumContigs"] == 10)
+            assert (data["assemblyQuality"]["unfilteredAssemblyLength"] == 30000)
 
-            assert (data["Assembly Thresholds"]["N50 Low Error"] == 142261.85)
-            assert (data["Assembly Thresholds"]["N50 Low Warning"] == 297362.8)
-            assert (data["Assembly Thresholds"]["N50 High Warning"] == 546172.8)
-            assert (data["Assembly Thresholds"]["N50 High Error"] == 1461919.65)
+            assert (data['heuristicEvaluation']['thresholds']["n50LowError"] == 142261.85)
+            assert (data['heuristicEvaluation']['thresholds']["n50LowWarning"] == 297362.8)
+            assert (data['heuristicEvaluation']['thresholds']["n50HighWarning"] == 546172.8)
+            assert (data['heuristicEvaluation']['thresholds']["n50HighError"] == 1461919.65)
 
-            assert (data["Assembly Thresholds"]["L50 Low Error"] == 1)
-            assert (data["Assembly Thresholds"]["L50 Low Warning"] == 2)
-            assert (data["Assembly Thresholds"]["L50 High Warning"] == 4)
-            assert (data["Assembly Thresholds"]["L50 High Error"] == 7)
+            assert (data['heuristicEvaluation']['thresholds']["l50LowError"] == 1)
+            assert (data['heuristicEvaluation']['thresholds']["l50LowWarning"] == 2)
+            assert (data['heuristicEvaluation']['thresholds']["l50HighWarning"] == 4)
+            assert (data['heuristicEvaluation']['thresholds']["l50HighError"] == 7)
 
-            assert (data["Assembly Thresholds"]["Contigs Low Error"] == 10)
-            assert (data["Assembly Thresholds"]["Contigs Low Warning"] == 14)
-            assert (data["Assembly Thresholds"]["Contigs High Warning"] == 36)
-            assert (data["Assembly Thresholds"]["Contigs High Error"] == 83)
+            assert (data['heuristicEvaluation']['thresholds']["contigsLowError"] == 10)
+            assert (data['heuristicEvaluation']['thresholds']["contigsLowWarning"] == 14)
+            assert (data['heuristicEvaluation']['thresholds']["contigsHighWarning"] == 36)
+            assert (data['heuristicEvaluation']['thresholds']["contigsHighError"] == 83)
 
-            assert (data["Assembly Thresholds"]["Length Low Error"] == 2861443.65)
-            assert (data["Assembly Thresholds"]["Length Low Warning"] == 2904912)
-            assert (data["Assembly Thresholds"]["Length High Warning"] == 3051700)
-            assert (data["Assembly Thresholds"]["Length High Error"] == 3111649.8)
+            assert (data['heuristicEvaluation']['thresholds']["lengthLowError"] == 2861443.65)
+            assert (data['heuristicEvaluation']['thresholds']["lengthLowWarning"] == 2904912)
+            assert (data['heuristicEvaluation']['thresholds']["lengthHighWarning"] == 3051700)
+            assert (data['heuristicEvaluation']['thresholds']["lengthHighError"] == 3111649.8)
 
-            assert not (data["Heuristic Evaluation"]["Success"])
-            assert (data["Heuristic Evaluation"]["N50 Pass"])
-            assert (data["Heuristic Evaluation"]["N50 Report"] == "The N50 looks good!")
-            assert (data["Heuristic Evaluation"]["Contigs Pass"])
-            assert (data["Heuristic Evaluation"]["Contigs Report"] == "The contigs look good!")
-            assert not (data["Heuristic Evaluation"]["L50 Pass"])
-            assert (data["Heuristic Evaluation"]["L50 Report"] == "The L50 looks bad!")
-            assert not (data["Heuristic Evaluation"]["Length Pass"])
-            assert (data["Heuristic Evaluation"]["Length Report"] == "The length looks bad!")
+            assert not (data["heuristicEvaluation"]["success"])
+            assert (data["heuristicEvaluation"]["n50Pass"])
+            assert (data["heuristicEvaluation"]["contigsPass"])
+            assert not (data["heuristicEvaluation"]["l50Pass"])
+            assert not (data["heuristicEvaluation"]["lengthPass"])
 
-            assert (data["Machine Learning Evaluation"]["Success"])
-            assert (data["Machine Learning Evaluation"]["Probability"] == 1.0)
-            assert (data["Machine Learning Evaluation"]["Report"] ==
+            assert (data["machineLearningEvaluation"]["success"])
+            assert (data["machineLearningEvaluation"]["probability"] == 1.0)
+            assert (data["machineLearningEvaluation"]["report"] ==
                     "The probability of the assembly being good is: 1.0")

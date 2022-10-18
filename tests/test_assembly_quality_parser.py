@@ -32,9 +32,11 @@ class TestAssemblyQualityParser:
         valid_quast_filename = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "report.tsv")
 
-        assembly_quality = parse_assembly_quality_from_quast_report(valid_quast_filename)
+        minimum_contig_length = 1000
+        assembly_quality = parse_assembly_quality_from_quast_report(valid_quast_filename, minimum_contig_length)
 
-        assert assembly_quality.num_contigs == 1
+        assert assembly_quality.num_contigs_filtered == 1
+        assert assembly_quality.minimum_contig_length == minimum_contig_length
         assert assembly_quality.n50 == 1249
         assert assembly_quality.n75 == 1249
         assert assembly_quality.l50 == 1
@@ -49,4 +51,4 @@ class TestAssemblyQualityParser:
             os.path.abspath(__file__)), "data", "missing.file")
 
         with pytest.raises(FileNotFoundError):
-            parse_assembly_quality_from_quast_report(missing_filename)
+            parse_assembly_quality_from_quast_report(missing_filename, 1000)

@@ -36,7 +36,7 @@ class AssemblyMeasurer:
     OUTPUT_FILENAME = "quast.out"
     ERROR_FILENAME = "quast.err"
 
-    def __init__(self, contigs_filename, output_directory):
+    def __init__(self, contigs_filename, output_directory, minimum_contig_length):
         """
         Initializes the AssemblyEvaluator.
 
@@ -44,6 +44,8 @@ class AssemblyMeasurer:
             contigs_filename (str): the filename of the contigs
             output_directory (str): the filename of the run output directory; note that the QUAST output directory will
                 be a subdirectory of this directory
+            minimum_contig_length (int): the minimum contig length considered when evaluating the assembly; contigs
+                smaller than this value will be ignored
         """
 
         QUAST_DIRECTORY_NAME = "quast"
@@ -51,6 +53,8 @@ class AssemblyMeasurer:
 
         self.contigs_filename = contigs_filename
         self.output_directory = output_directory
+        self.minimum_contig_length = minimum_contig_length
+
         self.quast_directory = os.path.join(output_directory, QUAST_DIRECTORY_NAME)
         self.quast_report_filename = os.path.join(self.quast_directory, QUAST_REPORT_TSV)
 
@@ -76,7 +80,8 @@ class AssemblyMeasurer:
         if not os.path.exists(self.contigs_filename):
             raise FileNotFoundError("File not found: " + self.contigs_filename)
 
-        quast_command = "quast " + self.contigs_filename + " -o " + self.quast_directory
+        quast_command = "quast --contig-thresholds 0," + str(self.minimum_contig_length) + " " + \
+                        self.contigs_filename + " -o " + self.quast_directory
         quast_out = open(os.path.join(self.output_directory, self.OUTPUT_FILENAME), "w+")
         quast_err = open(os.path.join(self.output_directory, self.ERROR_FILENAME), "w+")
 
@@ -84,7 +89,8 @@ class AssemblyMeasurer:
             subprocess.check_call(quast_command, shell=True, stdout=quast_out, stderr=quast_err)
             print("Evaluated the quality of the assembled contigs.")
 
-            assembly_quality = parse_assembly_quality_from_quast_report(self.quast_report_filename)
+            assembly_quality = parse_assembly_quality_from_quast_report(self.quast_report_filename,
+                                                                        self.minimum_contig_length)
 
         except subprocess.CalledProcessError as error:
             raise error

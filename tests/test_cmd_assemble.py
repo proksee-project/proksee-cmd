@@ -49,7 +49,8 @@ class TestCmdAssemble:
 
         # Files being tracked:
         assembly_statistics_file = os.path.join(OUTPUT_DIR, "assembly_statistics.csv")
-        contigs_file = os.path.join(OUTPUT_DIR, "contigs.fasta")
+        contigs_file = os.path.join(OUTPUT_DIR, "contigs.all.fasta")
+        contigs_filtered_file = os.path.join(OUTPUT_DIR, "contigs.filtered.fasta")
         quast_file = os.path.join(OUTPUT_DIR, "quast", "report.txt")
         json_file = os.path.join(OUTPUT_DIR, "assembly_info.json")
 
@@ -59,6 +60,9 @@ class TestCmdAssemble:
 
         if os.path.isfile(contigs_file):
             os.remove(contigs_file)
+
+        if os.path.isfile(contigs_filtered_file):
+            os.remove(contigs_filtered_file)
 
         if os.path.isfile(quast_file):
             os.remove(quast_file)
@@ -74,5 +78,6 @@ class TestCmdAssemble:
         # Check that expected files were created:
         assert os.path.isfile(assembly_statistics_file)
         assert os.path.isfile(contigs_file)
+        assert os.path.isfile(contigs_filtered_file)
         assert os.path.isfile(quast_file)
         assert os.path.isfile(json_file)

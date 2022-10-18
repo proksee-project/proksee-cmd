@@ -19,7 +19,8 @@ specific language governing permissions and limitations under the License.
 """
 
 from proksee.assembly_strategy import AssemblyStrategy
-from proksee.heuristic_evaluator import HeuristicEvaluator
+from proksee.species_assembly_evaluator import SpeciesAssemblyEvaluator
+from proksee.ncbi_assembly_evaluator import NCBIAssemblyEvaluator
 from proksee.skesa_assembler import SkesaAssembler
 from proksee.spades_assembler import SpadesAssembler
 
@@ -101,12 +102,12 @@ class ExpertSystem:
 
         if assembly_database.contains(species_name):
 
-            evaluator = HeuristicEvaluator(self.species, assembly_database)
-            evaluation = evaluator.evaluate(assembly_quality)
+            evaluator = SpeciesAssemblyEvaluator(self.species, assembly_database)
+            species_evaluation = evaluator.evaluate_assembly_from_database(assembly_quality)
 
             assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
-            proceed = evaluation.success  # proceed if evaluation was successful
-            strategy = AssemblyStrategy(proceed, assembler, evaluation.report)
+            proceed = species_evaluation.success  # proceed if evaluation was successful
+            strategy = AssemblyStrategy(proceed, assembler, species_evaluation.report)
 
         else:
 
@@ -127,8 +128,8 @@ class ExpertSystem:
             strategy (AssemblyStrategy): a strategy for assembly
         """
 
-        evaluator = HeuristicEvaluator(self.species, assembly_database)
-        evaluation = evaluator.evaluate(assembly_quality)
+        ncbi_evaluator = NCBIAssemblyEvaluator(self.species, assembly_database)
+        evaluation = ncbi_evaluator.evaluate(assembly_quality)
 
         assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
         proceed = evaluation.success  # proceed if evaluation was successful
