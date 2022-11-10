@@ -82,7 +82,7 @@ def update(directory):
 
         click.echo("Downloading database...")
 
-        command = "wget -O " + str(mash_database_path) + " " + MASH_DATABASE_URL
+        command = "wget -O " + str(mash_database_path) + " " + MASH_DATABASE_URL + " --progress=dot:giga"
 
         try:
             subprocess.check_call(command, shell=True)
