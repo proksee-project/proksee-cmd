@@ -169,11 +169,11 @@ class SpeciesEstimator:
         for item in self.input_list:
             command += " " + str(item)
 
-            # Break loop of command line argument is getting too long.
+            # Break loop if command line argument is getting too long.
             # This behaviour is likely fine for now, since the contigs are organized by size
             # and the missed contigs will likely be uninformative.
             if len(command) >= LINE_LENGTH_LIMIT:
-                continue
+                break
 
         command += " | sort -gr > " + output_filepath
 
