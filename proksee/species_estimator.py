@@ -161,15 +161,26 @@ class SpeciesEstimator:
 
         LINE_LENGTH_LIMIT = 3500  # Actually 4095, but smaller here for safety.
 
-        output_filepath = os.path.join(self.output_directory, self.OUTPUT_FILENAME)
+        output_filepath = os.path.abspath(os.path.join(self.output_directory, self.OUTPUT_FILENAME))
+
+        # Find the common directory between all paths:
+        # This is a safer solution than assuming everything will always use the output directory.
+        common_path = os.path.commonpath(self.input_list)
+
+        if os.path.isdir(common_path):
+            common_directory = common_path
+        else:
+            # The common path is NOT a directory.
+            # This can happen when there is only a single input (the common path is the single file's filepath).
+            common_directory = os.path.dirname(common_path)
 
         # create the mash command
+        # Use the full file path for the database file:
         command = "mash screen -i 0 -v 1 " + self.mash_database_filename
 
         for item in self.input_list:
-            # Since we will run relative to the output directory,
-            # grab only the file basename of each input filepath, not the full path:
-            command += " " + str(os.path.basename(item))
+            # Grab the relative path from the common directory of each item:
+            command += " " + str(os.path.relpath(item, start=common_directory))
 
             # Break loop if command line argument is getting too long.
             # This behaviour is likely fine for now, since the contigs are organized by size
@@ -177,13 +188,13 @@ class SpeciesEstimator:
             if len(command) >= LINE_LENGTH_LIMIT:
                 break
 
-        # Basename because we're running realitive to the output directory:
-        command += " | sort -gr > " + os.path.basename(output_filepath)
+        # Use the full filepath for the output file:
+        command += " | sort -gr > " + str(output_filepath)
 
         # run mash
         try:
             # Run relative to the output directory so that filepaths are shorter:
-            subprocess.run(command, capture_output=True, shell=True, encoding="utf8", cwd=self.output_directory)
+            subprocess.run(command, capture_output=True, shell=True, encoding="utf8", cwd=common_directory)
 
         except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to ensure there was output
