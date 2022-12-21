@@ -167,7 +167,9 @@ class SpeciesEstimator:
         command = "mash screen -i 0 -v 1 " + self.mash_database_filename
 
         for item in self.input_list:
-            command += " " + str(item)
+            # Since we will run relative to the output directory,
+            # grab only the file basename of each input filepath, not the full path:
+            command += " " + str(os.path.basename(item))
 
             # Break loop if command line argument is getting too long.
             # This behaviour is likely fine for now, since the contigs are organized by size
@@ -175,13 +177,15 @@ class SpeciesEstimator:
             if len(command) >= LINE_LENGTH_LIMIT:
                 break
 
-        command += " | sort -gr > " + output_filepath
+        # Basename because we're running realitive to the output directory:
+        command += " | sort -gr > " + os.path.basename(output_filepath)
 
         # run mash
         try:
-            subprocess.run(command, capture_output=True, shell=True, encoding="utf8")
+            # Run relative to the output directory so that filepaths are shorter:
+            subprocess.run(command, capture_output=True, shell=True, encoding="utf8", cwd=self.output_directory)
 
         except subprocess.CalledProcessError:
-            pass  # it will be the responsibility of the calling function to insure there was output
+            pass  # it will be the responsibility of the calling function to ensure there was output
 
         return output_filepath

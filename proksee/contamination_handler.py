@@ -68,6 +68,34 @@ class ContaminationHandler:
                 contains an associated, plain-language report
         """
 
+        # The single FASTA file containing multiple contigs (self.contigs_file) is first
+        # split into multiple single contig FASTA files, which are all placed in the
+        # newly created `fasta_directory`.
+        #
+        # Next, a number of chunks / lists are created. The single contig FASTA files
+        # are listed in descending order by contig size and this allows for (usually)
+        # an even distribution of contigs by size into the different chunks / lists.
+        # Single contig FASTA files are added to each chunk by rotating the lists and
+        # added the next largest contig. At the end of this step, there should be a
+        # number of lists equal to the number of chunks, and each list should contain
+        # a similar amount of sequence.
+        #
+        # Finally, the species of each chunk / list is evaluated independently. This
+        # will consider all of the single contig FASTA files in the chunk together
+        # when estimating a species. For example, if there are 5 chunks, each will
+        # contain approxately 1/5th of the total assembly sequence, and each 1/5th
+        # will be given a species estimation. These 5 species estimations will then be
+        # compared with each other and the provided species to see if there's any
+        # discrepancey. What this accomplishes is distributing the entire collection
+        # of assembled contigs into 5 different chunks, estimating the species of
+        # each chunk, and ensuring that each chunk still provides the same species
+        # estimation.
+        #
+        # The motivation is that with that right number of chunks (accounting for
+        # computational time), we should observe if a large contiminate contig has
+        # been assembled, because it will disagree with the other chunks and the
+        # provided species.
+
         CHUNKS = 5
 
         fasta_directory = os.path.join(self.output_directory, self.FASTA_DIRECTORY)
