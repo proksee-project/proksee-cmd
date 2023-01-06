@@ -74,11 +74,10 @@ class SpeciesAssemblyEvaluator(HeuristicEvaluator):
         success = n50_evaluation.success and contigs_evaluation.success \
             and l50_evaluation.success and length_evaluation.success
 
-        report = "\n"
-        report += n50_evaluation.report + "\n"
+        report = n50_evaluation.report + "\n"
         report += contigs_evaluation.report + "\n"
         report += l50_evaluation.report + "\n"
-        report += length_evaluation.report + "\n"
+        report += length_evaluation.report
 
         assembly_evaluation = AssemblyEvaluation(success, True,
                                                  n50_evaluation, contigs_evaluation, l50_evaluation, length_evaluation,

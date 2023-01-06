@@ -211,7 +211,6 @@ def compare_assemblies(assembly_quality1, assembly_quality2):
     report += "Number of Contigs: {}\n".format(assembly_quality2.num_contigs_filtered -
                                                assembly_quality1.num_contigs_filtered)
     report += "L50: {}\n".format(assembly_quality2.l50 - assembly_quality1.l50)
-    report += "Length: {}\n".format(assembly_quality2.length_filtered - assembly_quality1.length_filtered)
-    report += "\n"
+    report += "Length: {}".format(assembly_quality2.length_filtered - assembly_quality1.length_filtered)
 
     return report
