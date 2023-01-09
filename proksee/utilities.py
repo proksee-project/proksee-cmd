@@ -35,6 +35,7 @@ def get_time():
 
     return time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
 
+
 def determine_species(input_filenames, assembly_database, output_directory, mash_database_filename,
                       id_mapping_filename, species_name=None):
     """

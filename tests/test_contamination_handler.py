@@ -43,11 +43,10 @@ class TestContaminationHandler:
 
         assert not evaluation.success
 
-        message = "\n"
-        message += "FAIL: The evaluated contigs don't appear to agree with the species estimation.\n"
+        message = "FAIL: The evaluated contigs don't appear to agree with the species estimation.\n"
         message += "      The estimated species is: " + str(species) + "\n"
         message += "      The following species were estimated from the contigs:\n\n"
-        message += "      " + "Escherichia coli (p=1.00)" + "\n"
+        message += "      " + "Escherichia coli (p=1.00)"
 
         assert (evaluation.report == message)
 
@@ -63,9 +62,8 @@ class TestContaminationHandler:
 
         assert evaluation.success
 
-        message = "\n"
-        message += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
-        message += "      The estimated species is: " + str(species) + "\n"
+        message = "PASS: The evaluated contigs appear to agree with the species estimation.\n"
+        message += "      The estimated species is: " + str(species)
 
         assert (evaluation.report == message)
 
@@ -82,6 +80,6 @@ class TestContaminationHandler:
 
         assert evaluation.success
 
-        message = "\nWARNING: Unable to confidently estimate the species from the assembled contigs.\n"
+        message = "WARNING: Unable to confidently estimate the species from the assembled contigs."
 
         assert (evaluation.report == message)

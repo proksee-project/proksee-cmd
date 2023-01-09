@@ -128,8 +128,7 @@ class TestHeuristicEvaluator:
         expected += "N50: 9000\n"
         expected += "Number of Contigs: 10\n"
         expected += "L50: 5\n"
-        expected += "Length: 25000\n"
-        expected += "\n"
+        expected += "Length: 25000"
 
         assert report == expected
 
