@@ -199,11 +199,11 @@ def determine_platform(reads, platform_name=None):
               help="The species to assemble. This will override species estimation. Must be spelled correctly.")
 @click.option('-p', '--platform', required=False, default=None,
               help="The sequencing platform used to generate the reads. 'Illumina', 'Ion Torrent', or 'Pac Bio'.")
-@click.option('--min-contig-length', required=False, default=1000,
+@click.option('--min-contig-length', required=False, default=1000, type=int,
               help="The minimum contig length to include in analysis and output. The default is 1000.")
-@click.option('-t', '--threads', required=False, default=4,
+@click.option('-t', '--threads', required=False, default=4, type=int,
               help="Specifies the number of threads programs in the pipeline should use. The default is 4.")
-@click.option('-m', '--memory', required=False, default=4,
+@click.option('-m', '--memory', required=False, default=4, type=int,
               help="Specifies the amount of memory in gigabytes programs in the pipeline should use. The default is 4")
 @click.pass_context
 def cli(ctx, forward, reverse, output, force, species, platform, min_contig_length, threads, memory):
