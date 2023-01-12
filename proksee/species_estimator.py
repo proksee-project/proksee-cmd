@@ -18,6 +18,7 @@ specific language governing permissions and limitations under the License.
 
 import os
 import subprocess
+import logging
 
 from proksee.parser.mash_parser import MashParser
 from proksee.species import Species
@@ -182,17 +183,21 @@ class SpeciesEstimator:
         command = ["mash", "screen", "-i", "0", "-v", "1", self.mash_database_filename]
 
         total_filepath_length = 0  # The total length of all characters in all filepaths
+        total_contigs = 0
 
         for item in self.input_list:
             # Grab the relative path from the common directory of each item:
             relpath = str(os.path.relpath(item, start=common_directory))
             total_filepath_length += len(relpath)
+            total_contigs += 1
             command.append(relpath)
 
             # Break loop if the total filepath length is getting too long.
             # This behaviour is likely fine for now, since the contigs are organized by size
             # and the missed contigs will likely be uninformative.
             if total_filepath_length >= LINE_LENGTH_LIMIT:
+                logging.warning("The length of all contig filepaths to be screened by Mash exceeds acceptable limits.")
+                logging.warning("Only the largest " + str(total_contigs) + " contigs will be used.")
                 break
 
         # run mash
@@ -213,7 +218,9 @@ class SpeciesEstimator:
                 if os.path.exists(unsorted_output_filepath):
                     os.remove(unsorted_output_filepath)
 
-        except subprocess.CalledProcessError:
-            pass  # it will be the responsibility of the calling function to ensure there was output
+        except subprocess.CalledProcessError as e:
+            # It will be the responsibility of the calling function to ensure there was output:
+            logging.error("Encontered an error when running Mash.")
+            logging.error(str(e))
 
         return sorted_output_filepath
