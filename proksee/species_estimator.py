@@ -181,14 +181,18 @@ class SpeciesEstimator:
         # Use the full file path for the database file:
         command = ["mash", "screen", "-i", "0", "-v", "1", self.mash_database_filename]
 
+        total_filepath_length = 0  # The total length of all characters in all filepaths
+
         for item in self.input_list:
             # Grab the relative path from the common directory of each item:
-            command.append(str(os.path.relpath(item, start=common_directory)))
+            relpath = str(os.path.relpath(item, start=common_directory))
+            total_filepath_length += len(relpath)
+            command.append(relpath)
 
-            # Break loop if command line argument is getting too long.
+            # Break loop if the total filepath length is getting too long.
             # This behaviour is likely fine for now, since the contigs are organized by size
             # and the missed contigs will likely be uninformative.
-            if len(command) >= LINE_LENGTH_LIMIT:
+            if total_filepath_length >= LINE_LENGTH_LIMIT:
                 break
 
         # run mash
@@ -202,11 +206,12 @@ class SpeciesEstimator:
                                stdout=unsorted_output_file, stderr=NULL)
 
                 # Sort the output:
-                subprocess.run(["sort", "-gr", str(unsorted_output_file)], shell=False, encoding="utf8",
+                subprocess.run(["sort", "-gr", str(unsorted_output_filepath)], shell=False, encoding="utf8",
                                stdout=sorted_output_file, stderr=NULL)
 
                 # Remove the unsorted file:
-                os.remove(unsorted_output_filepath)
+                if os.path.exists(unsorted_output_filepath):
+                    os.remove(unsorted_output_filepath)
 
         except subprocess.CalledProcessError:
             pass  # it will be the responsibility of the calling function to ensure there was output
