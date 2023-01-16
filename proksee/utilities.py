@@ -19,12 +19,21 @@ specific language governing permissions and limitations under the License.
 """
 
 import click
+import time
 
 from proksee import __version__ as version
 from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 
 from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
+
+
+def get_time():
+    """
+    Returns the current time as a formatted string.
+    """
+
+    return time.strftime("%Y/%m/%d %H:%M:%S", time.localtime())
 
 
 def determine_species(input_filenames, assembly_database, output_directory, mash_database_filename,
@@ -48,14 +57,17 @@ def determine_species(input_filenames, assembly_database, output_directory, mash
 
     if species_name:
         if assembly_database.contains(species_name):
-            click.echo("\nThe species '" + str(species_name) + "' was recognized.")
+            click.echo("\n" + get_time())
+            click.echo("The species '" + str(species_name) + "' was recognized.")
             species_list = [Species(species_name, 1.0)]
 
         else:
-            click.echo("\nThe species name '" + str(species_name) + "' is unrecognized.")
+            click.echo("\n" + get_time())
+            click.echo("The species name '" + str(species_name) + "' is unrecognized.")
 
     if species_list is None:
-        click.echo("\nAttempting to identify the species from the input.")
+        click.echo("\n" + get_time())
+        click.echo("Attempting to identify the species from the input.")
 
         species_estimator = SpeciesEstimator(input_filenames, output_directory, mash_database_filename,
                                              id_mapping_filename)

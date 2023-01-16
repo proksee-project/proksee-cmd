@@ -1,5 +1,5 @@
 """
-Copyright Government of Canada 2020
+Copyright Government of Canada 2020-2022
 
 Written by:
 
@@ -29,6 +29,8 @@ from pathlib import Path
 from shutil import rmtree
 
 from proksee import utilities
+from proksee.utilities import get_time
+
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
@@ -66,11 +68,13 @@ def report_valid_fastq(valid):
         program's output.
     """
 
+    output = get_time() + "\n"
+
     if not valid:
-        output = "One or both of the reads are not in FASTQ format."
+        output += "One or both of the reads are not in FASTQ format."
 
     else:
-        output = "The reads appear to be formatted correctly."
+        output += "The reads appear to be formatted correctly."
 
     click.echo(output)
 
@@ -103,6 +107,7 @@ def report_species(species_list):
     """
 
     species = species_list[0]
+    click.echo("\n" + get_time())
     click.echo("SPECIES: " + str(species))
 
     if len(species_list) > 1:
@@ -113,8 +118,6 @@ def report_species(species_list):
 
     if species.name == "Unknown":  # A species could not be determined.
         click.echo("\nWARNING: A species could not be determined with high confidence from the input data.")
-
-    click.echo("")  # Blank line
 
 
 def report_strategy(strategy):
@@ -131,7 +134,7 @@ def report_strategy(strategy):
     click.echo(strategy.report)
 
     if not strategy.proceed:
-        click.echo("The assembly was unable to proceed.\n")
+        click.echo("\nThe assembly was unable to proceed.")
 
 
 def report_contamination(evaluation):
@@ -145,10 +148,11 @@ def report_contamination(evaluation):
         The evaluation of observed contamination will be written to output.
     """
 
+    click.echo("\n" + get_time())
     click.echo(evaluation.report)
 
     if not evaluation.success:
-        click.echo("The assembly was unable to proceed.\n")
+        click.echo("\nThe assembly was unable to proceed.")
 
 
 def determine_platform(reads, platform_name=None):
@@ -169,14 +173,17 @@ def determine_platform(reads, platform_name=None):
         platform = identify_name(platform_name)
 
         if platform is Platform.UNIDENTIFIABLE:
-            click.echo("\nThe platform name '" + str(platform_name) + "' is unrecognized.")
+            click.echo("\n" + get_time())
+            click.echo("The platform name '" + str(platform_name) + "' is unrecognized.")
             click.echo("Please see the help message for valid platform names.")
 
         else:
-            click.echo("\nThe platform name '" + str(platform_name) + "' was recognized.")
+            click.echo("\n" + get_time())
+            click.echo("The platform name '" + str(platform_name) + "' was recognized.")
 
     if platform is Platform.UNIDENTIFIABLE:
-        click.echo("\nAttempting to identify the sequencing platform from the reads.")
+        click.echo("\n" + get_time())
+        click.echo("Attempting to identify the sequencing platform from the reads.")
 
         platform_identifier = PlatformIdentifier(reads)
         platform = platform_identifier.identify()
@@ -303,6 +310,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
         could not continue will be written to standard output.
     """
 
+    click.echo("\n" + get_time())
     click.echo(utilities.build_version_message() + "\n")
 
     # Make output directory:
@@ -337,6 +345,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
     # Determine a fast assembly strategy:
     expert = ExpertSystem(platform, species, filtered_reads, output_directory, resource_specification)
     fast_strategy = expert.create_fast_assembly_strategy(read_quality)
+    click.echo("\n" + get_time())
     report_strategy(fast_strategy)
 
     if not fast_strategy.proceed and not force:
@@ -345,6 +354,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
     # Perform a fast assembly:
     assembler = fast_strategy.assembler
     output = assembler.assemble()
+    click.echo("\n" + get_time())
     click.echo(output)
 
     # Check for contamination at the contig level:
@@ -358,20 +368,25 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
 
     # Measure assembly quality statistics:
     assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory, minimum_contig_length)
+    click.echo("\n" + get_time())
     fast_assembly_quality = assembly_measurer.measure_quality()
 
     # Machine learning evaluation (fast assembly)
     machine_learning_evaluator = MachineLearningEvaluator(species)
     evaluation = machine_learning_evaluator.evaluate(fast_assembly_quality)
+
+    click.echo("\n" + get_time())
     click.echo(evaluation.report)
 
     # Expert assembly:
     expert_strategy = expert.create_expert_assembly_strategy(fast_assembly_quality, assembly_database)
+    click.echo("\n" + get_time())
     report_strategy(expert_strategy)
 
     if not expert_strategy.proceed and not force:
         return
 
+    click.echo("\n" + get_time())
     click.echo("Performing expert assembly.")
     assembler = expert_strategy.assembler
     output = assembler.assemble()
@@ -383,15 +398,18 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
 
     # Machine learning evaluation (expert assembly)
     machine_learning_evaluation = machine_learning_evaluator.evaluate(expert_assembly_quality)
+    click.echo("\n" + get_time())
     click.echo(machine_learning_evaluation.report)
 
     # NCBI RefSeq Exclusion Criteria Evaluation
-    click.echo("\nComparing the assembly against the NCBI RefSeq exclusion criteria:\n")
+    click.echo("\n" + get_time())
+    click.echo("Comparing the assembly against the NCBI RefSeq exclusion criteria:\n")
     ncbi_evaluator = NCBIAssemblyEvaluator(species, assembly_database)
     ncbi_evaluation = ncbi_evaluator.evaluate_assembly_from_fallback(expert_assembly_quality)
     click.echo(ncbi_evaluation.report)
 
     # Species-Based Evaluation
+    click.echo("\n" + get_time())
     click.echo("Comparing the assembly to similar assemblies of the same species:")
     species_evaluator = SpeciesAssemblyEvaluator(species, assembly_database)
     species_evaluation = species_evaluator.evaluate_assembly_from_database(expert_assembly_quality)
@@ -399,6 +417,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
 
     # Compare fast and slow assemblies:
     report = compare_assemblies(fast_assembly_quality, expert_assembly_quality)
+    click.echo("\n" + get_time())
     click.echo(report)
 
     # Write CSV assembly statistics summary:
@@ -420,4 +439,5 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
     contigs_filtered_filename = os.path.join(output_directory, "contigs.filtered.fasta")
     utilities.filter_spades_contigs_by_length(contigs_new_filename, contigs_filtered_filename, minimum_contig_length)
 
+    click.echo("\n" + get_time())
     click.echo("Complete.\n")

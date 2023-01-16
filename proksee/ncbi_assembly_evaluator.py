@@ -132,7 +132,7 @@ class NCBIAssemblyEvaluator(HeuristicEvaluator):
         full_report = n50_evaluation.report + "\n"
         full_report += contigs_evaluation.report + "\n"
         full_report += l50_evaluation.report + "\n"
-        full_report += length_evaluation.report + "\n"
+        full_report += length_evaluation.report
 
         species_present = True if self.assembly_database.contains(self.species.name) else False
 
