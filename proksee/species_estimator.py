@@ -176,7 +176,9 @@ class SpeciesEstimator:
         else:
             # The common path is NOT a directory.
             # This can happen when there is only a single input (the common path is the single file's filepath).
-            common_directory = os.path.dirname(common_path)
+            # We need to take the absolute path first, because some relative paths (ex: "contigs.fa") will return
+            # an empty string for the dirname.
+            common_directory = os.path.dirname(os.path.abspath(common_path))
 
         # create the mash command
         # Use the full file path for the database file:
