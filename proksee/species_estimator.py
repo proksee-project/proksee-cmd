@@ -98,10 +98,9 @@ class SpeciesEstimator:
         self.mash_database_filename = mash_database_filename
         self.id_mapping_filename = id_mapping_filename
 
-    def estimate_major_species(self):
+    def estimate_major_species_from_reads(self):
         """
-        Estimates the major species present in the input data. The input data will need to be in a form similar to
-        sequencing reads (i.e. have multiplicity, or depth of coverage). If this function returns more than one "major"
+        Estimates the major species present in the reads. If this function returns more than one "major"
         species, then it is possible there is major contamination in the input data.
 
         RETURNS
@@ -113,20 +112,30 @@ class SpeciesEstimator:
         MIN_IDENTITY = 0.90
         MIN_MULTIPLICITY = 5
 
-        mash_filename = self.run_mash()
-        mash_parser = MashParser(self.id_mapping_filename)
-        estimations = mash_parser.parse_estimations(mash_filename)
+        species = self.estimate_species(MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+        return species
 
-        species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+    def estimate_major_species_from_assembly(self):
+        """
+        Estimates the major species present in the assembly (contigs). If this function returns more than one "major"
+        species, then it is possible there is major contamination in the input data.
 
-        if len(species) == 0:
-            species.append(Species(Species.UNKNOWN, 0.0))
+        RETURNS
+            species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
+                and highest covered; will contain an "Unknown" species if no major species was found
+        """
 
+        MIN_SHARED_FRACTION = 0.80
+        MIN_IDENTITY = 0.90
+        MIN_MULTIPLICITY = 1  # Assemblies should have a multiplicity of 1.
+
+        species = self.estimate_species(MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
         return species
 
     def estimate_all_species(self):
         """
-        Estimates all the species present in the input data, with only minimal filtering for noise.
+        Estimates all the species present in the input data (reads or assembled contigs), with only minimal filtering
+        for noise.
 
         RETURNS
             species (List(Species)): a list of all estimated species, sorted in descending order of most complete
@@ -137,11 +146,23 @@ class SpeciesEstimator:
         MIN_IDENTITY = 0
         MIN_MULTIPLICITY = 1
 
+        species = self.estimate_species(MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+        return species
+
+    def estimate_species(self, min_shared_fraction, min_identity, min_multiplicity):
+        """
+        Estimates the species present in the input data according the specified Mash parameters.
+
+        RETURNS
+            species (List(Species)): a list of all estimated species, sorted in descending order of most complete
+                and highest covered; will contain an "Unknown" species if no species were found
+        """
+
         mash_filename = self.run_mash()
         mash_parser = MashParser(self.id_mapping_filename)
         estimations = mash_parser.parse_estimations(mash_filename)
 
-        species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+        species = estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity)
 
         if len(species) == 0:
             species.append(Species(Species.UNKNOWN, 0.0))

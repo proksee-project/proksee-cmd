@@ -26,11 +26,18 @@ from proksee.database.version import MODEL_VERSION, NORM_DATABASE_VERSION
 from proksee.species import Species
 from proksee.species_estimator import SpeciesEstimator
 
+from enum import Enum
 
-def determine_species(input_filenames, assembly_database, output_directory, mash_database_filename,
-                      id_mapping_filename, species_name=None):
+
+class InputType(Enum):
+    READS = "Reads"
+    ASSEMBLY = "Assembly"
+
+
+def determine_major_species(input_filenames, assembly_database, output_directory, mash_database_filename,
+                            id_mapping_filename, input_type, species_name=None):
     """
-    Attempts to determine the species in the input (reads or contigs).
+    Attempts to determine the species in the input (reads or assembly).
 
     ARGUMENTS:
         input_filenames (List(string)): the inputs (filenames) from which to determine the species from
@@ -38,6 +45,7 @@ def determine_species(input_filenames, assembly_database, output_directory, mash
         output_directory (string): the location of the output directory for placing temporary output
         mash_database_filename (string): the filename of the Mash sketch (database) file
         id_mapping_filename (string): the filename of the NCBI ID-to-taxonomy mapping file
+        input_type (InputType): InputType.READS or InputType.ASSEMBLY
         species_name (string): optional; the scientific name of the species
 
     RETURNS:
@@ -55,11 +63,15 @@ def determine_species(input_filenames, assembly_database, output_directory, mash
             click.echo("\nThe species name '" + str(species_name) + "' is unrecognized.")
 
     if species_list is None:
-        click.echo("\nAttempting to identify the species from the input.")
-
         species_estimator = SpeciesEstimator(input_filenames, output_directory, mash_database_filename,
                                              id_mapping_filename)
-        species_list = species_estimator.estimate_major_species()
+        if input_type == InputType.READS:
+            click.echo("\nAttempting to identify the species from the reads.")
+            species_list = species_estimator.estimate_major_species_from_reads()
+
+        elif input_type == InputType.ASSEMBLY:
+            click.echo("\nAttempting to identify the species from the assembly.")
+            species_list = species_estimator.estimate_major_species_from_assembly()
 
     return species_list
 

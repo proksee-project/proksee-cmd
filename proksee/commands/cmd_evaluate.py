@@ -24,6 +24,7 @@ import os
 from pathlib import Path
 
 from proksee import utilities
+from proksee.utilities import InputType
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
@@ -89,8 +90,9 @@ def evaluate(contigs_filename, output_directory, mash_database_path,
     assembly_database = AssemblyDatabase(DATABASE_PATH)
 
     # Estimate species
-    species_list = utilities.determine_species([contigs_filename], assembly_database, output_directory,
-                                               mash_database_path, id_mapping_filename, species_name)
+    species_list = utilities.determine_major_species([contigs_filename], assembly_database, output_directory,
+                                                     mash_database_path, id_mapping_filename, InputType.ASSEMBLY,
+                                                     species_name)
     species = species_list[0]
     click.echo("The identified species is: " + str(species.name) + "\n")
 

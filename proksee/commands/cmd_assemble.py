@@ -29,6 +29,7 @@ from pathlib import Path
 from shutil import rmtree
 
 from proksee import utilities
+from proksee.utilities import InputType
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.contamination_handler import ContaminationHandler
@@ -329,8 +330,9 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
 
     # Estimate species
     filtered_filenames = filtered_reads.get_file_locations()
-    species_list = utilities.determine_species(filtered_filenames, assembly_database, output_directory,
-                                               mash_database_path, id_mapping_filename, species_name)
+    species_list = utilities.determine_major_species(filtered_filenames, assembly_database, output_directory,
+                                                     mash_database_path, id_mapping_filename, InputType.READS,
+                                                     species_name)
     species = species_list[0]
     report_species(species_list)
 
