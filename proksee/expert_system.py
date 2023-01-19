@@ -76,10 +76,10 @@ class ExpertSystem:
             proceed = False
 
             report += "The read quality is too low.\n"
-            report += "The rate of Q20 bases is: " + str(read_quality.q20_rate) + "\n"
+            report += "The rate of Q20 bases is: " + str(read_quality.q20_rate)
 
         else:
-            report += "The read quality is acceptable.\n"
+            report += "The read quality is acceptable."
 
         assembler = SkesaAssembler(self.reads, self.output_directory, self.resource_specification)
 
