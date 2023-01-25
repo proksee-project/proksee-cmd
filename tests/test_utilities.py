@@ -22,6 +22,7 @@ from pathlib import Path
 from proksee.assembly_database import AssemblyDatabase
 from proksee.species import Species
 from proksee.utilities import InputType, determine_major_species
+from proksee.resource_specification import ResourceSpecification
 
 INPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "data")
 OUTPUT_DIR = os.path.join(Path(__file__).parent.absolute(), "output")
@@ -41,11 +42,12 @@ class TestUtilities:
 
         input_filenames = [os.path.join(INPUT_DIR, "ecoli_mini.fasta")]
         database = AssemblyDatabase(DATABASE_PATH)
+        resource_specification = ResourceSpecification(4, 4)
         species_name = "Escherichia coli"
 
         species_list = determine_major_species(input_filenames, database, OUTPUT_DIR,
                                                TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
-                                               InputType.ASSEMBLY, species_name)
+                                               InputType.ASSEMBLY, resource_specification, species_name)
         assert (species_list[0] == Species("Escherichia coli", 1.0))
 
     def test_determine_species_provided_absent(self):
@@ -58,11 +60,12 @@ class TestUtilities:
 
         input_filenames = [os.path.join(INPUT_DIR, "ecoli_mini.fasta")]
         database = AssemblyDatabase(DATABASE_PATH)
+        resource_specification = ResourceSpecification(4, 4)
         species_name = "TYPO! Escherichia coli"
 
         species_list = determine_major_species(input_filenames, database, OUTPUT_DIR,
                                                TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
-                                               InputType.ASSEMBLY, species_name)
+                                               InputType.ASSEMBLY, resource_specification, species_name)
 
         # Tries to find species when name missing:
         # The problem here, is it will find "Unknown", because the test data file isn't large enough

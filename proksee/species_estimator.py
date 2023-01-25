@@ -78,11 +78,13 @@ class SpeciesEstimator:
         output_directory (str): the directory to use for output
         mash_database_filename (str): the filename of the Mash database
         id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
+        resource_specification (ResourceSpecification): the computational resources available
     """
 
     OUTPUT_FILENAME = "mash.o"
 
-    def __init__(self, input_list, output_directory, mash_database_filename, id_mapping_filename):
+    def __init__(self, input_list, output_directory, mash_database_filename, id_mapping_filename,
+                 resource_specification):
         """
         Initializes the species estimator.
 
@@ -91,12 +93,14 @@ class SpeciesEstimator:
             output_directory (str): the directory to use for program output
             mash_database_filename (str): the filename of the Mash database
             id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
+            resource_specification (ResourceSpecification): the computational resources available
         """
 
         self.input_list = [i for i in input_list if i]  # remove all "None" inputs
         self.output_directory = output_directory
         self.mash_database_filename = mash_database_filename
         self.id_mapping_filename = id_mapping_filename
+        self.resource_specification = resource_specification
 
     def estimate_major_species_from_reads(self):
         """
@@ -203,7 +207,8 @@ class SpeciesEstimator:
 
         # create the mash command
         # Use the full file path for the database file:
-        command = ["mash", "screen", "-i", "0", "-v", "1", self.mash_database_filename]
+        threads = self.resource_specification.threads
+        command = ["mash", "screen", "-p", str(threads), "-i", "0", "-v", "1", self.mash_database_filename]
 
         total_filepath_length = 0  # The total length of all characters in all filepaths
         total_contigs = 0

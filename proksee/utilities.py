@@ -35,7 +35,7 @@ class InputType(Enum):
 
 
 def determine_major_species(input_filenames, assembly_database, output_directory, mash_database_filename,
-                            id_mapping_filename, input_type, species_name=None):
+                            id_mapping_filename, input_type, resource_specification, species_name=None):
     """
     Attempts to determine the species in the input (reads or assembly).
 
@@ -46,6 +46,7 @@ def determine_major_species(input_filenames, assembly_database, output_directory
         mash_database_filename (string): the filename of the Mash sketch (database) file
         id_mapping_filename (string): the filename of the NCBI ID-to-taxonomy mapping file
         input_type (InputType): InputType.READS or InputType.ASSEMBLY
+        resource_specification (ResourceSpecification): the computational resources that can be used
         species_name (string): optional; the scientific name of the species
 
     RETURNS:
@@ -64,7 +65,7 @@ def determine_major_species(input_filenames, assembly_database, output_directory
 
     if species_list is None:
         species_estimator = SpeciesEstimator(input_filenames, output_directory, mash_database_filename,
-                                             id_mapping_filename)
+                                             id_mapping_filename, resource_specification)
         if input_type == InputType.READS:
             click.echo("\nAttempting to identify the species from the reads.")
             species_list = species_estimator.estimate_major_species_from_reads()

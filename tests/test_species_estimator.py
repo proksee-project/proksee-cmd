@@ -23,6 +23,7 @@ from pathlib import Path
 
 from proksee.parser.mash_parser import MashParser
 from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
+from proksee.resource_specification import ResourceSpecification
 
 TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
 TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
@@ -58,9 +59,11 @@ class TestSpeciesEstimator:
             os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
         output_directory = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "temp")
+        resource_specification = ResourceSpecification(4, 4)
 
         estimator = SpeciesEstimator([input_filename], output_directory,
-                                     TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
+                                     TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
+                                     resource_specification)
         species_list = estimator.estimate_all_species()
 
         top_species = species_list[0]
@@ -78,11 +81,13 @@ class TestSpeciesEstimator:
             os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
         output_directory = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "temp")
+        resource_specification = ResourceSpecification(4, 4)
 
         # Creating the estimator with 500 copies of the same input file.
         # This will result in an argument list that is too many characters long. (i.e. >3500)
         estimator = SpeciesEstimator([input_filename] * 500, output_directory,
-                                     TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
+                                     TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
+                                     resource_specification)
         species_list = estimator.estimate_all_species()
 
         top_species = species_list[0]

@@ -36,11 +36,13 @@ class ContaminationHandler:
             subdirectory of the program output directory
         mash_database_filename (str): the filename of the Mash sketch (database)
         id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
+        resource_specification (ResourceSpecification): the computational resources available
     """
 
     FASTA_DIRECTORY = "fasta"
 
-    def __init__(self, species, contigs_file, output_directory, mash_database_filename, id_mapping_filename):
+    def __init__(self, species, contigs_file, output_directory, mash_database_filename, id_mapping_filename,
+                 resource_specification):
         """
         Initializes the contamination handler.
 
@@ -50,6 +52,7 @@ class ContaminationHandler:
             output_directory (str): the output directory for the program
             mash_database_filename (str): the filename of the Mash sketch (database)
             id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
+            resource_specification (ResourceSpecification): the computational resources available
         """
 
         self.species = species
@@ -57,6 +60,7 @@ class ContaminationHandler:
         self.output_directory = output_directory
         self.mash_database_filename = mash_database_filename
         self.id_mapping_filename = id_mapping_filename
+        self.resource_specification = resource_specification
 
     def estimate_contamination(self):
         """
@@ -124,7 +128,8 @@ class ContaminationHandler:
         for i in range(len(contig_filenames)):
 
             species_estimator = SpeciesEstimator(contig_filenames[i], self.output_directory,
-                                                 self.mash_database_filename, self.id_mapping_filename)
+                                                 self.mash_database_filename, self.id_mapping_filename,
+                                                 self.resource_specification)
             species_list = species_estimator.estimate_all_species()
 
             contig_species.append(species_list[0])  # Select the estimation with the most evidence
