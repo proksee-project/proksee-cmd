@@ -154,7 +154,7 @@ class ContaminationHandler:
         sorted_species = list(set(species_list))  # Convert to set and back to list to find only unique species
         sorted_species.sort(key=lambda item: item.confidence, reverse=True)  # "item" is an Species
 
-        report = "\n"
+        report = ""
 
         # Species couldn't be estimated from reads:
         if self.species.name == Species.UNKNOWN:
@@ -171,13 +171,13 @@ class ContaminationHandler:
         # Species was estimated from reads, but couldn't be estimated from contigs:
         elif len(sorted_species) == 1 and species_list[0].name == Species.UNKNOWN:
             success = True
-            report += "WARNING: Unable to confidently estimate the species from the assembled contigs.\n"
+            report += "WARNING: Unable to confidently estimate the species from the assembled contigs."
 
         # Species was estimated from reads, and estimation from contigs matches:
         elif len(sorted_species) == 1 and species_list[0] == self.species:
             success = True
             report += "PASS: The evaluated contigs appear to agree with the species estimation.\n"
-            report += "      The estimated species is: " + str(self.species) + "\n"
+            report += "      The estimated species is: " + str(self.species)
 
         # Species was estimated from reads, but at least one estimation does not match:
         else:
@@ -187,6 +187,6 @@ class ContaminationHandler:
             report += "      The following species were estimated from the contigs:\n\n"
 
             for species in sorted_species:
-                report += "      " + str(species) + "\n"
+                report += "      " + str(species)
 
         return Evaluation(success, report)

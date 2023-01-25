@@ -25,6 +25,8 @@ from pathlib import Path
 
 from proksee import utilities
 from proksee.utilities import InputType
+from proksee.utilities import get_time
+
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
@@ -87,6 +89,7 @@ def evaluate(contigs_filename, output_directory, resource_specification, mash_da
         The contigs with passed filename will be evaluated and the results will be written to standard output.
     """
 
+    click.echo("\n" + get_time())
     click.echo(utilities.build_version_message())
 
     # Make output directory:
@@ -101,6 +104,8 @@ def evaluate(contigs_filename, output_directory, resource_specification, mash_da
                                                      mash_database_path, id_mapping_filename, InputType.ASSEMBLY,
                                                      resource_specification, species_name)
     species = species_list[0]
+
+    click.echo("\n" + get_time())
     click.echo("The identified species is: " + str(species.name) + "\n")
 
     # Measure assembly quality statistics:
@@ -110,10 +115,14 @@ def evaluate(contigs_filename, output_directory, resource_specification, mash_da
     # Heuristic evaluation:
     species_evaluator = SpeciesAssemblyEvaluator(species, assembly_database)
     species_evaluation = species_evaluator.evaluate_assembly_from_database(assembly_quality)
+
+    click.echo("\n" + get_time())
     click.echo(species_evaluation.report)
 
     ncbi_evaluator = NCBIAssemblyEvaluator(species, assembly_database)
     ncbi_evaluation = ncbi_evaluator.evaluate_assembly_from_fallback(assembly_quality)
+
+    click.echo("\n" + get_time())
     click.echo(ncbi_evaluation.report)
 
     # Machine learning evaluation:
@@ -121,4 +130,5 @@ def evaluate(contigs_filename, output_directory, resource_specification, mash_da
     evaluation = evaluator.evaluate(assembly_quality)
     click.echo(evaluation.report)
 
-    click.echo("\nComplete.\n")
+    click.echo("\n" + get_time())
+    click.echo("Complete.\n")
