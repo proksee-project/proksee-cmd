@@ -23,6 +23,7 @@ from pathlib import Path
 
 from proksee.parser.mash_parser import MashParser
 from proksee.species_estimator import estimate_species_from_estimations, SpeciesEstimator
+from proksee.resource_specification import ResourceSpecification
 
 TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
 TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
@@ -58,12 +59,40 @@ class TestSpeciesEstimator:
             os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
         output_directory = os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "data", "temp")
+        resource_specification = ResourceSpecification(4, 4)
 
         estimator = SpeciesEstimator([input_filename], output_directory,
-                                     TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
+                                     TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
+                                     resource_specification)
         species_list = estimator.estimate_all_species()
 
         top_species = species_list[0]
 
         assert top_species.name == "Escherichia coli"
         assert top_species.confidence == pytest.approx(1, 0.0001)
+
+    def test_estimate_long_filepaths(self, caplog):
+        """
+        Tests the cut off for when the sum of the filepaths to be passed to Mash are too long.
+        Expectation is that some will be cut off and the program will continue normally.
+        """
+
+        input_filename = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
+        output_directory = os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "data", "temp")
+        resource_specification = ResourceSpecification(4, 4)
+
+        # Creating the estimator with 500 copies of the same input file.
+        # This will result in an argument list that is too many characters long. (i.e. >3500)
+        estimator = SpeciesEstimator([input_filename] * 500, output_directory,
+                                     TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
+                                     resource_specification)
+        species_list = estimator.estimate_all_species()
+
+        top_species = species_list[0]
+
+        assert top_species.name == "Escherichia coli"
+        assert top_species.confidence == pytest.approx(1, 0.0001)
+        assert "The length of all contig filepaths to be screened by Mash exceeds acceptable limits." in caplog.text
+        assert "Only the largest 219 contigs will be used." in caplog.text

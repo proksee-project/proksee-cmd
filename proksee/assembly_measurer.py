@@ -80,7 +80,8 @@ class AssemblyMeasurer:
         if not os.path.exists(self.contigs_filename):
             raise FileNotFoundError("File not found: " + self.contigs_filename)
 
-        quast_command = "quast --contig-thresholds 0," + str(self.minimum_contig_length) + " " + \
+        quast_command = "quast --contig-thresholds 0," + str(self.minimum_contig_length) + \
+                        " --min-contig " + str(self.minimum_contig_length) + " " + \
                         self.contigs_filename + " -o " + self.quast_directory
         quast_out = open(os.path.join(self.output_directory, self.OUTPUT_FILENAME), "w+")
         quast_err = open(os.path.join(self.output_directory, self.ERROR_FILENAME), "w+")

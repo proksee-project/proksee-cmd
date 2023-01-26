@@ -24,7 +24,9 @@ import os
 from pathlib import Path
 
 from proksee import utilities
+from proksee.utilities import InputType
 from proksee.utilities import get_time
+
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
 from proksee.machine_learning_evaluator import MachineLearningEvaluator
@@ -32,6 +34,7 @@ from proksee.machine_learning_evaluator import MachineLearningEvaluator
 import proksee.config as config
 from proksee.ncbi_assembly_evaluator import NCBIAssemblyEvaluator
 from proksee.species_assembly_evaluator import SpeciesAssemblyEvaluator
+from proksee.resource_specification import ResourceSpecification
 
 DATABASE_PATH = os.path.join(Path(__file__).parent.parent.absolute(), "database",
                              "refseq_short.csv")
@@ -50,8 +53,12 @@ ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.parent.absolute(), "dat
 @click.option('-o', '--output', required=True,
               type=click.Path(exists=False, file_okay=False,
                               dir_okay=True, writable=True))
+@click.option('-t', '--threads', required=False, default=4, type=click.IntRange(min=1, max=None),
+              help="Specifies the number of threads programs in the pipeline should use. The default is 4.")
+@click.option('-m', '--memory', required=False, default=4, type=click.IntRange(min=1, max=None),
+              help="Specifies the amount of memory in gigabytes programs in the pipeline should use. The default is 4")
 @click.pass_context
-def cli(ctx, contigs, species, min_contig_length, output):
+def cli(ctx, contigs, species, min_contig_length, output, threads, memory):
 
     # Check Mash database is installed:
     mash_database_path = config.get(config.MASH_PATH)
@@ -60,10 +67,11 @@ def cli(ctx, contigs, species, min_contig_length, output):
         print("Please run 'proksee updatedb' to install the databases!")
         return
 
-    evaluate(contigs, output, mash_database_path, species, min_contig_length)
+    resource_specification = ResourceSpecification(threads, memory)
+    evaluate(contigs, output, resource_specification, mash_database_path, species, min_contig_length)
 
 
-def evaluate(contigs_filename, output_directory, mash_database_path,
+def evaluate(contigs_filename, output_directory, resource_specification, mash_database_path,
              species_name=None, minimum_contig_length=1000, id_mapping_filename=ID_MAPPING_FILENAME):
     """
     The main control flow of the program that evaluates the assembly.
@@ -71,6 +79,7 @@ def evaluate(contigs_filename, output_directory, mash_database_path,
     ARGUMENTS:
         contigs_filename (string): the filename of the contigs to evaluate
         output_directory (string): the location to place all program output and temporary files
+        resource_specification (ResourceSpecification): the computational resources available
         mash_database_path (string): optional; the name of the Mash database
         species_name (string): optional; the name of the species being assembled
         minimum_contig_length (int): optional; the minimum contig length to consider for analysis
@@ -91,8 +100,9 @@ def evaluate(contigs_filename, output_directory, mash_database_path,
     assembly_database = AssemblyDatabase(DATABASE_PATH)
 
     # Estimate species
-    species_list = utilities.determine_species([contigs_filename], assembly_database, output_directory,
-                                               mash_database_path, id_mapping_filename, species_name)
+    species_list = utilities.determine_major_species([contigs_filename], assembly_database, output_directory,
+                                                     mash_database_path, id_mapping_filename, InputType.ASSEMBLY,
+                                                     resource_specification, species_name)
     species = species_list[0]
 
     click.echo("\n" + get_time())

@@ -18,6 +18,7 @@ specific language governing permissions and limitations under the License.
 
 import os
 import subprocess
+import logging
 
 from proksee.parser.mash_parser import MashParser
 from proksee.species import Species
@@ -77,11 +78,13 @@ class SpeciesEstimator:
         output_directory (str): the directory to use for output
         mash_database_filename (str): the filename of the Mash database
         id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
+        resource_specification (ResourceSpecification): the computational resources available
     """
 
     OUTPUT_FILENAME = "mash.o"
 
-    def __init__(self, input_list, output_directory, mash_database_filename, id_mapping_filename):
+    def __init__(self, input_list, output_directory, mash_database_filename, id_mapping_filename,
+                 resource_specification):
         """
         Initializes the species estimator.
 
@@ -90,17 +93,18 @@ class SpeciesEstimator:
             output_directory (str): the directory to use for program output
             mash_database_filename (str): the filename of the Mash database
             id_mapping_filename (str): filename of the NCBI ID-to-taxonomy mapping file
+            resource_specification (ResourceSpecification): the computational resources available
         """
 
         self.input_list = [i for i in input_list if i]  # remove all "None" inputs
         self.output_directory = output_directory
         self.mash_database_filename = mash_database_filename
         self.id_mapping_filename = id_mapping_filename
+        self.resource_specification = resource_specification
 
-    def estimate_major_species(self):
+    def estimate_major_species_from_reads(self):
         """
-        Estimates the major species present in the input data. The input data will need to be in a form similar to
-        sequencing reads (i.e. have multiplicity, or depth of coverage). If this function returns more than one "major"
+        Estimates the major species present in the reads. If this function returns more than one "major"
         species, then it is possible there is major contamination in the input data.
 
         RETURNS
@@ -112,20 +116,30 @@ class SpeciesEstimator:
         MIN_IDENTITY = 0.90
         MIN_MULTIPLICITY = 5
 
-        mash_filename = self.run_mash()
-        mash_parser = MashParser(self.id_mapping_filename)
-        estimations = mash_parser.parse_estimations(mash_filename)
+        species = self.estimate_species(MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+        return species
 
-        species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+    def estimate_major_species_from_assembly(self):
+        """
+        Estimates the major species present in the assembly (contigs). If this function returns more than one "major"
+        species, then it is possible there is major contamination in the input data.
 
-        if len(species) == 0:
-            species.append(Species(Species.UNKNOWN, 0.0))
+        RETURNS
+            species (List(Species)): a list of the estimated major species, sorted in descending order of most complete
+                and highest covered; will contain an "Unknown" species if no major species was found
+        """
 
+        MIN_SHARED_FRACTION = 0.80
+        MIN_IDENTITY = 0.90
+        MIN_MULTIPLICITY = 1  # Assemblies should have a multiplicity of 1.
+
+        species = self.estimate_species(MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
         return species
 
     def estimate_all_species(self):
         """
-        Estimates all the species present in the input data, with only minimal filtering for noise.
+        Estimates all the species present in the input data (reads or assembled contigs), with only minimal filtering
+        for noise.
 
         RETURNS
             species (List(Species)): a list of all estimated species, sorted in descending order of most complete
@@ -136,11 +150,23 @@ class SpeciesEstimator:
         MIN_IDENTITY = 0
         MIN_MULTIPLICITY = 1
 
+        species = self.estimate_species(MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+        return species
+
+    def estimate_species(self, min_shared_fraction, min_identity, min_multiplicity):
+        """
+        Estimates the species present in the input data according the specified Mash parameters.
+
+        RETURNS
+            species (List(Species)): a list of all estimated species, sorted in descending order of most complete
+                and highest covered; will contain an "Unknown" species if no species were found
+        """
+
         mash_filename = self.run_mash()
         mash_parser = MashParser(self.id_mapping_filename)
         estimations = mash_parser.parse_estimations(mash_filename)
 
-        species = estimate_species_from_estimations(estimations, MIN_SHARED_FRACTION, MIN_IDENTITY, MIN_MULTIPLICITY)
+        species = estimate_species_from_estimations(estimations, min_shared_fraction, min_identity, min_multiplicity)
 
         if len(species) == 0:
             species.append(Species(Species.UNKNOWN, 0.0))
@@ -161,27 +187,68 @@ class SpeciesEstimator:
 
         LINE_LENGTH_LIMIT = 3500  # Actually 4095, but smaller here for safety.
 
-        output_filepath = os.path.join(self.output_directory, self.OUTPUT_FILENAME)
+        unsorted_output_filepath = os.path.abspath(os.path.join(self.output_directory,
+                                                                self.OUTPUT_FILENAME + ".unsorted"))
+        sorted_output_filepath = os.path.abspath(os.path.join(self.output_directory,
+                                                              self.OUTPUT_FILENAME))
+
+        # Find the common directory between all paths:
+        # This is a safer solution than assuming everything will always use the output directory.
+        common_path = os.path.commonpath(self.input_list)
+
+        if os.path.isdir(common_path):
+            common_directory = common_path
+        else:
+            # The common path is NOT a directory.
+            # This can happen when there is only a single input (the common path is the single file's filepath).
+            # We need to take the absolute path first, because some relative paths (ex: "contigs.fa") will return
+            # an empty string for the dirname.
+            common_directory = os.path.dirname(os.path.abspath(common_path))
 
         # create the mash command
-        command = "mash screen -i 0 -v 1 " + self.mash_database_filename
+        # Use the full file path for the database file:
+        threads = self.resource_specification.threads
+        command = ["mash", "screen", "-p", str(threads), "-i", "0", "-v", "1", self.mash_database_filename]
+
+        total_filepath_length = 0  # The total length of all characters in all filepaths
+        total_contigs = 0
 
         for item in self.input_list:
-            command += " " + str(item)
+            # Grab the relative path from the common directory of each item:
+            relpath = str(os.path.relpath(item, start=common_directory))
+            total_filepath_length += len(relpath)
+            total_contigs += 1
+            command.append(relpath)
 
-            # Break loop of command line argument is getting too long.
+            # Break loop if the total filepath length is getting too long.
             # This behaviour is likely fine for now, since the contigs are organized by size
             # and the missed contigs will likely be uninformative.
-            if len(command) >= LINE_LENGTH_LIMIT:
-                continue
-
-        command += " | sort -gr > " + output_filepath
+            if total_filepath_length >= LINE_LENGTH_LIMIT:
+                logging.warning("The length of all contig filepaths to be screened by Mash exceeds acceptable limits.")
+                logging.warning("Only the largest " + str(total_contigs) + " contigs will be used.")
+                break
 
         # run mash
         try:
-            subprocess.run(command, capture_output=True, shell=True, encoding="utf8")
+            with open(unsorted_output_filepath, 'w') as unsorted_output_file, \
+                 open(sorted_output_filepath, 'w') as sorted_output_file, \
+                 open(os.devnull, 'w') as NULL:
 
-        except subprocess.CalledProcessError:
-            pass  # it will be the responsibility of the calling function to insure there was output
+                # Run relative to the output directory so that filepaths are shorter:
+                subprocess.run(command, shell=False, encoding="utf8", cwd=common_directory,
+                               stdout=unsorted_output_file, stderr=NULL)
 
-        return output_filepath
+                # Sort the output:
+                subprocess.run(["sort", "-gr", str(unsorted_output_filepath)], shell=False, encoding="utf8",
+                               stdout=sorted_output_file, stderr=NULL)
+
+                # Remove the unsorted file:
+                if os.path.exists(unsorted_output_filepath):
+                    os.remove(unsorted_output_filepath)
+
+        except subprocess.CalledProcessError as e:
+            # It will be the responsibility of the calling function to ensure there was output:
+            logging.error("Encontered an error when running Mash.")
+            logging.error(str(e))
+
+        return sorted_output_filepath

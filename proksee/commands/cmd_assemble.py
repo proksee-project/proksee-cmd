@@ -29,7 +29,9 @@ from pathlib import Path
 from shutil import rmtree
 
 from proksee import utilities
+from proksee.utilities import InputType
 from proksee.utilities import get_time
+
 
 from proksee.assembly_database import AssemblyDatabase
 from proksee.assembly_measurer import AssemblyMeasurer
@@ -206,11 +208,11 @@ def determine_platform(reads, platform_name=None):
               help="The species to assemble. This will override species estimation. Must be spelled correctly.")
 @click.option('-p', '--platform', required=False, default=None,
               help="The sequencing platform used to generate the reads. 'Illumina', 'Ion Torrent', or 'Pac Bio'.")
-@click.option('--min-contig-length', required=False, default=1000,
+@click.option('--min-contig-length', required=False, default=1000, type=click.IntRange(min=1, max=None),
               help="The minimum contig length to include in analysis and output. The default is 1000.")
-@click.option('-t', '--threads', required=False, default=4,
+@click.option('-t', '--threads', required=False, default=4, type=click.IntRange(min=1, max=None),
               help="Specifies the number of threads programs in the pipeline should use. The default is 4.")
-@click.option('-m', '--memory', required=False, default=4,
+@click.option('-m', '--memory', required=False, default=4, type=click.IntRange(min=1, max=None),
               help="Specifies the amount of memory in gigabytes programs in the pipeline should use. The default is 4")
 @click.pass_context
 def cli(ctx, forward, reverse, output, force, species, platform, min_contig_length, threads, memory):
@@ -299,7 +301,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
         output_directory (string): the location to place all program output and temporary files
         force (bool): whether or not to force the assembly to continue, even when it's evaluated as being poor
         mash_database_path (string): optional; the file path of the Mash database
-        resource_specification (ResourceSpecification): the resources that sub-programs should use
+        resource_specification (ResourceSpecification): the computational resources available
         species_name (string): optional; the name of the species being assembled
         platform_name (string): optional; the name of the sequencing platform that generated the reads
         minimum_contig_length (int): optional; the minimum contig length to use for assembly and analysis
@@ -337,8 +339,9 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
 
     # Estimate species
     filtered_filenames = filtered_reads.get_file_locations()
-    species_list = utilities.determine_species(filtered_filenames, assembly_database, output_directory,
-                                               mash_database_path, id_mapping_filename, species_name)
+    species_list = utilities.determine_major_species(filtered_filenames, assembly_database, output_directory,
+                                                     mash_database_path, id_mapping_filename, InputType.READS,
+                                                     resource_specification, species_name)
     species = species_list[0]
     report_species(species_list)
 
@@ -359,7 +362,8 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
 
     # Check for contamination at the contig level:
     contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_directory,
-                                                 mash_database_path, id_mapping_filename)
+                                                 mash_database_path, id_mapping_filename,
+                                                 resource_specification)
     evaluation = contamination_handler.estimate_contamination()
     report_contamination(evaluation)
 

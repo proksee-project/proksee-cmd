@@ -22,6 +22,8 @@ from pathlib import Path
 
 from proksee.contamination_handler import ContaminationHandler
 from proksee.species import Species
+from proksee.resource_specification import ResourceSpecification
+
 
 TEST_MASH_DB_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "ecoli.msh")
 TEST_ID_MAPPING_FILENAME = os.path.join(Path(__file__).parent.absolute(), "data", "test_id_mapping.tab")
@@ -34,8 +36,10 @@ class TestContaminationHandler:
         species = Species("Boletus subalpinus", 1.0)
         contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
         output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
+        resource_specification = ResourceSpecification(4, 4)
         handler = ContaminationHandler(species, contigs_file, output_directory,
-                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
+                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
+                                       resource_specification)
 
         evaluation = handler.estimate_contamination()
 
@@ -55,8 +59,10 @@ class TestContaminationHandler:
         species = Species("Escherichia coli", 1.0)
         contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "ecoli_mini.fasta")
         output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
+        resource_specification = ResourceSpecification(4, 4)
         handler = ContaminationHandler(species, contigs_file, output_directory,
-                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
+                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
+                                       resource_specification)
 
         evaluation = handler.estimate_contamination()
 
@@ -72,8 +78,10 @@ class TestContaminationHandler:
         species = Species("Staphylococcus pseudintermedius", 1.0)
         contigs_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "simple_contig.fasta")
         output_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "testout")
+        resource_specification = ResourceSpecification(4, 4)
         handler = ContaminationHandler(species, contigs_file, output_directory,
-                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME)
+                                       TEST_MASH_DB_FILENAME, TEST_ID_MAPPING_FILENAME,
+                                       resource_specification)
 
         evaluation = handler.estimate_contamination()
         print(evaluation.report)
