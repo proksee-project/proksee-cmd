@@ -9,7 +9,7 @@ v1.0.0a6
 - Modifies the Mash database download procedure to write less output.
 - Correctly instructs QUAST to use the user-specified minimum contig size.
 - Better handling of Mash for species estimation of large assemblies with many contigs.
-- Mash may now be run using parrellization.
+- Mash may now be run using parallelization.
 - Removed possible security vulnerabilities when running subprocesses.
 - Better user input checking.
 
