@@ -4,9 +4,14 @@ Proksee is a suite of command line tools for performing assembly and evaluation 
 
 ## Release
 
-v1.0.0a5
+v1.0.0a6
 
-This release makes improvements to the assembly information output file.
+- Modifies the Mash database download procedure to write less output.
+- Correctly instructs QUAST to use the user-specified minimum contig size.
+- Better handling of Mash for species estimation of large assemblies with many contigs.
+- Mash may now be run using parallelization.
+- Removed possible security vulnerabilities when running subprocesses.
+- Better user input checking.
 
 ## Installation
 
