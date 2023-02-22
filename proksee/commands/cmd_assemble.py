@@ -372,8 +372,8 @@ def assemble(reads, output_directory, force, skip_fast_assembly, mash_database_p
 
         # Check for contamination at the contig level:
         contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_directory,
-                                                    mash_database_path, id_mapping_filename,
-                                                    resource_specification)
+                                                     mash_database_path, id_mapping_filename,
+                                                     resource_specification)
         evaluation = contamination_handler.estimate_contamination()
         report_contamination(evaluation)
 
@@ -443,7 +443,7 @@ def assemble(reads, output_directory, force, skip_fast_assembly, mash_database_p
 
     if not skip_fast_assembly:
         assembly_statistics_writer.write_csv([fast_strategy.assembler.name, expert_strategy.assembler.name],
-                                            [fast_assembly_quality, expert_assembly_quality])
+                                             [fast_assembly_quality, expert_assembly_quality])
     else:
         assembly_statistics_writer.write_csv([expert_strategy.assembler.name], [expert_assembly_quality])
 

@@ -70,7 +70,55 @@ class TestCmdAssemble:
         if os.path.isfile(json_file):
             os.remove(json_file)
 
-        assemble(reads, OUTPUT_DIR, force,
+        assemble(reads, OUTPUT_DIR, force, False,
+                 TEST_MASH_DB_FILENAME, RESOURCE_SPECIFICATION,
+                 species_name=None, platform_name=None,
+                 id_mapping_filename=TEST_ID_MAPPING_FILENAME)
+
+        # Check that expected files were created:
+        assert os.path.isfile(assembly_statistics_file)
+        assert os.path.isfile(contigs_file)
+        assert os.path.isfile(contigs_filtered_file)
+        assert os.path.isfile(quast_file)
+        assert os.path.isfile(json_file)
+
+    def test_simple_assemble_skip_fast_assembly(self):
+        """
+        Tests the cmd_assemble.py's main control flow: .assemble(...) when skipping fast assembly.
+        This test uses data with a small file size, that is insufficient to test the accuracy of the assembly.
+        Instead, this data and test will be used to test the correctness of the program control flow.
+        """
+
+        forward_filename = os.path.join(INPUT_DIR, "NA12878_fwd.fastq")
+        reverse_filename = None
+        reads = Reads(forward_filename, reverse_filename)
+
+        force = True
+
+        # Files being tracked:
+        assembly_statistics_file = os.path.join(OUTPUT_DIR, "assembly_statistics.csv")
+        contigs_file = os.path.join(OUTPUT_DIR, "contigs.all.fasta")
+        contigs_filtered_file = os.path.join(OUTPUT_DIR, "contigs.filtered.fasta")
+        quast_file = os.path.join(OUTPUT_DIR, "quast", "report.txt")
+        json_file = os.path.join(OUTPUT_DIR, "assembly_info.json")
+
+        # Remove previous files if they exist:
+        if os.path.isfile(assembly_statistics_file):
+            os.remove(assembly_statistics_file)
+
+        if os.path.isfile(contigs_file):
+            os.remove(contigs_file)
+
+        if os.path.isfile(contigs_filtered_file):
+            os.remove(contigs_filtered_file)
+
+        if os.path.isfile(quast_file):
+            os.remove(quast_file)
+
+        if os.path.isfile(json_file):
+            os.remove(json_file)
+
+        assemble(reads, OUTPUT_DIR, force, True,
                  TEST_MASH_DB_FILENAME, RESOURCE_SPECIFICATION,
                  species_name=None, platform_name=None,
                  id_mapping_filename=TEST_ID_MAPPING_FILENAME)

@@ -100,24 +100,25 @@ class ExpertSystem:
 
         species_name = self.species.name
 
-        if assembly_database.contains(species_name):
+        # Proceed if there was no previous assembly ("None"), otherwise evaluate the previous:
+        if assembly_quality is None:
+            proceed = True
+            report = "Fast assembly was skipped. Proceeding with expert assembly."
 
-            # Proceed if there was no previous assembly ("None"), otherwise evaluate the previous:
-            if assembly_quality is None:
-                proceed = True
-                report = "Fast assembly was skipped. Proceeding with expert assembly."
+            assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
+            strategy = AssemblyStrategy(proceed, assembler, report)
 
-                assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
-                strategy = AssemblyStrategy(proceed, assembler, report)
+        # Create an assembly strategy using the results of the fast assembly:
+        elif assembly_database.contains(species_name):
 
-            else:
-                evaluator = SpeciesAssemblyEvaluator(self.species, assembly_database)
-                species_evaluation = evaluator.evaluate_assembly_from_database(assembly_quality)
-                proceed = species_evaluation.success
+            evaluator = SpeciesAssemblyEvaluator(self.species, assembly_database)
+            species_evaluation = evaluator.evaluate_assembly_from_database(assembly_quality)
+            proceed = species_evaluation.success
 
-                assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
-                strategy = AssemblyStrategy(proceed, assembler, species_evaluation.report)
+            assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
+            strategy = AssemblyStrategy(proceed, assembler, species_evaluation.report)
 
+        # Use a fallback strategy when the species doesn't exist or isn't known:
         else:
             strategy = self.create_fallback_assembly_strategy(assembly_quality, assembly_database)
 
