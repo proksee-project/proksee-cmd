@@ -57,6 +57,9 @@ class SpeciesAssemblyEvaluator(HeuristicEvaluator):
         Evaluates the quality of the assembly. The quality measurements will be compared against the assembly
         statistics for the given species in the assembly database.
 
+        PARAMETERS
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly; must not be None
+
         RETURN
             evaluation (AssemblyEvaluation): an evaluation of the assembly's quality against the assembly database
         """

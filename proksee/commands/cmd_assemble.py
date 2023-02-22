@@ -204,6 +204,8 @@ def determine_platform(reads, platform_name=None):
                               dir_okay=True, writable=True))
 @click.option('--force', is_flag=True,
               help="This will force the assembler to proceed when the assembly appears to be poor.")
+@click.option('--skip-fast-assembly', is_flag=True,
+              help="This will skip the fast assembly step.")
 @click.option('-s', '--species', required=False, default=None,
               help="The species to assemble. This will override species estimation. Must be spelled correctly.")
 @click.option('-p', '--platform', required=False, default=None,
@@ -215,7 +217,8 @@ def determine_platform(reads, platform_name=None):
 @click.option('-m', '--memory', required=False, default=4, type=click.IntRange(min=1, max=None),
               help="Specifies the amount of memory in gigabytes programs in the pipeline should use. The default is 4")
 @click.pass_context
-def cli(ctx, forward, reverse, output, force, species, platform, min_contig_length, threads, memory):
+def cli(ctx, forward, reverse, output, force, skip_fast_assembly, species, platform, min_contig_length, threads,
+        memory):
 
     # Check Mash database is installed:
     mash_database_path = config.get(config.MASH_PATH)
@@ -226,7 +229,8 @@ def cli(ctx, forward, reverse, output, force, species, platform, min_contig_leng
 
     reads = Reads(forward, reverse)
     resource_specification = ResourceSpecification(threads, memory)
-    assemble(reads, output, force, mash_database_path, resource_specification, species, platform, min_contig_length)
+    assemble(reads, output, force, skip_fast_assembly, mash_database_path, resource_specification, species, platform,
+             min_contig_length)
     cleanup(output)
 
 
@@ -290,9 +294,9 @@ def cleanup(output_directory):
         rmtree(spades_directory)
 
 
-def assemble(reads, output_directory, force, mash_database_path, resource_specification,
-             species_name=None, platform_name=None, minimum_contig_length=1000,
-             id_mapping_filename=ID_MAPPING_FILENAME):
+def assemble(reads, output_directory, force, skip_fast_assembly, mash_database_path,
+             resource_specification, species_name=None, platform_name=None,
+             minimum_contig_length=1000, id_mapping_filename=ID_MAPPING_FILENAME):
     """
     The main control flow of the program that assembles reads.
 
@@ -300,6 +304,7 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
         reads (Reads): the reads to assemble
         output_directory (string): the location to place all program output and temporary files
         force (bool): whether or not to force the assembly to continue, even when it's evaluated as being poor
+        skip_fast_assembly (bool): whether or not to skip the fast assembly step
         mash_database_path (string): optional; the file path of the Mash database
         resource_specification (ResourceSpecification): the computational resources available
         species_name (string): optional; the name of the species being assembled
@@ -345,42 +350,50 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
     species = species_list[0]
     report_species(species_list)
 
-    # Determine a fast assembly strategy:
     expert = ExpertSystem(platform, species, filtered_reads, output_directory, resource_specification)
-    fast_strategy = expert.create_fast_assembly_strategy(read_quality)
-    click.echo("\n" + get_time())
-    report_strategy(fast_strategy)
-
-    if not fast_strategy.proceed and not force:
-        return
-
-    # Perform a fast assembly:
-    assembler = fast_strategy.assembler
-    output = assembler.assemble()
-    click.echo("\n" + get_time())
-    click.echo(output)
-
-    # Check for contamination at the contig level:
-    contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_directory,
-                                                 mash_database_path, id_mapping_filename,
-                                                 resource_specification)
-    evaluation = contamination_handler.estimate_contamination()
-    report_contamination(evaluation)
-
-    if not evaluation.success and not force:
-        return
-
-    # Measure assembly quality statistics:
-    assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory, minimum_contig_length)
-    click.echo("\n" + get_time())
-    fast_assembly_quality = assembly_measurer.measure_quality()
-
-    # Machine learning evaluation (fast assembly)
     machine_learning_evaluator = MachineLearningEvaluator(species)
-    evaluation = machine_learning_evaluator.evaluate(fast_assembly_quality)
 
-    click.echo("\n" + get_time())
-    click.echo(evaluation.report)
+    # Perform fast assembly:
+    if not skip_fast_assembly:
+
+        # Determine a fast assembly strategy:
+        fast_strategy = expert.create_fast_assembly_strategy(read_quality)
+        click.echo("\n" + get_time())
+        report_strategy(fast_strategy)
+
+        if not fast_strategy.proceed and not force:
+            return
+
+        # Perform a fast assembly:
+        assembler = fast_strategy.assembler
+        output = assembler.assemble()
+        click.echo("\n" + get_time())
+        click.echo(output)
+
+        # Check for contamination at the contig level:
+        contamination_handler = ContaminationHandler(species, assembler.contigs_filename, output_directory,
+                                                    mash_database_path, id_mapping_filename,
+                                                    resource_specification)
+        evaluation = contamination_handler.estimate_contamination()
+        report_contamination(evaluation)
+
+        if not evaluation.success and not force:
+            return
+
+        # Measure assembly quality statistics:
+        assembly_measurer = AssemblyMeasurer(assembler.contigs_filename, output_directory, minimum_contig_length)
+        click.echo("\n" + get_time())
+        fast_assembly_quality = assembly_measurer.measure_quality()
+
+        # Machine learning evaluation (fast assembly)
+        evaluation = machine_learning_evaluator.evaluate(fast_assembly_quality)
+
+        click.echo("\n" + get_time())
+        click.echo(evaluation.report)
+
+    # Skipping fast assembly:
+    else:
+        fast_assembly_quality = None
 
     # Expert assembly:
     expert_strategy = expert.create_expert_assembly_strategy(fast_assembly_quality, assembly_database)
@@ -420,14 +433,19 @@ def assemble(reads, output_directory, force, mash_database_path, resource_specif
     click.echo(species_evaluation.report)
 
     # Compare fast and slow assemblies:
-    report = compare_assemblies(fast_assembly_quality, expert_assembly_quality)
-    click.echo("\n" + get_time())
-    click.echo(report)
+    if not skip_fast_assembly:
+        report = compare_assemblies(fast_assembly_quality, expert_assembly_quality)
+        click.echo("\n" + get_time())
+        click.echo(report)
 
     # Write CSV assembly statistics summary:
     assembly_statistics_writer = AssemblyStatisticsWriter(output_directory)
-    assembly_statistics_writer.write_csv([fast_strategy.assembler.name, expert_strategy.assembler.name],
-                                         [fast_assembly_quality, expert_assembly_quality])
+
+    if not skip_fast_assembly:
+        assembly_statistics_writer.write_csv([fast_strategy.assembler.name, expert_strategy.assembler.name],
+                                            [fast_assembly_quality, expert_assembly_quality])
+    else:
+        assembly_statistics_writer.write_csv([expert_strategy.assembler.name], [expert_assembly_quality])
 
     # Write expert assembly information to JSON file:
     assembly_statistics_writer.write_json(platform, species, reads, read_quality, expert_assembly_quality,

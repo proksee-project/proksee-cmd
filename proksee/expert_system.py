@@ -91,7 +91,7 @@ class ExpertSystem:
         an assembly database about similar assemblies.
 
         PARAMETERS
-            assembly_quality (AssemblyQuality): an object representing the quality of an assembly
+            assembly_quality (AssemblyQuality): an object representing the quality of an assembly; may be None
             assembly_database (AssemblyDatabase): a database containing assembly statistics for various species
 
         RETURN
@@ -102,15 +102,23 @@ class ExpertSystem:
 
         if assembly_database.contains(species_name):
 
-            evaluator = SpeciesAssemblyEvaluator(self.species, assembly_database)
-            species_evaluation = evaluator.evaluate_assembly_from_database(assembly_quality)
+            # Proceed if there was no previous assembly ("None"), otherwise evaluate the previous:
+            if assembly_quality is None:
+                proceed = True
+                report = "Fast assembly was skipped. Proceeding with expert assembly."
 
-            assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
-            proceed = species_evaluation.success  # proceed if evaluation was successful
-            strategy = AssemblyStrategy(proceed, assembler, species_evaluation.report)
+                assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
+                strategy = AssemblyStrategy(proceed, assembler, report)
+
+            else:
+                evaluator = SpeciesAssemblyEvaluator(self.species, assembly_database)
+                species_evaluation = evaluator.evaluate_assembly_from_database(assembly_quality)
+                proceed = species_evaluation.success
+
+                assembler = SpadesAssembler(self.reads, self.output_directory, self.resource_specification)
+                strategy = AssemblyStrategy(proceed, assembler, species_evaluation.report)
 
         else:
-
             strategy = self.create_fallback_assembly_strategy(assembly_quality, assembly_database)
 
         return strategy
